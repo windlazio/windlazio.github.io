@@ -1,12 +1,12 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>得意洋洋的怀俄明野兔</title>
-    <link>http://www.pavelhan.com/</link>
+    <link>http://windlazio.github.io/</link>
     <description>Recent content on 得意洋洋的怀俄明野兔</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     
-        <atom:link href="http://www.pavelhan.com/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="http://windlazio.github.io/index.xml" rel="self" type="application/rss+xml" />
     
     
   </channel>
