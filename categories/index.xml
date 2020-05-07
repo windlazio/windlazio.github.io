@@ -1,12 +1,13 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Categories on 得意洋洋的怀俄明野兔</title>
-    <link>http://windlazio.github.io/categories/</link>
-    <description>Recent content in Categories on 得意洋洋的怀俄明野兔</description>
+    <title>Categories on Pavel Han的博客</title>
+    <link>https://windlazio.github.io/categories/</link>
+    <description>Recent content in Categories on Pavel Han的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
+    <language>zh-CN</language>
     
-        <atom:link href="http://windlazio.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://windlazio.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
   </channel>
