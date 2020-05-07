@@ -5,9 +5,28 @@
     <description>Recent content on 得意洋洋的怀俄明野兔</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
+    <lastBuildDate>Thu, 07 May 2020 16:21:07 +0800</lastBuildDate>
     
         <atom:link href="http://windlazio.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Article</title>
+      <link>http://windlazio.github.io/article/</link>
+      <pubDate>Thu, 07 May 2020 16:21:07 +0800</pubDate>
+      
+      <guid>http://windlazio.github.io/article/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Sample</title>
+      <link>http://windlazio.github.io/sample/</link>
+      <pubDate>Thu, 07 May 2020 13:34:17 +0800</pubDate>
+      
+      <guid>http://windlazio.github.io/sample/</guid>
+      <description></description>
+    </item>
     
   </channel>
 </rss>
