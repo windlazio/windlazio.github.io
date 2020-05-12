@@ -145,11 +145,8 @@
     <div class="post-toc-content">
         <nav id="TableOfContents">
   <ul>
-    <li>
-      <ul>
-        <li></li>
-      </ul>
-    </li>
+    <li><a href="#hugo-command">Hugo Command：</a></li>
+    <li><a href="#github-deployment">Github Deployment</a></li>
   </ul>
 </nav>
     </div>
@@ -197,16 +194,46 @@
         
         
         <div class="post-content">
-            <h4 id="hugo-command"><strong>Hugo Command</strong>：</h4>
-<h5 id="hugo-version查看hugo版本确认hugo的运行环境是否正常">Hugo version：查看Hugo版本，确认Hugo的运行环境是否正常；</h5>
-<h5 id="hugo-new-site-site-name建立一个新的hugo个人站点站点内容包含在site-name指定的目录中">Hugo new site [site name]：建立一个新的Hugo个人站点，站点内容包含在site name指定的目录中；</h5>
-<h5 id="hugo-new-contentarticlemd在content目录中生成markdown文章模板">Hugo new content/article.md：在content目录中生成Markdown文章模板；</h5>
-<h5 id="hugo-server在本地运行模拟服务器查看页面生成后的效果"><strong>Hugo server</strong>：在本地运行模拟服务器，查看页面生成后的效果；</h5>
-<ul>
-<li>这一步不需要运行Hugo命令来生成静态站点；</li>
-</ul>
-<h5 id="hugo在站点目录中执行用于基于目前的配置和数据生成静态站点站点的内容包含在public目录中"><strong>Hugo</strong>：在站点目录中执行，用于基于目前的配置和数据生成静态站点，站点的内容包含在public目录中；</h5>
-
+            <h2 id="hugo-command">Hugo Command：</h2>
+<p><strong>Hugo version</strong>：查看Hugo版本，确认Hugo的运行环境是否正常；
+<strong>Hugo new site [site name]</strong>：建立一个新的Hugo个人站点，站点内容包含在site name指定的目录中；
+<strong>Hugo new content/article.md</strong>：在content目录中生成Markdown文章模板；
+<strong>Hugo server</strong>：在本地运行模拟服务器，查看页面生成后的效果；
+<strong>Hugo</strong>：在站点目录中执行，用于基于目前的配置和数据生成静态站点，站点的内容包含在public目录中；</p>
+<h2 id="github-deployment">Github Deployment</h2>
+<p>初次运行：(以下命令在hugo命令运行生成的public目录中执行)</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">git init：建立本地git仓库；
+git add -A：把本次修改的内容推送到暂存区；
+git commit -m <span style="color:#d14">&#34;commit message&#34;</span>：把本次的修改推送到本地仓库；
+git remote add origin https://github.com/windlazio/windlazio.github.io.git：增加远端仓库；
+git push -u origin master：把本地仓库的修改推送到远端仓库；
+</code></pre></td></tr></table>
+</div>
+</div><p>以后每次修改/增删博文后执行：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">git status：查看本次的修改内容；
+git add -A：把本次修改的内容推送到暂存区；
+git commit -m <span style="color:#d14">&#34;commit message&#34;</span>：把本次的修改推送到本地仓库；
+git push -u origin master：把本地仓库的修改推送到远端仓库；
+</code></pre></td></tr></table>
+</div>
+</div>
         </div>
 
         
@@ -332,6 +359,17 @@
 
 <a id="rocket" href="#top"></a>
 <script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-166241725-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
 
 
 
