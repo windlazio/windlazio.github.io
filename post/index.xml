@@ -6,10 +6,19 @@
     <description>Recent content in Posts on Pavel Han的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sun, 10 May 2020 21:00:00 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 12 May 2020 08:56:10 +0800</lastBuildDate>
     
 	<atom:link href="http://www.pavelhan.tech/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>H.264的几个基本概念: IDR, dts/pts</title>
+      <link>http://www.pavelhan.tech/post/2020-05-12-00-H.264%E7%9A%84%E5%87%A0%E4%B8%AA%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/</link>
+      <pubDate>Tue, 12 May 2020 08:56:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/post/2020-05-12-00-H.264%E7%9A%84%E5%87%A0%E4%B8%AA%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/</guid>
+      <description>IDR帧与I帧之间的区别 IDR：Instantaneous Decoding Refresh。 I帧与IDR帧之间的区别涉及到H.264中不同帧类型的视频解码过程。 对于普通的I帧（及其IDR帧）而言，对其进行的视频解码不依赖于其他帧，对每一个I帧（及其IDR帧）解码都可以得到一张完整的图像。 对于每一</description>
+    </item>
     
     <item>
       <title>WiFi的低功耗策略实现机制总结</title>

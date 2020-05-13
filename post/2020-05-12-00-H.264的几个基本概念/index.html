@@ -6,20 +6,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>WiFi的低功耗策略实现机制总结 | Pavel Han的博客</title>
-    <meta property="og:title" content="WiFi的低功耗策略实现机制总结 - Pavel Han的博客">
+    <title>H.264的几个基本概念: IDR, dts/pts | Pavel Han的博客</title>
+    <meta property="og:title" content="H.264的几个基本概念: IDR, dts/pts - Pavel Han的博客">
     <meta property="og:type" content="article">
         
-    <meta property="article:published_time" content='2020-05-10T21:00:00&#43;08:00'>
+    <meta property="article:published_time" content='2020-05-12T08:56:10&#43;08:00'>
         
         
-    <meta property="article:modified_time" content='2020-05-10T21:00:00&#43;08:00'>
+    <meta property="article:modified_time" content='2020-05-12T08:56:10&#43;08:00'>
         
     <meta name="Keywords" content="">
-    <meta name="description" content="WiFi的低功耗策略实现机制总结">
+    <meta name="description" content="H.264的几个基本概念: IDR, dts/pts">
         
     <meta name="author" content="Pavel Han">
-    <meta property="og:url" content="http://www.pavelhan.tech/post/2020-05-10-00-WiFi%E7%9A%84%E4%BD%8E%E5%8A%9F%E8%80%97%E7%AD%96%E7%95%A5%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6%E6%80%BB%E7%BB%93/">
+    <meta property="og:url" content="http://www.pavelhan.tech/post/2020-05-12-00-H.264%E7%9A%84%E5%87%A0%E4%B8%AA%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 
     <link rel="stylesheet" href='/css/normalize.css'>
@@ -145,12 +145,9 @@
     <div class="post-toc-content">
         <nav id="TableOfContents">
   <ul>
-    <li><a href="#wifi的低功耗工作模式">WiFi的低功耗工作模式</a></li>
-    <li><a href="#低功耗模式的整体工作流程">低功耗模式的整体工作流程</a></li>
-    <li><a href="#more-data">More Data</a></li>
-    <li><a href="#dtim">DTIM</a></li>
-    <li><a href="#另外一种低功耗模式的实现策略">另外一种低功耗模式的实现策略</a></li>
-    <li><a href="#参考资料">参考资料：</a></li>
+    <li><a href="#idr帧与i帧之间的区别">IDR帧与I帧之间的区别</a></li>
+    <li><a href="#dts与pts">dts与pts</a></li>
+    <li><a href="#参考信息">参考信息</a></li>
   </ul>
 </nav>
     </div>
@@ -184,16 +181,16 @@
 </script>
     <article class="post">
         <header>
-            <h1 class="post-title">WiFi的低功耗策略实现机制总结</h1>
+            <h1 class="post-title">H.264的几个基本概念: IDR, dts/pts</h1>
         </header>
         <date class="post-meta meta-date">
-            2020年5月10日
+            2020年5月12日
         </date>
         
         <div class="post-meta">
             <span>|</span>
             
-            <span class="meta-category"><a href='http://www.pavelhan.tech/categories/WiFi'>WiFi</a></span>
+            <span class="meta-category"><a href='http://www.pavelhan.tech/categories/%E9%9F%B3%E8%A7%86%E9%A2%91'>音视频</a></span>
             
         </div>
         
@@ -204,96 +201,57 @@
         </div>
         
         
-        <div class="clear" style="display: none">
-            <div class="toc-article">
-                <div class="toc-title">文章目录</div>
-            </div>
-        </div>
-        
         <div class="post-content">
-            <h2 id="wifi的低功耗工作模式">WiFi的低功耗工作模式</h2>
-<p>低功耗工作模式禁止：STA在大部分时间保持RF接收器打开等待和监听是否有自己的无线数据包，在需要发送数据的时候切换为RF发射状态。</p>
+            <h2 id="idr帧与i帧之间的区别">IDR帧与I帧之间的区别</h2>
+<p>IDR：Instantaneous Decoding Refresh。</p>
+<p>I帧与IDR帧之间的区别涉及到H.264中不同帧类型的视频解码过程。</p>
 <ul>
-<li>在这种情况下，AP会直接把所有发给这个STA的frame直接发给这个STA，不会为其缓存frame。</li>
-<li>这种情况下STA的RF电路的大部分都需要保持开启状态，非常耗电；</li>
+<li>对于普通的I帧（及其IDR帧）而言，对其进行的视频解码不依赖于其他帧，对每一个I帧（及其IDR帧）解码都可以得到一张完整的图像。</li>
+<li>对于每一个P帧而言，对其进行解码需要参考其前面的I帧或者P帧，才能成功的解码出来一帧完整的图像；</li>
+<li>B帧的解码则更复杂一些，对其进行解码不仅要参考前面的I帧或者P帧，还有可能要参考其后面的P帧解码后的图像；</li>
 </ul>
-<p>低功耗工作模式使能：STA通知AP自己即将进入低功耗模式，AP就会为这个STA缓存数据帧；STA周期性的醒来，通过Beacon Frame中的TIM Field了解到AP上是否有自己的缓存数据，有的话就发出PS-Poll frame获取这些缓存帧；完成后重新进入低功耗状态；</p>
+<p>为了能够支持以上解码过程，H.264的解码算法需要维护一个参考帧列表DPB（Decorded Picture Buffer），实际上就是一个普通的缓存空间，用于存放每一帧完成解码的图像数据，因此：</p>
 <ul>
-<li>STA处于低功耗状态下，AP收到发给这个STA的数据后，不会直接发给这个STA，而是先为其缓存，等待其发出PS-Poll来获取或者等待这个STA重新进入唤醒模式（Power management bit设置为1）；</li>
-<li>在低功耗模式下，STA的RF电路大部分的时间只有时钟部分在工作，只有定期醒来需要进行数据交互的时候才需要接收器或者发射器工作，因此非常省电；</li>
-<li>对于应用层而言，一般通过WiFi原厂提供的接口来设置STA进入低功耗模式；</li>
+<li>I帧的解码不需要依赖于DPB中的内容，直接独立进行解码就可以产生一张完整的图像，填入DPB中，此后就可以作为其他P帧和B帧解码的参考；</li>
+<li>P帧和B帧的解码则需要依赖于DPB中已经解码好的图像帧，解码完成后同样放入DPB中，作为后面的P帧和B帧的解码参考帧。</li>
 </ul>
-<h2 id="低功耗模式的整体工作流程">低功耗模式的整体工作流程</h2>
-<p>STA要进入低功耗工作模式的时候，就会把发给AP的frame的Power Managerment bit设置为1，表示其将进入低功耗模式；</p>
-<p>AP收到后就会为这个STA缓存所有要发送给它的单播数据帧，并且在它发出的周期性Beacon Frame的TIM Field设置标志，标记这个STA在AP中有缓存帧；</p>
-<p>STA周期性醒来，等待接收来自AP的beacon frame；通过beacon frame中的TIM信息了解到是否有自己的缓存帧；</p>
+<p>注意：P帧和B帧的解码不仅可能依赖于其前面紧邻的那个I帧，还有可能要依赖于更前面的帧。这一点就导致了I帧和IDR帧的细微差别：</p>
+<p>​	<strong>IDR帧是一种特殊的I帧，在IDR帧之后的所有P帧和B帧的解码都只会向前参考到这个IDR帧，而不会参考这个IDR帧之前的帧。因此在解码器在对一个IDR帧进行解码的时候，就可以直接把DPB中保存的所有缓存数据全部清空，这是很自然的道理：因为这个IDR帧后面的所有帧的解码都不会参考这个IDR帧之前的数据。</strong></p>
+<p>总结起来：</p>
 <ul>
-<li>如果没有自己的缓存帧，STA就会重新进入休眠状态；</li>
-<li>如果有自己的缓存帧的话，STA就会向AP发出一个PS-Poll frame请求获取自己的缓存帧，AP收到后就会把缓存的Frame发给STA；</li>
+<li>IDR帧一定是I帧，但I帧不一定是IDR帧。</li>
+<li>IDR帧会导致DPB被清空，而普通的I帧不会，因为其后面的帧解码有可能要参考到普通I帧前面的帧。</li>
+<li>也正因为以上道理，在对视频流或者视频文件在播放过程中做seek操作的时候，一定要找到IDR帧开始进行解码播放，否则如果在I帧位置进行播放，有可能会因为其后面的帧解码时要依赖于这个I帧前面的帧而造成花屏。</li>
 </ul>
-<p>STA把缓存在AP上的所有frame都读取到本地处理之后，就可以重新进入休眠状态；</p>
-<h2 id="more-data">More Data</h2>
-<p>以上所描述的低功耗模式的工作流程里，有一个问题：如果在STA休眠期间，AP为STA缓存了多个帧，而不是一个帧的话，应该如何处理？这就是More Data标志的用武之地了。</p>
-<p><img src="/images/2020-05-10-00-WiFi%E7%9A%84%E4%BD%8E%E5%8A%9F%E8%80%97%E7%AD%96%E7%95%A5%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6%E6%80%BB%E7%BB%93/2020051000_00-1589186021242.png" alt="2020051000_00"></p>
-<p>More Data是MAC Frame Header的Frame Control Field中的一个标志。</p>
-<p>STA向AP发出一个PS-Poll Frame，AP就会给它回一个Data Frame，并根据情况设置这个Data Frame的More Data标志：</p>
+<h2 id="dts与pts">dts与pts</h2>
+<p>dts、pts 的概念如下所述：</p>
 <ul>
-<li>当AP中还有更多缓存帧的话，设置为1，这样STA就需要继续发出PS-Poll Frame，并等待读取下一个缓存的Data Frame，并继续检查More Data标志，直到所有缓存的Data Frame读完，那么最后一个Data Frame的More data标志就会设置为0；</li>
-<li>如果AP中没有更多缓存帧，那么这个More Data标志就是0，同时AP发出的Beacon Frame的TIM中也不会再设置这个STA中有缓存帧的标志；STA在收到这个Data Frame就会了解到AP中没有为自己缓存的帧；这个时候它就可以重新进入休眠状态了；</li>
+<li>dts（Decoding Time Stamp）：即解码时间戳，这个时间戳的意义在于告诉播放器该在什么时候解码这一帧的数据。</li>
+<li>pts（Presentation Time Stamp）：即显示时间戳，这个时间戳用来告诉播放器该在什么时候显示这一帧的数据。</li>
 </ul>
-<h2 id="dtim">DTIM</h2>
-<p>TIM：Traffic Indication Map；</p>
-<p>DTIM：Delivery Traffic Indication Map；</p>
-<p>每一个Beacon Frame中都包含有TIM信息，但是并非每个beacon帧中都包含DTIM信息。</p>
-<p>TIM信息结构体中描述的是AP中为每个STA缓存的单播帧信息，处于休眠状态的STA可以通过TIM信息了解到AP是否有为自己缓存的单播帧；</p>
-<p>DTIM信息结构体中描述的则是AP中所缓存的组播/广播帧；</p>
+<p>实际上dts和pts的概念与B帧息息相关，当编解码器只有I帧和P帧的时候，视频解码和播放的顺序是完全一致的，因此dts与pts是相等的，这个时候讨论dts和pts就意义不大了，播放器只需要按照原来的顺序进行解码和显示就可以了。
+但是如果引入了B帧，就会导致解码和显示的顺序不一样。这是因为：</p>
 <ul>
-<li>当AP下连接的所有STA都始终处于Wakeup状态，即没有一个STA处于低功耗状态的时候，AP会把所有的广播/组播帧直接向外发送，不会在AP中进行缓存；</li>
-<li>只要AP下连接的一个STA进入低功耗模式，那么AP会先把所有的广播/组播帧缓存起来，等到包含有DTIM信息的Beacon frame发出去后，再把这些缓存的广播/组播帧向整个网络广播出去；广播完成后会继续把新的广播/组播帧缓存起来，等到下一个DTIM周期到来后再发出去；</li>
-<li>如下图所示，AP如果有缓存的广播和组播帧的话，会在每个DTIM Beacon frame发出之后，把这些缓存的广播和组播帧一起发出去，因此如果STA的应用对广播和组播帧的内容感兴趣的话就需要在DTIM Beacon Frame保持唤醒状态等待接收这些广播帧；</li>
+<li>B帧的解码需要依赖于其后面的帧，所以解码B帧的时候要先把其后面的帧解码才能对B帧成功解码，但是在播放的时候则需要按照原来的顺序进行播放，也就是说解码和播放显示的顺序不一致。</li>
 </ul>
-<p><img src="/images/2020-05-10-00-WiFi%E7%9A%84%E4%BD%8E%E5%8A%9F%E8%80%97%E7%AD%96%E7%95%A5%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6%E6%80%BB%E7%BB%93/2020051000_01-1589186279862.png" alt="2020051000_01"></p>
-<p>TIM与DTIM信息结构体的组织结构是一样的：</p>
-<p><img src="/images/2020-05-10-00-WiFi%E7%9A%84%E4%BD%8E%E5%8A%9F%E8%80%97%E7%AD%96%E7%95%A5%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6%E6%80%BB%E7%BB%93/2020051000_02.png" alt="2020051000_02"></p>
-<p>DTIM Count：表示当前的这个Beacon Frame后面还有几个Beacon Frame里面才包含有DTIM信息；如果这个值为0的话，表示当前的这个Beacon Frame就包含有DTIM信息，否则这个Beacon中包含的是TIM信息；</p>
+<p>例如：</p>
+<p>一个帧序列播放的顺序是：I B1 B2 P；</p>
 <ul>
-<li>是一个倒计时计数值，从DTIM Period开始倒计时为0，周而复始；</li>
+<li>I帧可以独立解码，因此首先解码，I帧解码顺序为1，播放顺序为1；</li>
+<li>B1和B2的解码需要依赖于I帧和后面的P帧，所以需要等P帧先解码；</li>
+<li>P帧解码顺序为2，播放顺序为4；</li>
+<li>B1的解码需要依赖于B2，因此B2先解码，B2的解码顺序为3，播放顺序为3；</li>
+<li>B1的解码顺序为4，播放顺序为2。</li>
 </ul>
-<p>DTIM Period：表示每隔几个Beacon Frame有一个包含有DTIM信息，是一个固定数字，可以在AP的设置界面进行设置；</p>
-<p>Bitmap Control：1个字节</p>
+<p>也就是说：</p>
+<p>Frame：I B1 B2 P;</p>
+<p>dts：         1 4   3  2；</p>
+<p>pts：         1 2   3  4；</p>
+<h2 id="参考信息">参考信息</h2>
 <ul>
-<li>
-<p>bit0：如果是TIM信息，则这个bit为0；如果是DTIM信息，并且AP有缓存的广播/组播帧，则这个bit为1，否则仍然为0；</p>
-</li>
-<li>
-<p>Bit7-1：与Partial Virtual Bitmap合并在一起表示AP为哪些STA缓存了单播帧；</p>
-</li>
-</ul>
-<p>Partial Virtual Bitmap：2个字节</p>
-<ul>
-<li>与Bitmap Control的高7bit合并在一起表示AP为哪些STA缓存了单播帧；</li>
-<li>具体的算法可以参考《802.11-2012》Annex O；</li>
-</ul>
-<h2 id="另外一种低功耗模式的实现策略">另外一种低功耗模式的实现策略</h2>
-<p>以上所描述的在Beacon的TIM中包含帧缓存标志+PS-Poll获取缓存帧的方式并非是802.11规范提供的唯一一种低功耗实现策略。</p>
-<p>一些厂商还提供了另外一种不使用PS-Poll的低功耗实现策略，具体的实现流程如下：</p>
-<ul>
-<li>STA在要进入低功耗模式的时候，向AP发出一个空Data frame，把其Power Management bit设置为1，表示这个STA要进入低功耗模式；</li>
-<li>此后AP就会为这个STA缓存要发给这个STA的帧，并在Beacon的TIM域中广播；</li>
-<li>STA周期性的唤醒后，不需要等待和关注Beacon Frame中的TIM标志的内容，直接向AP重新发一个空Data frame，把其Power Management bit设置为0，表示它退出低功耗模式；</li>
-<li>AP在收到这个空Data Frame以后就会停止为这个STA缓存帧，并立即把之前为这个STA缓存的所有帧发给这个STA；</li>
-<li>如果之前AP没有收到这个STA的缓存帧，就不需要做任何事情；</li>
-<li>STA在收到所有的缓存帧以后，就会重新发一个Power Management bit设置为1的空Data frame，重新进入低功耗模式。</li>
-</ul>
-<h2 id="参考资料">参考资料：</h2>
-<p>*《CWAP WLAN ANALYSIS》第四章；</p>
-<ul>
-<li>
-<p><a href="http://www.wireless-nets.com/resources/tutorials/802.11_multicasting.html">How to: Get the Most from 802.11 Multicasting</a></p>
-</li>
-<li>
-<p><a href="https://blogs.arubanetworks.com/industries/802-11-tim-and-dtim-information-elements/">802.11 – TIM and DTIM Information Elements</a></p>
-</li>
+<li>《音视频开发进阶指南》第一章；</li>
+<li><a href="https://blog.csdn.net/jammg/article/details/52357245">H264中I帧和IDR帧的区别</a></li>
+<li><a href="https://www.cnblogs.com/samirchen/p/7071824.html">理解音视频PTS和DTS</a></li>
 </ul>
 
         </div>
@@ -302,7 +260,7 @@
 <div class="post-archive">
     <ul class="post-copyright">
         <li><strong>原文作者：</strong><a rel="author" href="http://www.pavelhan.tech">Pavel Han</a></li>
-        <li style="word-break:break-all"><strong>原文链接：</strong><a href="http://www.pavelhan.tech/post/2020-05-10-00-WiFi%E7%9A%84%E4%BD%8E%E5%8A%9F%E8%80%97%E7%AD%96%E7%95%A5%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6%E6%80%BB%E7%BB%93/">http://www.pavelhan.tech/post/2020-05-10-00-WiFi%E7%9A%84%E4%BD%8E%E5%8A%9F%E8%80%97%E7%AD%96%E7%95%A5%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6%E6%80%BB%E7%BB%93/</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="http://www.pavelhan.tech/post/2020-05-12-00-H.264%E7%9A%84%E5%87%A0%E4%B8%AA%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/">http://www.pavelhan.tech/post/2020-05-12-00-H.264%E7%9A%84%E5%87%A0%E4%B8%AA%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/</a></li>
         <li><strong>版权声明：</strong>本作品采用<a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可，非商业转载请注明出处（作者，原文链接），商业转载请联系作者获得授权。</li>
     </ul>
 </div>
@@ -317,9 +275,9 @@
             
             <ul class="clearfix">
                 
-                <li><a href='http://www.pavelhan.tech/tags/WiFi'>WiFi</a></li>
+                <li><a href='http://www.pavelhan.tech/tags/%E9%9F%B3%E8%A7%86%E9%A2%91'>音视频</a></li>
                 
-                <li><a href='http://www.pavelhan.tech/tags/%E4%BD%8E%E5%8A%9F%E8%80%97'>低功耗</a></li>
+                <li><a href='http://www.pavelhan.tech/tags/H.264'>H.264</a></li>
                 
             </ul>
             
