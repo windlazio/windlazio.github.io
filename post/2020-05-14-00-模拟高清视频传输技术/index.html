@@ -6,20 +6,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>关于我 | Pavel Han的博客</title>
-    <meta property="og:title" content="关于我 - Pavel Han的博客">
+    <title>模拟高清视频传输技术：AHD，HD-TVI，HD-CVI | Pavel Han的博客</title>
+    <meta property="og:title" content="模拟高清视频传输技术：AHD，HD-TVI，HD-CVI - Pavel Han的博客">
     <meta property="og:type" content="article">
         
-    <meta property="article:published_time" content='2019-05-07T18:59:27&#43;08:00'>
+    <meta property="article:published_time" content='2020-05-14T10:56:10&#43;08:00'>
         
         
-    <meta property="article:modified_time" content='2019-05-07T18:59:27&#43;08:00'>
+    <meta property="article:modified_time" content='2020-05-14T10:56:10&#43;08:00'>
         
     <meta name="Keywords" content="">
-    <meta name="description" content="关于我">
+    <meta name="description" content="模拟高清视频传输技术：AHD，HD-TVI，HD-CVI">
         
     <meta name="author" content="Pavel Han">
-    <meta property="og:url" content="http://www.pavelhan.tech/about/">
+    <meta property="og:url" content="http://www.pavelhan.tech/post/2020-05-14-00-%E6%A8%A1%E6%8B%9F%E9%AB%98%E6%B8%85%E8%A7%86%E9%A2%91%E4%BC%A0%E8%BE%93%E6%8A%80%E6%9C%AF/">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 
     <link rel="stylesheet" href='/css/normalize.css'>
@@ -60,11 +60,11 @@
             </div>
             <div>
                 <nav id="nav-menu" class="clearfix">
-                    <a class="" href="http://www.pavelhan.tech">首页</a>
+                    <a class="current" href="http://www.pavelhan.tech">首页</a>
                     
                     <a  href="http://www.pavelhan.tech/archives/" title="归档">归档</a>
                     
-                    <a class="current" href="http://www.pavelhan.tech/about/" title="关于">关于</a>
+                    <a  href="http://www.pavelhan.tech/about/" title="关于">关于</a>
                     
                 </nav>
             </div>
@@ -143,7 +143,18 @@
 <div class="post-toc" style="position: absolute; top: 188px;">
     <h2 class="post-toc-title">文章目录</h2>
     <div class="post-toc-content">
-        <nav id="TableOfContents"></nav>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#缘起">缘起</a></li>
+    <li><a href="#模拟高清视频传输技术的优势">模拟高清视频传输技术的优势</a></li>
+    <li><a href="#ahdanalog-high-definition">AHD：Analog High Definition。</a></li>
+    <li><a href="#hd-tvihigh-definition-transport-video-interface">HD-TVI：High Definition Transport Video Interface。</a></li>
+    <li><a href="#hd-cvihigh-definition-composite-video-interface">HD-CVI：High Definition Composite Video Interface。</a></li>
+    <li><a href="#hd-sdihign-difinition-serial-digital-interface">HD-SDI：Hign Difinition Serial Digital Interface。</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考资料">参考资料：</a></li>
+  </ul>
+</nav>
     </div>
 </div>
 <script type="text/javascript">
@@ -175,11 +186,18 @@
 </script>
     <article class="post">
         <header>
-            <h1 class="post-title">关于我</h1>
+            <h1 class="post-title">模拟高清视频传输技术：AHD，HD-TVI，HD-CVI</h1>
         </header>
         <date class="post-meta meta-date">
-            2019年5月7日
+            2020年5月14日
         </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='http://www.pavelhan.tech/categories/%E9%9F%B3%E8%A7%86%E9%A2%91'>音视频</a></span>
+            
+        </div>
         
         
         <div class="post-meta">
@@ -189,27 +207,95 @@
         
         
         <div class="post-content">
-            <p>现居西安；</p>
-<p>毕业于西安交通大学电气工程专业；</p>
-<p>混迹于国内音视频和智能硬件行业十余年，从事技术开发与管理相关职务；</p>
-<p>专注于音视频、摄像头、智能硬件、物联网等相关行业；</p>
-<p>从事过嵌入式、Linux、后台服务器、智能硬件、C/C++、Java、项目管理、软件架构等领域；</p>
-<p><strong>联系我</strong>：</p>
+            <h2 id="缘起">缘起</h2>
+<p>由于从事摄像头相关行业以来，一直做的都是数字也就是IP摄像头领域，因此之前对于模拟摄像头的认知，还停留在10多年前CCD标清模组+CBVS接口+同轴线缆传输，以及模拟摄像头无法支持高清分辨率的认知上。</p>
 <ul>
-<li>email: <a href="mailto:pavelhan@163.com">pavelhan@163.com</a>;</li>
+<li>对于模拟图像传输支持高清分辨率的方案，印象里只有大华之前推出的HD-SDI的方案，当时据说可以支持1280x960的分辨率。</li>
+</ul>
+<p>直到公司最新新开的车载DVR的项目上，才知道模拟摄像头也早已经可以支持高清分辨率，甚至4K模拟视频图像的传输。因此在本篇文章学习和整理当前市场上比较流行的模拟高清图像传输方案，以补充这个知识盲点。</p>
+<h2 id="模拟高清视频传输技术的优势">模拟高清视频传输技术的优势</h2>
+<p>最成熟的模拟视频传输方案大概就是使用CVBS接口+同轴电缆的方式来传输标清模拟视频了，这也是之前绝大多数模拟摄像头所使用的标准传输方式。</p>
+<p>CVBS：Composite Video Blanking and Sync。</p>
+<ul>
+<li>一般采用BNC或者RCA端子。</li>
+<li>最高能够支持960H分辨率的模拟视频传输，即960x576（PAL）或者960x480（NTSC）。</li>
+<li>采用隔行扫描方式，主要适应于早期的CRT显示器；</li>
+</ul>
+<p>因此传统的CVBS方式是无法支持720P或者更高分辨率的所谓高清图像视频信号的传输，而各种模拟高清视频传输技术要解决的问题都可以归结为：如何使用一条同轴电缆来传输模拟高清视频信号。
+这样的技术相比于数字/IP图像传输技术带来的优势是：</p>
+<ul>
+<li>部署和安装非常方便（不需要进行复杂的组网和设置，直接连接上单根线缆就可以直接使用了），</li>
+<li>可以很容易在原有的模拟监听的线路/系统中进行替换，即使用传统的标清模拟摄像头所用的同轴电缆进行高清模拟视频信号的传输，这样可以大大节约用户对原有标清设备进行升级所需要的费用。</li>
+<li>从目前的情况来看，大致相同规格的模拟高清摄像头的价格还是要远低于网络摄像头：</li>
+</ul>
+<p><img src="/images/2020-05-14-00-%E6%A8%A1%E6%8B%9F%E9%AB%98%E6%B8%85%E8%A7%86%E9%A2%91%E4%BC%A0%E8%BE%93%E6%8A%80%E6%9C%AF/2020051500_01.png" alt="2020051500_01"></p>
+<h2 id="ahdanalog-high-definition">AHD：Analog High Definition。</h2>
+<p>由韩国厂商NextChip开发，该公司主要生产AHD技术的芯片，提供给生产模拟高清摄像头与DVR产品的下游厂家使用。</p>
+<p>使用同轴电缆进行视频传输，最高可以支持720P和1080P。</p>
+<p>其中AHD1.0最高可以支持到720P；AHD2.0最高可以支持使用RG59同轴电缆传输1080P视频到500m的距离；</p>
+<p>摄像头端TX芯片：NVP2430H/NVP2431H；DVR端RX芯片：NVP6114/NVP6124B；</p>
+<h2 id="hd-tvihigh-definition-transport-video-interface">HD-TVI：High Definition Transport Video Interface。</h2>
+<p>由一家日本公司TechPoint开发，最早于2014年推出。</p>
+<p>该方案是美国市场上最流行的模拟高清传输方案，得到了众多大厂的支持，例如海康就使用TechPoint的芯片推出了多款模拟高清摄像头的产品型号。</p>
+<p>最早的目标是使用同轴电缆是可以支持对模拟视频信号进行长达500m的实时传输。</p>
+<p>2016年海康声称通过使用HDTVI 3.0版本的协议可以支持对720p分辨率的视频进行最远1200m的传输，对1080p分辨率的视频进行最远800m的传输。</p>
+<p>最新版本已经可以支持对4K即8M分辨率的模拟视频进行传输。</p>
+<h2 id="hd-cvihigh-definition-composite-video-interface">HD-CVI：High Definition Composite Video Interface。</h2>
+<p>该技术在2012年由大华推出，在中国国内的使用比较多。</p>
+<p>大华除了自己生产这种技术的模拟摄像头以外，还允许授权其他其他公司也使用这种技术。</p>
+<p>该方案的工作机制与HD-TVI类似，只是采取了不同的数字化策略传输信号。</p>
+<p>最初的版本可以通过同轴电缆传输两种高清视频格式：1080P和720P。截至目前随着HD-CVI 3.0版本的推出，已经同样可以支持4K即8M像素分辨率模拟视频的传输。</p>
+<h2 id="hd-sdihign-difinition-serial-digital-interface">HD-SDI：Hign Difinition Serial Digital Interface。</h2>
+<p>最高已经可以支持到1080P；</p>
+<p>封闭标准，中国厂商大华的专利技术；</p>
+<p>SDI实际上是一种数字视频技术，只不过是使用同轴线缆来传输串行的数字视频信号，因此在传输之前需要把模拟视频信号进行数字化+串行化再送入同轴线缆进行传输，实际上很难称得上是一种模拟视频传输方案。</p>
+<p>对传输介质的要求很高，不适合远距离的传输，基本已经淡出市场。</p>
+<h2 id="总结">总结</h2>
+<ul>
+<li>AHD、HD-TVI、HD-CVI均可以支持在传统的同轴电缆上传输高清甚至4K制式的模拟高清视频信号，但是需要在图像的发送端（一般是摄像头）使用专门的TX芯片对要发送的信号进行自定义的编码，而在图像的接收端（一般是DVR）使用专门的RX芯片对要接收的信号进行自定义的解码；</li>
+<li>以上三种技术在工作的原理和指标上大同小异，市场推广方面也各有千秋：HD-TVI在美国占绝对优势；HD-CVI则在中国推广较好，并成为国标；AHD主要用在日韩市场，但是凭借低成本优势迅速打开自己的市场局面；</li>
+</ul>
+<h2 id="参考资料">参考资料：</h2>
+<ul>
+<li><a href="https://learncctv.com/hd-tvi-hd-cvi-ahd-comparison-best-explained/">hd-tvi-hd-cvi-ahd-comparison-best-explained</a></li>
+<li><a href="https://www.2mcctv.com/blog/2019_02_17-tvi-vs-cvi-vs-ahd-vs-cvbs-vs-sdi-security-cameras/">TVI vs CVI vs AHD vs CVBS vs SDI Security Cameras</a></li>
 </ul>
 
         </div>
 
         
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="http://www.pavelhan.tech">Pavel Han</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="http://www.pavelhan.tech/post/2020-05-14-00-%E6%A8%A1%E6%8B%9F%E9%AB%98%E6%B8%85%E8%A7%86%E9%A2%91%E4%BC%A0%E8%BE%93%E6%8A%80%E6%9C%AF/">http://www.pavelhan.tech/post/2020-05-14-00-%E6%A8%A1%E6%8B%9F%E9%AB%98%E6%B8%85%E8%A7%86%E9%A2%91%E4%BC%A0%E8%BE%93%E6%8A%80%E6%9C%AF/</a></li>
+        <li><strong>版权声明：</strong>本作品采用<a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可，非商业转载请注明出处（作者，原文链接），商业转载请联系作者获得授权。</li>
+    </ul>
+</div>
+<br/>
+
 
 
         
 
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/post/2020-05-12-00-H.264%E7%9A%84%E5%87%A0%E4%B8%AA%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/">H.264的几个基本概念: IDR, dts/pts</a></li>
+        
+    </ul>
+</div>
+
 
         <div class="post-meta meta-tags">
             
-            没有标签
+            <ul class="clearfix">
+                
+                <li><a href='http://www.pavelhan.tech/tags/%E9%9F%B3%E8%A7%86%E9%A2%91'>音视频</a></li>
+                
+                <li><a href='http://www.pavelhan.tech/tags/AHD'>AHD</a></li>
+                
+            </ul>
             
         </div>
     </article>

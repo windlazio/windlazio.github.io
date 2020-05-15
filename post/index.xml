@@ -6,10 +6,19 @@
     <description>Recent content in Posts on Pavel Han的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Tue, 12 May 2020 08:56:10 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 14 May 2020 10:56:10 +0800</lastBuildDate>
     
 	<atom:link href="http://www.pavelhan.tech/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>模拟高清视频传输技术：AHD，HD-TVI，HD-CVI</title>
+      <link>http://www.pavelhan.tech/post/2020-05-14-00-%E6%A8%A1%E6%8B%9F%E9%AB%98%E6%B8%85%E8%A7%86%E9%A2%91%E4%BC%A0%E8%BE%93%E6%8A%80%E6%9C%AF/</link>
+      <pubDate>Thu, 14 May 2020 10:56:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/post/2020-05-14-00-%E6%A8%A1%E6%8B%9F%E9%AB%98%E6%B8%85%E8%A7%86%E9%A2%91%E4%BC%A0%E8%BE%93%E6%8A%80%E6%9C%AF/</guid>
+      <description>缘起 由于从事摄像头相关行业以来，一直做的都是数字也就是IP摄像头领域，因此之前对于模拟摄像头的认知，还停留在10多年前CCD标清模组+CBVS接口+同轴线缆传输，以及模拟摄像头无法支持高清分辨率的认知上。 对于模拟图像传输支持高清分辨率的方案，印象里只有大华之前推出的HD-SDI的</description>
+    </item>
     
     <item>
       <title>H.264的几个基本概念: IDR, dts/pts</title>
