@@ -6,10 +6,19 @@
     <description>Recent content in 音视频 on Pavel Han的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 14 May 2020 10:56:10 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 18 May 2020 10:08:10 +0800</lastBuildDate>
     
 	<atom:link href="http://www.pavelhan.tech/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>BT601/BT656/BT1120的基本概念解析</title>
+      <link>http://www.pavelhan.tech/post/2020-05-18-00-BT601&#43;BT656&#43;BT1120%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E8%A7%A3%E6%9E%90/</link>
+      <pubDate>Mon, 18 May 2020 10:08:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/post/2020-05-18-00-BT601&#43;BT656&#43;BT1120%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E8%A7%A3%E6%9E%90/</guid>
+      <description>要解释清楚BT656、BT601、BT1120这些规范的由来，就需要从最早期的模拟视频技术讲起。因此早期的电视以及音视频信号都是以模拟的形式采集、处理、传输、播放的，而到了数字时代，为了能够以更先进的数字形式来对模拟的图像视频进行进行处理，就要涉及到模拟视频数字化的处理，而BT6</description>
+    </item>
     
     <item>
       <title>模拟高清视频传输技术：AHD，HD-TVI，HD-CVI</title>

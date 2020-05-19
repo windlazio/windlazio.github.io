@@ -6,20 +6,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>模拟高清视频传输技术：AHD，HD-TVI，HD-CVI | Pavel Han的博客</title>
-    <meta property="og:title" content="模拟高清视频传输技术：AHD，HD-TVI，HD-CVI - Pavel Han的博客">
+    <title>BT601/BT656/BT1120的基本概念解析 | Pavel Han的博客</title>
+    <meta property="og:title" content="BT601/BT656/BT1120的基本概念解析 - Pavel Han的博客">
     <meta property="og:type" content="article">
         
-    <meta property="article:published_time" content='2020-05-14T10:56:10&#43;08:00'>
+    <meta property="article:published_time" content='2020-05-18T10:08:10&#43;08:00'>
         
         
-    <meta property="article:modified_time" content='2020-05-14T10:56:10&#43;08:00'>
+    <meta property="article:modified_time" content='2020-05-18T10:08:10&#43;08:00'>
         
     <meta name="Keywords" content="">
-    <meta name="description" content="模拟高清视频传输技术：AHD，HD-TVI，HD-CVI">
+    <meta name="description" content="BT601/BT656/BT1120的基本概念解析">
         
     <meta name="author" content="Pavel Han">
-    <meta property="og:url" content="http://www.pavelhan.tech/post/2020-05-14-00-%E6%A8%A1%E6%8B%9F%E9%AB%98%E6%B8%85%E8%A7%86%E9%A2%91%E4%BC%A0%E8%BE%93%E6%8A%80%E6%9C%AF/">
+    <meta property="og:url" content="http://www.pavelhan.tech/post/2020-05-18-00-BT601&#43;BT656&#43;BT1120%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E8%A7%A3%E6%9E%90/">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 
     <link rel="stylesheet" href='/css/normalize.css'>
@@ -145,14 +145,11 @@
     <div class="post-toc-content">
         <nav id="TableOfContents">
   <ul>
-    <li><a href="#缘起">缘起</a></li>
-    <li><a href="#模拟高清视频传输技术的优势">模拟高清视频传输技术的优势</a></li>
-    <li><a href="#ahdanalog-high-definition">AHD：Analog High Definition。</a></li>
-    <li><a href="#hd-tvihigh-definition-transport-video-interface">HD-TVI：High Definition Transport Video Interface。</a></li>
-    <li><a href="#hd-cvihigh-definition-composite-video-interface">HD-CVI：High Definition Composite Video Interface。</a></li>
-    <li><a href="#hd-sdihign-difinition-serial-digital-interface">HD-SDI：Hign Difinition Serial Digital Interface。</a></li>
-    <li><a href="#总结">总结</a></li>
-    <li><a href="#参考资料">参考资料：</a></li>
+    <li><a href="#pal和ntsc">PAL和NTSC</a></li>
+    <li><a href="#bt601">BT601</a></li>
+    <li><a href="#bt656">BT656</a></li>
+    <li><a href="#bt1120">BT1120</a></li>
+    <li><a href="#参考信息">参考信息</a></li>
   </ul>
 </nav>
     </div>
@@ -186,10 +183,10 @@
 </script>
     <article class="post">
         <header>
-            <h1 class="post-title">模拟高清视频传输技术：AHD，HD-TVI，HD-CVI</h1>
+            <h1 class="post-title">BT601/BT656/BT1120的基本概念解析</h1>
         </header>
         <date class="post-meta meta-date">
-            2020年5月14日
+            2020年5月18日
         </date>
         
         <div class="post-meta">
@@ -207,58 +204,133 @@
         
         
         <div class="post-content">
-            <h2 id="缘起">缘起</h2>
-<p>由于从事摄像头相关行业以来，一直做的都是数字也就是IP摄像头领域，因此之前对于模拟摄像头的认知，还停留在10多年前CCD标清模组+CBVS接口+同轴线缆传输，以及模拟摄像头无法支持高清分辨率的认知上。</p>
+            <p>要解释清楚BT656、BT601、BT1120这些规范的由来，就需要从最早期的模拟视频技术讲起。因此早期的电视以及音视频信号都是以模拟的形式采集、处理、传输、播放的，而到了数字时代，为了能够以更先进的数字形式来对模拟的图像视频进行进行处理，就要涉及到模拟视频数字化的处理，而BT656、BT601、BT1120这些规范就定义了如何实现模拟视频数字化的标准。</p>
+<h2 id="pal和ntsc">PAL和NTSC</h2>
+<p>PAL和NTSC均使用隔行扫描技术，即在显示器显示的一个帧分为两个场：偶数场和奇数场。</p>
+<p>一帧图像的显示需要使用电子枪在CRT上扫描两次：第一次对屏幕上的奇数行进行扫描，第二次对屏幕上的偶数行进行扫描（NTSC与以上刚好相反，先扫描偶数场，然后扫描奇数场）。因此，PAL制式的图像信号一秒钟有25帧完整的图像帧，但电子枪一秒钟要扫描50次；NTSC则一秒钟有30帧完整图像帧，电子枪一秒钟扫描60次。</p>
+<p>除了能够在显示器上显示出来的有效图像信号之外，PAL或者NTSC送出的信号中还包含一些消隐行和水平消隐像素，这些消隐行和水平消隐像素不会显示在显示器上，但是仍然以行频和帧频等时钟同步包含在信号中。</p>
+<p>每一个场的有效图像上下都包含有一些消隐行，称为消隐顶场和消隐底场。</p>
+<p>因此对于PAL的一帧图像而言（NTSC与之类似），就由以下部分组成：</p>
 <ul>
-<li>对于模拟图像传输支持高清分辨率的方案，印象里只有大华之前推出的HD-SDI的方案，当时据说可以支持1280x960的分辨率。</li>
+<li>奇数场消隐顶场；</li>
+<li>奇数场有效图像数据行；</li>
+<li>奇数场消隐底场；</li>
+<li>偶数场消隐顶场；</li>
+<li>偶数场有效图像数据行；</li>
+<li>偶数场消隐底场；</li>
 </ul>
-<p>直到公司最新新开的车载DVR的项目上，才知道模拟摄像头也早已经可以支持高清分辨率，甚至4K模拟视频图像的传输。因此在本篇文章学习和整理当前市场上比较流行的模拟高清图像传输方案，以补充这个知识盲点。</p>
-<h2 id="模拟高清视频传输技术的优势">模拟高清视频传输技术的优势</h2>
-<p>最成熟的模拟视频传输方案大概就是使用CVBS接口+同轴电缆的方式来传输标清模拟视频了，这也是之前绝大多数模拟摄像头所使用的标准传输方式。</p>
-<p>CVBS：Composite Video Blanking and Sync。</p>
+<p>同样的，每一行数据中都由两部分组成：</p>
 <ul>
-<li>一般采用BNC或者RCA端子。</li>
-<li>最高能够支持960H分辨率的模拟视频传输，即960x576（PAL）或者960x480（NTSC）。</li>
-<li>采用隔行扫描方式，主要适应于早期的CRT显示器；</li>
+<li>水平消隐像素（Horizontal Vertical Blanking）；</li>
+<li>有效数据；</li>
 </ul>
-<p>因此传统的CVBS方式是无法支持720P或者更高分辨率的所谓高清图像视频信号的传输，而各种模拟高清视频传输技术要解决的问题都可以归结为：如何使用一条同轴电缆来传输模拟高清视频信号。
-这样的技术相比于数字/IP图像传输技术带来的优势是：</p>
+<p><strong>PAL制式主要用在中国和欧洲</strong>。其详细技术指标如下：</p>
 <ul>
-<li>部署和安装非常方便（不需要进行复杂的组网和设置，直接连接上单根线缆就可以直接使用了），</li>
-<li>可以很容易在原有的模拟监听的线路/系统中进行替换，即使用传统的标清模拟摄像头所用的同轴电缆进行高清模拟视频信号的传输，这样可以大大节约用户对原有标清设备进行升级所需要的费用。</li>
-<li>从目前的情况来看，大致相同规格的模拟高清摄像头的价格还是要远低于网络摄像头：</li>
+<li>场频：50Hz；</li>
+<li>帧频：25Hz；</li>
+<li>行频：15625Hz=625行/帧 * 25帧/秒；</li>
+<li>总行数：625；</li>
+<li>总列数：864；</li>
+<li>有效行：576：</li>
+<li>有效列：720；</li>
+<li>图像宽高比：4:3；</li>
+<li>像素采样频率：13.5MHz；</li>
+<li>每行采样时间：53.3333us（720/13.5）；</li>
+<li>扫描方式：奇场在前，偶场在后；</li>
 </ul>
-<p><img src="/images/2020-05-14-00-%E6%A8%A1%E6%8B%9F%E9%AB%98%E6%B8%85%E8%A7%86%E9%A2%91%E4%BC%A0%E8%BE%93%E6%8A%80%E6%9C%AF/2020051500_01.png" alt="2020051500_01"></p>
-<h2 id="ahdanalog-high-definition">AHD：Analog High Definition。</h2>
-<p>由韩国厂商NextChip开发，该公司主要生产AHD技术的芯片，提供给生产模拟高清摄像头与DVR产品的下游厂家使用。</p>
-<p>使用同轴电缆进行视频传输，最高可以支持720P和1080P。</p>
-<p>其中AHD1.0最高可以支持到720P；AHD2.0最高可以支持使用RG59同轴电缆传输1080P视频到500m的距离；</p>
-<p>摄像头端TX芯片：NVP2430H/NVP2431H；DVR端RX芯片：NVP6114/NVP6124B；</p>
-<h2 id="hd-tvihigh-definition-transport-video-interface">HD-TVI：High Definition Transport Video Interface。</h2>
-<p>由一家日本公司TechPoint开发，最早于2014年推出。</p>
-<p>该方案是美国市场上最流行的模拟高清传输方案，得到了众多大厂的支持，例如海康就使用TechPoint的芯片推出了多款模拟高清摄像头的产品型号。</p>
-<p>最早的目标是使用同轴电缆是可以支持对模拟视频信号进行长达500m的实时传输。</p>
-<p>2016年海康声称通过使用HDTVI 3.0版本的协议可以支持对720p分辨率的视频进行最远1200m的传输，对1080p分辨率的视频进行最远800m的传输。</p>
-<p>最新版本已经可以支持对4K即8M分辨率的模拟视频进行传输。</p>
-<h2 id="hd-cvihigh-definition-composite-video-interface">HD-CVI：High Definition Composite Video Interface。</h2>
-<p>该技术在2012年由大华推出，在中国国内的使用比较多。</p>
-<p>大华除了自己生产这种技术的模拟摄像头以外，还允许授权其他其他公司也使用这种技术。</p>
-<p>该方案的工作机制与HD-TVI类似，只是采取了不同的数字化策略传输信号。</p>
-<p>最初的版本可以通过同轴电缆传输两种高清视频格式：1080P和720P。截至目前随着HD-CVI 3.0版本的推出，已经同样可以支持4K即8M像素分辨率模拟视频的传输。</p>
-<h2 id="hd-sdihign-difinition-serial-digital-interface">HD-SDI：Hign Difinition Serial Digital Interface。</h2>
-<p>最高已经可以支持到1080P；</p>
-<p>封闭标准，中国厂商大华的专利技术；</p>
-<p>SDI实际上是一种数字视频技术，只不过是使用同轴线缆来传输串行的数字视频信号，因此在传输之前需要把模拟视频信号进行数字化+串行化再送入同轴线缆进行传输，实际上很难称得上是一种模拟视频传输方案。</p>
-<p>对传输介质的要求很高，不适合远距离的传输，基本已经淡出市场。</p>
-<h2 id="总结">总结</h2>
+<p><strong>NTSC主要用在美国和日本</strong>。其详细技术指标如下：</p>
 <ul>
-<li>AHD、HD-TVI、HD-CVI均可以支持在传统的同轴电缆上传输高清甚至4K制式的模拟高清视频信号，但是需要在图像的发送端（一般是摄像头）使用专门的TX芯片对要发送的信号进行自定义的编码，而在图像的接收端（一般是DVR）使用专门的RX芯片对要接收的信号进行自定义的解码；</li>
-<li>以上三种技术在工作的原理和指标上大同小异，市场推广方面也各有千秋：HD-TVI在美国占绝对优势；HD-CVI则在中国推广较好，并成为国标；AHD主要用在日韩市场，但是凭借低成本优势迅速打开自己的市场局面；</li>
+<li>场频：29.97Hz * 2；</li>
+<li>帧频：29.97Hz；</li>
+<li>行频：15734.25Hz=525行/帧 * 29.97帧/秒；</li>
+<li>总行数：525；</li>
+<li>总列数：858；</li>
+<li>有效行：486（480）：</li>
+<li>有效列：720；</li>
+<li>图像宽高比：4:3；</li>
+<li>像素采样频率：13.5MHz；</li>
+<li>每行采样时间：53.3333us（720/13.5）；</li>
+<li>扫描方式：偶场在前，奇场在后；</li>
 </ul>
-<h2 id="参考资料">参考资料：</h2>
+<h2 id="bt601">BT601</h2>
+<p>该标准的推出主要是用于把传统的隔行模拟视频信号进行数字化转换和编码，也就是对以上所描述的525行60Hz（NTSC）和625行50Hz（PAL）模拟视频信号进行数字化采样和编码的规范和方法。</p>
+<p>BT601规范对PAL和NTSC模拟视频进行数字化的时候，使用的图像数字化编码方式为YCbCr 4:2:2，每个采样点的亮度和色度信号均取8bit进行量化；</p>
 <ul>
-<li><a href="https://learncctv.com/hd-tvi-hd-cvi-ahd-comparison-best-explained/">hd-tvi-hd-cvi-ahd-comparison-best-explained</a></li>
-<li><a href="https://www.2mcctv.com/blog/2019_02_17-tvi-vs-cvi-vs-ahd-vs-cvbs-vs-sdi-security-cameras/">TVI vs CVI vs AHD vs CVBS vs SDI Security Cameras</a></li>
+<li>对亮度信号Y仍然采用13.5MHz采样频率，色度信号U和V分别采用6.75MHz采样频率，但因为色度信号U和V共用Cb/Cr合成信号线进行传输，因此在通信方面都采用13.5MHz的通信速率；</li>
+<li>采样数据率：13.5(MHz)×8(bit)＋2×6.75(MHz)×8(bit)= 27Mbyte/s。</li>
+</ul>
+<p>在数据接口方面采样21芯进行传输，其中包含16bit数据，Y信号和UV信号数据同时并行传输，并且有独立的行场同步信号；</p>
+<ul>
+<li>一路Y信号，8bit；</li>
+<li>一路Cb/Cr合成信号，8bit；</li>
+<li>系统时钟信号，行同步信号，场同步信号，各1bit；</li>
+<li>两根底线；</li>
+</ul>
+<h2 id="bt656">BT656</h2>
+<p>BT656实际上只是在BT601的基础上新增的一种数据传输接口和传输方式，对模拟视频信号如何进行采样和量化仍然遵守BT601规范的定义。</p>
+<p>BT656在BT601提供的数据结构规范的基础上定义了两种传输数字化视频的数字接口标准：位并行模式和位串行模式。</p>
+<p>位并行模式：</p>
+<ul>
+<li>采用9芯，8bit数据传输，1bit时钟信号，先传Y，再传UV，没有独立的行场同步信号，行场同步信号嵌入在数据流中。</li>
+<li>因此BT656的传输时钟的速度是BT601的2倍，也就是说BT656的采样率是27MHz；</li>
+</ul>
+<p>位串行模式：</p>
+<ul>
+<li>单个通道上传输一路串行的复用数据流，所有的亮度和色度信息在同一条数据线上分时传输，位时钟速率接近300MHz（实际数据传输率243Mbps），涉及到复杂的同步化、频谱整形和时钟恢复等技术手段，难度很大；</li>
+</ul>
+<p><strong>因此在工程实践中一般使用BT656的位并行模式。</strong></p>
+<p>既然在BT656的位并行模式中没有独立的行场同步信号，那么在对BT656送过来的图像视频信号进行解析的时候，如何能够知道其同步信息呢？这就要依赖于BT656在传输过程中嵌入在图像信息中的SAV和EAV信息。</p>
+<p>一个典型的行由四个部分组成：</p>
+<ul>
+<li>结束码EAV+水平消隐像素（Horizontal Vertical Blanking） + 起始码（SAV） + 有效数据（Active Video）；</li>
+</ul>
+<p>SAV和EAV信息都是4个字节，其定义如下：FF 00 00 XY；
+前面的三个字节是固定的，第四个字节则定义了行、场、消隐等信息，这个8bit的字节定义如下：
+1 F V H P3 P2 P1 P0；</p>
+<p><img src="/images/2020-05-18-00-BT601+BT656+BT1120%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E8%A7%A3%E6%9E%90/1.png" alt="1"></p>
+<p>其中：</p>
+<ul>
+<li>F：标记奇偶场信息，传输顶场时为0，传输底场时为1；</li>
+<li>V：标记消隐行信息，传输消隐行时为1，传输有效视频数据行时为0；</li>
+<li>H：标记EAV还是SAV，SAV为0，EAV为1；</li>
+<li>P0~P3为保护比特，其值取决于F、H、V，起到校验的作用。</li>
+</ul>
+<p>NTSC和PAL制式情况下各行的SAV和EAV设置如下所示：</p>
+<p><img src="/images/2020-05-18-00-BT601+BT656+BT1120%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E8%A7%A3%E6%9E%90/2.png" alt="2"></p>
+<h2 id="bt1120">BT1120</h2>
+<p>与BT601/BT656类似，只不过BT601/BT656定义的针对标清的NTSC和PAL制式模拟视频的数字化数据格式与传输接口的规范，而BT1120针对的则是1080P分辨率的高清模拟视频的数字化传输规范。</p>
+<p>BT1120规范中定义一个图像帧应该包含1125总行数和1080有效行，而每行的有效像素则为1920个像素，并且能够支持逐行和隔行的24Hz、25Hz、30Hz、50Hz、60Hz等扫描频率。</p>
+<p>以下为逐行扫描模式下的帧格式定义：</p>
+<p><img src="/images/2020-05-18-00-BT601+BT656+BT1120%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E8%A7%A3%E6%9E%90/3.png" alt="3"></p>
+<p><img src="/images/2020-05-18-00-BT601+BT656+BT1120%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E8%A7%A3%E6%9E%90/4.png" alt="4"></p>
+<p>以下为隔行扫描模式下的帧格式定义：</p>
+<p><img src="/images/2020-05-18-00-BT601+BT656+BT1120%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E8%A7%A3%E6%9E%90/5.png" alt="5"></p>
+<p><img src="/images/2020-05-18-00-BT601+BT656+BT1120%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E8%A7%A3%E6%9E%90/6.png" alt="6"></p>
+<p>同样与BT656规范类似，在BT1120的接口定义中不包含行场同步信号，而是把这些行、场、有效像素区域等同步相关的信息嵌入在SAV和EAV信息中传输到接收端。</p>
+<p>BT1120的SAV和EAV的定义也与BT656基本一致，即：SAV和EAV信息都是由4个字节组成，其定义如下：FF 00 00 XY</p>
+<p><img src="/images/2020-05-18-00-BT601+BT656+BT1120%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E8%A7%A3%E6%9E%90/7.png" alt="7"></p>
+<p>最后一个字节XY中通过F、V和H bit分别代表了场识别信息、场/帧消隐期识别信息以及行消隐期识别信息。</p>
+<p>BT1120在硬件传输接口的定义上与BT656类似，可以支持并行数据流模式和复用并行数据流两种模式：</p>
+<ul>
+<li>并行数据流模式：vclk+vid[15:0] 16/20bit，同时在16bit的数据总线上传输一个像素的8bit亮度信息和8bit色度信息，类似于两个BT656组合在一起使用；</li>
+<li>复用并行数据流模式：vclk+vid[7:0] 8/10bit，在同一组数据总线的时间上下沿上分别传输像素的亮度信号和色度信号。</li>
+</ul>
+<p><img src="/images/2020-05-18-00-BT601+BT656+BT1120%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E8%A7%A3%E6%9E%90/8.png" alt="8"></p>
+<ul>
+<li>YD0-YD1919:数字亮度数据Y；</li>
+<li>CBD0-CBD959 :数字色差数据Cb；</li>
+<li>CRD0-CRD959:数字色差数据Cr；</li>
+</ul>
+<p>vlck的频率方面，BT656的采样频率是27MHz；而BT1120因为要支持高清分辨率，其采样频率是72/74.25MHz。</p>
+<ul>
+<li>其中30fps采样74.25MHz的采样率，60fps则采用148.5MHz的采样率。</li>
+</ul>
+<h2 id="参考信息">参考信息</h2>
+<ul>
+<li><a href="https://blog.csdn.net/mao0514/article/details/16958873">BT656跟BT1120和BT709有什么区别</a></li>
+<li><a href="https://www.cnblogs.com/cyyljw/p/6871766.html">基础知识：BT1120</a></li>
+<li><a href="https://blog.csdn.net/jiayu5100687/article/details/81741012">BT.601和BT.656</a></li>
+<li><a href="https://blog.csdn.net/jiayu5100687/article/details/81629397">BT.1120数据流解释</a></li>
 </ul>
 
         </div>
@@ -267,7 +339,7 @@
 <div class="post-archive">
     <ul class="post-copyright">
         <li><strong>原文作者：</strong><a rel="author" href="http://www.pavelhan.tech">Pavel Han</a></li>
-        <li style="word-break:break-all"><strong>原文链接：</strong><a href="http://www.pavelhan.tech/post/2020-05-14-00-%E6%A8%A1%E6%8B%9F%E9%AB%98%E6%B8%85%E8%A7%86%E9%A2%91%E4%BC%A0%E8%BE%93%E6%8A%80%E6%9C%AF/">http://www.pavelhan.tech/post/2020-05-14-00-%E6%A8%A1%E6%8B%9F%E9%AB%98%E6%B8%85%E8%A7%86%E9%A2%91%E4%BC%A0%E8%BE%93%E6%8A%80%E6%9C%AF/</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="http://www.pavelhan.tech/post/2020-05-18-00-BT601&#43;BT656&#43;BT1120%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E8%A7%A3%E6%9E%90/">http://www.pavelhan.tech/post/2020-05-18-00-BT601&#43;BT656&#43;BT1120%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E8%A7%A3%E6%9E%90/</a></li>
         <li><strong>版权声明：</strong>本作品采用<a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可，非商业转载请注明出处（作者，原文链接），商业转载请联系作者获得授权。</li>
     </ul>
 </div>
@@ -281,6 +353,8 @@
     <h2>See Also</h2>
     <ul class="listing">
         
+        <li><a href="/post/2020-05-14-00-%E6%A8%A1%E6%8B%9F%E9%AB%98%E6%B8%85%E8%A7%86%E9%A2%91%E4%BC%A0%E8%BE%93%E6%8A%80%E6%9C%AF/">模拟高清视频传输技术：AHD，HD-TVI，HD-CVI</a></li>
+        
         <li><a href="/post/2020-05-12-00-H.264%E7%9A%84%E5%87%A0%E4%B8%AA%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/">H.264的几个基本概念: IDR, dts/pts</a></li>
         
     </ul>
@@ -293,7 +367,9 @@
                 
                 <li><a href='http://www.pavelhan.tech/tags/%E9%9F%B3%E8%A7%86%E9%A2%91'>音视频</a></li>
                 
-                <li><a href='http://www.pavelhan.tech/tags/AHD'>AHD</a></li>
+                <li><a href='http://www.pavelhan.tech/tags/BT1120'>BT1120</a></li>
+                
+                <li><a href='http://www.pavelhan.tech/tags/BT656'>BT656</a></li>
                 
             </ul>
             
