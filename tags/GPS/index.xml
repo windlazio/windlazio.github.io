@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>GPS on Pavel Han的博客</title>
+    <link>http://www.pavelhan.tech/tags/GPS/</link>
+    <description>Recent content in GPS on Pavel Han的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Fri, 22 May 2020 15:35:10 +0800</lastBuildDate>
+    
+	<atom:link href="http://www.pavelhan.tech/tags/GPS/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>GPS的NMEA数据格式解析及GPS/北斗双模模块TD3020C介绍</title>
+      <link>http://www.pavelhan.tech/post/2020-05-22-00-GPS%E7%9A%84NMEA%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90%E5%8F%8AGPS&#43;%E5%8C%97%E6%96%97%E5%8F%8C%E6%A8%A1%E6%A8%A1%E5%9D%97TD3020C%E4%BB%8B%E7%BB%8D/</link>
+      <pubDate>Fri, 22 May 2020 15:35:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/post/2020-05-22-00-GPS%E7%9A%84NMEA%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90%E5%8F%8AGPS&#43;%E5%8C%97%E6%96%97%E5%8F%8C%E6%A8%A1%E6%A8%A1%E5%9D%97TD3020C%E4%BB%8B%E7%BB%8D/</guid>
+      <description>NMEA数据格式 NEMA-0183是GPS接收机应该遵守的标准协议，也是当前世界上GPS接收机上使用最广泛的协议，绝大多数的GPS接收机，包括北斗模块在内都遵守或者至少兼容这个协议。 NMEA语句的标准格式定义如下： $&amp;lt;语句类型标识&amp;gt;，&amp;lt;数据字段&amp;gt;，&amp;lt;</description>
+    </item>
+    
+  </channel>
+</rss>
