@@ -6,20 +6,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>关于我 | Pavel Han的博客</title>
-    <meta property="og:title" content="关于我 - Pavel Han的博客">
+    <title>海思35XX系列HiMPP框架开发参考之VI模块 | Pavel Han的博客</title>
+    <meta property="og:title" content="海思35XX系列HiMPP框架开发参考之VI模块 - Pavel Han的博客">
     <meta property="og:type" content="article">
         
-    <meta property="article:published_time" content='2019-05-07T18:59:27&#43;08:00'>
+    <meta property="article:published_time" content='2020-05-26T10:42:10&#43;08:00'>
         
         
-    <meta property="article:modified_time" content='2019-05-07T18:59:27&#43;08:00'>
+    <meta property="article:modified_time" content='2020-05-26T10:42:10&#43;08:00'>
         
     <meta name="Keywords" content="">
-    <meta name="description" content="关于我">
+    <meta name="description" content="海思35XX系列HiMPP框架开发参考之VI模块">
         
     <meta name="author" content="Pavel Han">
-    <meta property="og:url" content="http://www.pavelhan.tech/about/">
+    <meta property="og:url" content="http://www.pavelhan.tech/post/2020-05-26-00-%E6%B5%B7%E6%80%9D35XX%E7%B3%BB%E5%88%97HiMPP%E6%A1%86%E6%9E%B6%E5%BC%80%E5%8F%91%E5%8F%82%E8%80%83%E4%B9%8BVI%E6%A8%A1%E5%9D%97/">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 
     <link rel="stylesheet" href='/css/normalize.css'>
@@ -60,11 +60,11 @@
             </div>
             <div>
                 <nav id="nav-menu" class="clearfix">
-                    <a class="" href="http://www.pavelhan.tech">首页</a>
+                    <a class="current" href="http://www.pavelhan.tech">首页</a>
                     
                     <a  href="http://www.pavelhan.tech/archives/" title="归档">归档</a>
                     
-                    <a class="current" href="http://www.pavelhan.tech/about/" title="关于">关于</a>
+                    <a  href="http://www.pavelhan.tech/about/" title="关于">关于</a>
                     
                 </nav>
             </div>
@@ -143,7 +143,15 @@
 <div class="post-toc" style="position: absolute; top: 188px;">
     <h2 class="post-toc-title">文章目录</h2>
     <div class="post-toc-content">
-        <nav id="TableOfContents"></nav>
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#vi模块的主要功能">VI模块的主要功能</a></li>
+    <li><a href="#接口设备通道">接口/设备/通道</a></li>
+    <li><a href="#接口与设备的接收能力">接口与设备的接收能力</a></li>
+    <li><a href="#vi模块的掩码设置">VI模块的掩码设置</a></li>
+    <li><a href="#常用api总结">常用API总结</a></li>
+  </ul>
+</nav>
     </div>
 </div>
 <script type="text/javascript">
@@ -175,11 +183,18 @@
 </script>
     <article class="post">
         <header>
-            <h1 class="post-title">关于我</h1>
+            <h1 class="post-title">海思35XX系列HiMPP框架开发参考之VI模块</h1>
         </header>
         <date class="post-meta meta-date">
-            2019年5月7日
+            2020年5月26日
         </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='http://www.pavelhan.tech/categories/%E7%A1%AC%E4%BB%B6'>硬件</a></span>
+            
+        </div>
         
         
         <div class="post-meta">
@@ -189,19 +204,173 @@
         
         
         <div class="post-content">
-            <p>现居西安；</p>
-<p>毕业于西安交通大学电气工程专业；</p>
-<p>混迹于国内音视频和智能硬件行业十余年，从事技术开发与管理相关职务；</p>
-<p>专注于音视频、摄像头、智能硬件、物联网等相关行业；</p>
-<p>从事过嵌入式、Linux、后台服务器、智能硬件、C/C++、Java、项目管理、软件架构等领域；</p>
-<p><strong>联系我</strong>：</p>
+            <p>主要参考文件：《HiMPP V3.0媒体处理软件开发参考》。
+文档版本：21.
+文档发布日期：2019-09-30.</p>
+<p>本文档基于对海思官方SDK提供的HiMPP开发参考文件的学习，整理了该平台下视频输入接口VI模块在开发过程中流程以及主要概念。</p>
+<h2 id="vi模块的主要功能">VI模块的主要功能</h2>
+<p>VI模块能够支持从BT656/BT601/BT1120以及Digital Camera接口上接收外部传过来的YUV格式视频数据，保存在内部的指定内存区域中。
+除以上简单的接收YUV视频数据以为，VI能够实现的额外功能：</p>
 <ul>
-<li>email: <a href="mailto:pavelhan@163.com">pavelhan@163.com</a>;</li>
+<li>对接收到的原始视频图像进行裁剪Crop；</li>
+<li>水平/垂直缩小处理Scale down；</li>
+<li>水平/垂直反转操作（Mirror，Flip）；</li>
+<li>可以把输入的一路或者多路原始视频图像，合并/分割为一路/多路视频图像。</li>
+</ul>
+<h2 id="接口设备通道">接口/设备/通道</h2>
+<p>海思35XX系列的各个芯片对于VI模块的支持情况不同，需要参考具体芯片的配置。
+总的来讲，HI35xx芯片的VI接口和设备均以8bit为单位进行组织和编号，1个8bit接口就对应一个VI设备。
+两个8bit的VI可以合并组成一个16bit BT1120接口，所以一个芯片上有n组16bit的BT1120接口，就会有2*n个8bit的VI设备。</p>
+<ul>
+<li>当两个8bit接口拼接在一起作为一个16bit接口使用的时候，这两个8bit接口对应的VI设备就只有1个设备可用；</li>
+</ul>
+<p>此外，每个VI接口和设备固定对应包含4个VI通道，可以把VI接口通过时分复用方式接收到的数据映射到不同的通道进行单独处理。因此对于VI模块的后级处理而言，就是从各个通道上读取数据。</p>
+<p>Hi3520DV400和HI3521DV100的接口/设备/通道的对应情况：</p>
+<ul>
+<li>Hi3520DV400有两组8bit接口VI0和VI1，也就分别对应两个VI设备，也就是dev0和dev1；
+<ul>
+<li>两组8bit接口可以合并为一个16bit BT1120接口使用，此时就只有dev0可以使用；</li>
+<li>Dev0对应的通道是Chn0，Chn1，Chn2，Chn3；</li>
+<li>Dev1对应的通道是Chn4，Chn5，Chn6，Chn7；</li>
+</ul>
+</li>
+<li>HI3521DV100包含有4组8bit接口：VI0，VI1，VI2，VI3，也就是dev0，dev1，dev2，dev3；
+<ul>
+<li>VI0+VI1以及VI2+VI3分别可以合并起来作为一个独立的16bit BT1120接口使用，此时就只有dev0和dev2可以使用；</li>
+<li>Dev0对应的通道是Chn0，Chn1，Chn2，Chn3；</li>
+<li>Dev1对应的通道是Chn4，Chn5，Chn6，Chn7；</li>
+<li>Dev2对应的通道是Chn8，Chn9，Chn10，Chn11；</li>
+<li>Dev3对应的通道是Chn12，Chn13，Chn14，Chn15；</li>
+</ul>
+</li>
+</ul>
+<h2 id="接口与设备的接收能力">接口与设备的接收能力</h2>
+<p>当VI接口和设备配置为8bit模式使用时，可以支持：</p>
+<ul>
+<li>可以支持1/2/4路D1、960H复合模式输入；
+<ul>
+<li>即1路8bit VI接口可以通过分时的方式支持最多4路D1和960H的视频；</li>
+<li>因此一个芯片的VI模块有N路8bit VI接口，最多就可以支持4*N路D1和960H分辨率图像的复合模式输入；</li>
+</ul>
+</li>
+<li>可以支持2路720P复合模式输入；
+<ul>
+<li>即1路8bit VI接口可以通过分时的方式支持最多2路720P的视频；</li>
+<li>因此一个芯片的VI模块有N路8bit VI接口，最多就可以支持2*N路720P分辨率图像的复合模式输入；</li>
+</ul>
+</li>
+<li>可以支持1路1080P30输入；
+<ul>
+<li>每个1080P30摄像头连接1路8bit接口（即YC复用模式），使用BT1120 148.5MHz时钟；（单路接口不复用，每个8bit接口只接入1路1080P30视频输入）</li>
+<li>配置为这种模式下，一个芯片的VI模块有N路8bit VI接口，就可以支持N路1080P30分辨率图像的输入；</li>
+</ul>
+</li>
+<li>通过双沿采样方式支持2路1080P30输入；
+<ul>
+<li>每个1080P30摄像头连接1路8bit接口（即YC复用模式），使用BT1120 148.5MHz时钟，在上升沿和下降沿同时进行采样可以支持两路1080P30视频的同时输入；</li>
+<li>因此一个芯片的VI模块有N路8bit VI接口，最多就可以支持2*N路1080P分辨率图像的复合模式输入；</li>
+</ul>
+</li>
+<li>还可以支持1路4M 30fps输入；
+<ul>
+<li>1个4M 30fps摄像头连接1路8bit接口，设置为BT1120 148.5MHz时钟+双沿采样方式；</li>
+<li>因此一个芯片的VI模块有N路8bit VI接口，最多就可以支持N路4M 30fps分辨率图像的输入；</li>
+</ul>
+</li>
+</ul>
+<p>两个8bit接口合并在一起组成一个16bit接口：</p>
+<ul>
+<li>可以支持1路1080P30输入；
+<ul>
+<li>1个1080P30摄像头连接一个16bit接口，同时传输YC数据，使用BT1120 74.24MHz时钟；</li>
+<li>配置为这种模式下，一个芯片的VI模块有N路16bit VI接口，就可以支持N路1080P30分辨率图像的输入；</li>
+</ul>
+</li>
+</ul>
+<p><strong>从以上的总结来看，无论是接入标清还是高清分辨率视频，最简单灵活的方式就是把VI模块的接口按照8bit来进行配置就好，设置为16bit的意义不大。</strong></p>
+<h2 id="vi模块的掩码设置">VI模块的掩码设置</h2>
+<p>VI模块的掩码用于定义VI模块的各个设备所使用的外部接口；
+每个VI设备对应两个掩码：掩码0和掩码1。
+VI设备和接口按照8bit的模式进行配置的情况：</p>
+<ul>
+<li>只需要设置掩码0，把掩码1设置为0即可；</li>
+<li>设备号为0/2/4/6等偶数编号的情况下，掩码0设置为0x00FF0000；</li>
+<li>设备号为1/3/5/7等奇数编号的情况下，掩码0设置为0xFF000000；</li>
+</ul>
+<p>VI设备和接口按照16bit的模式进行配置的情况：</p>
+<ul>
+<li>需要同时设置掩码0和掩码1；</li>
+<li>此时设备号为1/3/5/7等奇数编号的设备不可用，只能使用设备号为0/2/4/6等偶数编号的设备；</li>
+<li>所有设备号为0/2/4/6等偶数编号的设备，掩码0设置为0xFF000000，掩码1设置为0x00FF0000；</li>
+</ul>
+<h2 id="常用api总结">常用API总结</h2>
+<ul>
+<li>设置和获取VI设备属性
+<ul>
+<li>HI_MPI_VI_SetDevAttr;</li>
+<li>HI_MPI_VI_GetDevAttr;</li>
+</ul>
+</li>
+<li>启用和禁用VI设备；
+<ul>
+<li>HI_MPI_VI_EnableDev；</li>
+<li>HI_MPI_VI_DisableDev；</li>
+</ul>
+</li>
+<li>设置和获取VI通道属性
+<ul>
+<li>HI_MPI_VI_SetChnAttr;</li>
+<li>HI_MPI_VI_GetChnAttr;</li>
+</ul>
+</li>
+<li>启用和禁用VI通道
+<ul>
+<li>HI_MPI_VI_EnableChn；</li>
+<li>HI_MPI_VI_DisableChn；</li>
+<li>调用HI_MPI_VI_EnableChn之后实际上VI模块已经开始正常的接收接口进来的图像数据了；</li>
+</ul>
+</li>
+<li>读取VI模块接收到的图像数据：
+<ul>
+<li>HI_MPI_VI_GetFrame；</li>
+<li>一般不需要直接调用这个接口来获取Frame，VI模块连接的后续模块会自动接收并处理，除非需要对VI模块接收到的图像数据做自定义的处理；</li>
+</ul>
+</li>
+<li>释放VI图像数据所占的缓存
+<ul>
+<li>HI_MPI_VI_ReleaseFrame；</li>
+</ul>
+</li>
+<li>绑定/解绑VI通道/获取当前通道绑定关系
+<ul>
+<li>HI_MPI_VI_BindChn；</li>
+<li>HI_MPI_VI_UnBindChn；</li>
+<li>HI_MPI_VI_GetChnBind；</li>
+<li>如果使用系统默认的设备与通道的绑定关系的话，系统启动的时候自动就绑定好了。除非需要修改默认的绑定关系，才需要调用这两个接口先解除之前的默认绑定关系，再重新绑定；</li>
+</ul>
+</li>
+</ul>
+<p><strong>VI模块的基本工作流程：</strong></p>
+<ul>
+<li>设置VI设备属性：HI_MPI_VI_SetDevAttr</li>
+<li>使能VI设备：HI_MPI_VI_EnableDev</li>
+<li>设置VI通道属性：HI_MPI_VI_SetChnAttr</li>
+<li>使能VI通道：HI_MPI_VI_EnableChn</li>
+<li>至此VI部分的图像流已经正常工作，pipeline的下游设备可以从对应的VI通道中读取到图像流。</li>
 </ul>
 
         </div>
 
         
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="http://www.pavelhan.tech">Pavel Han</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="http://www.pavelhan.tech/post/2020-05-26-00-%E6%B5%B7%E6%80%9D35XX%E7%B3%BB%E5%88%97HiMPP%E6%A1%86%E6%9E%B6%E5%BC%80%E5%8F%91%E5%8F%82%E8%80%83%E4%B9%8BVI%E6%A8%A1%E5%9D%97/">http://www.pavelhan.tech/post/2020-05-26-00-%E6%B5%B7%E6%80%9D35XX%E7%B3%BB%E5%88%97HiMPP%E6%A1%86%E6%9E%B6%E5%BC%80%E5%8F%91%E5%8F%82%E8%80%83%E4%B9%8BVI%E6%A8%A1%E5%9D%97/</a></li>
+        <li><strong>版权声明：</strong>本作品采用<a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可，非商业转载请注明出处（作者，原文链接），商业转载请联系作者获得授权。</li>
+    </ul>
+</div>
+<br/>
+
 
 
         
@@ -209,7 +378,15 @@
 
         <div class="post-meta meta-tags">
             
-            没有标签
+            <ul class="clearfix">
+                
+                <li><a href='http://www.pavelhan.tech/tags/%E6%B5%B7%E6%80%9D'>海思</a></li>
+                
+                <li><a href='http://www.pavelhan.tech/tags/Hi3520DV400'>Hi3520DV400</a></li>
+                
+                <li><a href='http://www.pavelhan.tech/tags/Hi3521DV100'>Hi3521DV100</a></li>
+                
+            </ul>
             
         </div>
     </article>
