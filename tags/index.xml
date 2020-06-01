@@ -6,10 +6,28 @@
     <description>Recent content in Tags on Pavel Han的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Tue, 26 May 2020 10:42:10 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 01 Jun 2020 18:42:10 +0800</lastBuildDate>
     
 	<atom:link href="http://www.pavelhan.tech/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>CppCheck</title>
+      <link>http://www.pavelhan.tech/tags/CppCheck/</link>
+      <pubDate>Mon, 01 Jun 2020 18:42:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/tags/CppCheck/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>debian</title>
+      <link>http://www.pavelhan.tech/tags/debian/</link>
+      <pubDate>Mon, 01 Jun 2020 18:42:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/tags/debian/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>Hi3520DV400</title>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>软件工程 on Pavel Han的博客</title>
+    <link>http://www.pavelhan.tech/categories/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/</link>
+    <description>Recent content in 软件工程 on Pavel Han的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Mon, 01 Jun 2020 18:42:10 +0800</lastBuildDate>
+    
+	<atom:link href="http://www.pavelhan.tech/categories/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>在Debian/Linux下使用CppCheck对C代码进行静态扫描</title>
+      <link>http://www.pavelhan.tech/post/2020-06-01-00-%E5%9C%A8Debian%E4%B8%8B%E4%BD%BF%E7%94%A8CppCheck%E5%AF%B9C%E4%BB%A3%E7%A0%81%E8%BF%9B%E8%A1%8C%E9%9D%99%E6%80%81%E6%89%AB%E6%8F%8F/</link>
+      <pubDate>Mon, 01 Jun 2020 18:42:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/post/2020-06-01-00-%E5%9C%A8Debian%E4%B8%8B%E4%BD%BF%E7%94%A8CppCheck%E5%AF%B9C%E4%BB%A3%E7%A0%81%E8%BF%9B%E8%A1%8C%E9%9D%99%E6%80%81%E6%89%AB%E6%8F%8F/</guid>
+      <description>cppcheck的官网： http://cppcheck.net/。 cppcheck是一个C/C++静态检查工具，可以帮助我们检测出代码可能存在(潜在)的问题； cppcheck的执行完全基于C/C++源码的文本文件进行词法、语法分析，帮助开发人员找出代码中常见的隐患所在，从而规范化</description>
+    </item>
+    
+  </channel>
+</rss>

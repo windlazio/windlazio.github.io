@@ -1,0 +1,680 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>在Debian/Linux下使用CppCheck对C代码进行静态扫描 | Pavel Han的博客</title>
+    <meta property="og:title" content="在Debian/Linux下使用CppCheck对C代码进行静态扫描 - Pavel Han的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2020-06-01T18:42:10&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2020-06-01T18:42:10&#43;08:00'>
+        
+    <meta name="Keywords" content="">
+    <meta name="description" content="在Debian/Linux下使用CppCheck对C代码进行静态扫描">
+        
+    <meta name="author" content="Pavel Han">
+    <meta property="og:url" content="http://www.pavelhan.tech/post/2020-06-01-00-%E5%9C%A8Debian%E4%B8%8B%E4%BD%BF%E7%94%A8CppCheck%E5%AF%B9C%E4%BB%A3%E7%A0%81%E8%BF%9B%E8%A1%8C%E9%9D%99%E6%80%81%E6%89%AB%E6%8F%8F/">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-4031353640611810",
+        enable_page_level_ads: true
+    });
+    </script>
+    
+
+
+    
+    
+        <link rel="stylesheet" href='/css/douban.css'>
+    
+        <link rel="stylesheet" href='/css/other.css'>
+    
+</head>
+
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="http://www.pavelhan.tech">
+                        Pavel Han的博客
+                    </a>
+                
+                <p class="description">专注于音视频、摄像头、消费类电子、智能硬件、物联网等行业</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="http://www.pavelhan.tech">首页</a>
+                    
+                    <a  href="http://www.pavelhan.tech/archives/" title="归档">归档</a>
+                    
+                    <a  href="http://www.pavelhan.tech/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#cppcheck在debianlinux上的安装">cppcheck在debian/linux上的安装</a></li>
+    <li><a href="#使用cppcheck对单个c源文件进行扫描">使用cppcheck对单个c源文件进行扫描</a></li>
+    <li><a href="#使用cppcheck对整个c源文件目录进行扫描">使用cppcheck对整个c源文件目录进行扫描</a></li>
+    <li><a href="#cppcheck的常用执行选项">cppcheck的常用执行选项</a></li>
+    <li><a href="#参考资料">参考资料</a></li>
+  </ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
+    <article class="post">
+        <header>
+            <h1 class="post-title">在Debian/Linux下使用CppCheck对C代码进行静态扫描</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2020年6月1日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='http://www.pavelhan.tech/categories/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B'>软件工程</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <p>cppcheck的官网： <a href="http://cppcheck.net/">http://cppcheck.net/</a>。</p>
+<ul>
+<li>cppcheck是一个C/C++静态检查工具，可以帮助我们检测出代码可能存在(潜在)的问题；</li>
+<li>cppcheck的执行完全基于C/C++源码的文本文件进行词法、语法分析，帮助开发人员找出代码中常见的隐患所在，从而规范化软件开发流程，提高开发质量；</li>
+<li>cppcheck不是编译器，替代不了gcc，cppcheck的执行环境中也不需要安装gcc这类编译工具；</li>
+<li>cppcheck对于软件开发的生态非常完善，可以以插件的方式整合到Visual Studio、Eclipse、Jenkins、SVN、Git等编译器、版本管理工具以及持续部署的工具链中；</li>
+<li>目前市场上的主流静态分析工具除了cppcheck之外，还有clang、pclint、coverity、tscancode等，主要属性对比如下：
+<ul>
+<li><img src="/images/2020-06-01-00-%E5%9C%A8Debian%E4%B8%8B%E4%BD%BF%E7%94%A8CppCheck%E5%AF%B9C%E4%BB%A3%E7%A0%81%E8%BF%9B%E8%A1%8C%E9%9D%99%E6%80%81%E6%89%AB%E6%8F%8F/1.png" alt="1"></li>
+</ul>
+</li>
+</ul>
+<h2 id="cppcheck在debianlinux上的安装">cppcheck在debian/linux上的安装</h2>
+<p>sudo apt-get install cppcheck；</p>
+<h2 id="使用cppcheck对单个c源文件进行扫描">使用cppcheck对单个c源文件进行扫描</h2>
+<p>以cppcheck官网上提供的例子进行测试：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#999;font-weight:bold;font-style:italic">#include</span> <span style="color:#999;font-weight:bold;font-style:italic">&lt;stdio.h&gt;</span><span style="color:#999;font-weight:bold;font-style:italic">
+</span><span style="color:#999;font-weight:bold;font-style:italic"></span>
+<span style="color:#458;font-weight:bold">void</span> <span style="color:#900;font-weight:bold">foo</span>(<span style="color:#458;font-weight:bold">int</span> x)
+{
+    <span style="color:#458;font-weight:bold">int</span> buf[<span style="color:#099">10</span>];
+    <span style="color:#000;font-weight:bold">if</span>(x<span style="color:#000;font-weight:bold">==</span><span style="color:#099">1000</span>){
+        buf[x]<span style="color:#000;font-weight:bold">=</span><span style="color:#099">0</span>;
+    }
+}
+
+<span style="color:#458;font-weight:bold">int</span> <span style="color:#900;font-weight:bold">main</span>()
+{
+    printf(<span style="color:#d14">&#34;hello world</span><span style="color:#d14">\n</span><span style="color:#d14">&#34;</span>);
+    foo(<span style="color:#099">0</span>);
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>对以上单个C源码文件执行cppcheck扫描（使能所有的告警输出信息）：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">pavel@debian:~/test$ cppcheck main.c --enable<span style="color:#000;font-weight:bold">=</span>all
+Checking main.c ...
+<span style="color:#000;font-weight:bold">[</span>main.c:7<span style="color:#000;font-weight:bold">]</span> -&gt; <span style="color:#000;font-weight:bold">[</span>main.c:6<span style="color:#000;font-weight:bold">]</span>: <span style="color:#000;font-weight:bold">(</span>warning<span style="color:#000;font-weight:bold">)</span> Either the condition <span style="color:#d14">&#39;x==1000&#39;</span> is redundant or the array <span style="color:#d14">&#39;buf[10]&#39;</span> is accessed at index 1000, which is out of bounds.
+<span style="color:#000;font-weight:bold">[</span>main.c:5<span style="color:#000;font-weight:bold">]</span>: <span style="color:#000;font-weight:bold">(</span>style<span style="color:#000;font-weight:bold">)</span> The scope of the variable <span style="color:#d14">&#39;buf&#39;</span> can be reduced.
+<span style="color:#000;font-weight:bold">[</span>main.c:7<span style="color:#000;font-weight:bold">]</span>: <span style="color:#000;font-weight:bold">(</span>style<span style="color:#000;font-weight:bold">)</span> Variable <span style="color:#d14">&#39;buf&#39;</span> is assigned a value that is never used.
+<span style="color:#000;font-weight:bold">(</span>information<span style="color:#000;font-weight:bold">)</span> Cppcheck cannot find all the include files <span style="color:#000;font-weight:bold">(</span>use --check-config <span style="color:#000;font-weight:bold">for</span> details<span style="color:#000;font-weight:bold">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>分别对应的问题是：</p>
+<ul>
+<li>warning：buf越界；</li>
+<li>style：buf的定义范围可以更小，例如放在x==1000的判断条件之内；</li>
+<li>style：仍然是buf定义范围问题，如果程序没有在x==1000条件下执行，则buf根本就不会用到；</li>
+<li>information：无法找到头文件；
+<ul>
+<li>可以使用&ndash;suppress=missingIncludeSystem选项忽略掉包含头文件的告警信息；</li>
+<li>也可以使用-I选项指定头文件所在的目录路径；</li>
+</ul>
+</li>
+</ul>
+<h2 id="使用cppcheck对整个c源文件目录进行扫描">使用cppcheck对整个c源文件目录进行扫描</h2>
+<p>以海思Hi3521DV100 SDK中mpp的sample源文件目录为例进行扫描：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">41
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">42
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">43
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">44
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">45
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">46
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">47
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">48
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">49
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">50
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">51
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">52
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">53
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">54
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">55
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">56
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">pavel@debian:~/hi3521d/Hi3521DV100_SDK_V1.0.4.0/mpp$ cppcheck sample --enable<span style="color:#000;font-weight:bold">=</span>all
+Checking sample/audio/adp/audio_aac_adp.c ...
+<span style="color:#000;font-weight:bold">[</span>sample/audio/adp/audio_aac_adp.c:106<span style="color:#000;font-weight:bold">]</span>: <span style="color:#000;font-weight:bold">(</span>style<span style="color:#000;font-weight:bold">)</span> Same value in both branches of ternary operator.
+<span style="color:#000;font-weight:bold">[</span>sample/audio/adp/audio_aac_adp.c:117<span style="color:#000;font-weight:bold">]</span>: <span style="color:#000;font-weight:bold">(</span>style<span style="color:#000;font-weight:bold">)</span> Same value in both branches of ternary operator.
+<span style="color:#000;font-weight:bold">[</span>sample/audio/adp/audio_aac_adp.c:128<span style="color:#000;font-weight:bold">]</span>: <span style="color:#000;font-weight:bold">(</span>style<span style="color:#000;font-weight:bold">)</span> Same value in both branches of ternary operator.
+<span style="color:#000;font-weight:bold">[</span>sample/audio/adp/audio_aac_adp.c:139<span style="color:#000;font-weight:bold">]</span>: <span style="color:#000;font-weight:bold">(</span>style<span style="color:#000;font-weight:bold">)</span> Same value in both branches of ternary operator.
+<span style="color:#000;font-weight:bold">[</span>sample/audio/adp/audio_aac_adp.c:141<span style="color:#000;font-weight:bold">]</span>: <span style="color:#000;font-weight:bold">(</span>style<span style="color:#000;font-weight:bold">)</span> Same value in both branches of ternary operator.
+<span style="color:#000;font-weight:bold">[</span>sample/audio/adp/audio_aac_adp.c:150<span style="color:#000;font-weight:bold">]</span>: <span style="color:#000;font-weight:bold">(</span>style<span style="color:#000;font-weight:bold">)</span> Same value in both branches of ternary operator.
+<span style="color:#000;font-weight:bold">[</span>sample/audio/adp/audio_aac_adp.c:161<span style="color:#000;font-weight:bold">]</span>: <span style="color:#000;font-weight:bold">(</span>style<span style="color:#000;font-weight:bold">)</span> Same value in both branches of ternary operator.
+<span style="color:#000;font-weight:bold">[</span>sample/audio/adp/audio_aac_adp.c:163<span style="color:#000;font-weight:bold">]</span>: <span style="color:#000;font-weight:bold">(</span>style<span style="color:#000;font-weight:bold">)</span> Same value in both branches of ternary operator.
+<span style="color:#000;font-weight:bold">[</span>sample/audio/adp/audio_aac_adp.c:172<span style="color:#000;font-weight:bold">]</span>: <span style="color:#000;font-weight:bold">(</span>style<span style="color:#000;font-weight:bold">)</span> Same value in both branches of ternary operator.
+<span style="color:#000;font-weight:bold">[</span>sample/audio/adp/audio_aac_adp.c:211<span style="color:#000;font-weight:bold">]</span>: <span style="color:#000;font-weight:bold">(</span>style<span style="color:#000;font-weight:bold">)</span> Same value in both branches of ternary operator.
+<span style="color:#000;font-weight:bold">[</span>sample/audio/adp/audio_aac_adp.c:222<span style="color:#000;font-weight:bold">]</span>: <span style="color:#000;font-weight:bold">(</span>style<span style="color:#000;font-weight:bold">)</span> Same value in both branches of ternary operator.
+<span style="color:#000;font-weight:bold">[</span>sample/audio/adp/audio_aac_adp.c:233<span style="color:#000;font-weight:bold">]</span>: <span style="color:#000;font-weight:bold">(</span>style<span style="color:#000;font-weight:bold">)</span> Same value in both branches of ternary operator.
+<span style="color:#000;font-weight:bold">[</span>sample/audio/adp/audio_aac_adp.c:244<span style="color:#000;font-weight:bold">]</span>: <span style="color:#000;font-weight:bold">(</span>style<span style="color:#000;font-weight:bold">)</span> Same value in both branches of ternary operator.
+<span style="color:#000;font-weight:bold">[</span>sample/audio/adp/audio_aac_adp.c:246<span style="color:#000;font-weight:bold">]</span>: <span style="color:#000;font-weight:bold">(</span>style<span style="color:#000;font-weight:bold">)</span> Same value in both branches of ternary operator.
+<span style="color:#000;font-weight:bold">[</span>sample/audio/adp/audio_aac_adp.c:255<span style="color:#000;font-weight:bold">]</span>: <span style="color:#000;font-weight:bold">(</span>style<span style="color:#000;font-weight:bold">)</span> Same value in both branches of ternary operator.
+<span style="color:#000;font-weight:bold">[</span>sample/audio/adp/audio_aac_adp.c:266<span style="color:#000;font-weight:bold">]</span>: <span style="color:#000;font-weight:bold">(</span>style<span style="color:#000;font-weight:bold">)</span> Same value in both branches of ternary operator.
+<span style="color:#000;font-weight:bold">[</span>sample/audio/adp/audio_aac_adp.c:401<span style="color:#000;font-weight:bold">]</span>: <span style="color:#000;font-weight:bold">(</span>style<span style="color:#000;font-weight:bold">)</span> Same value in both branches of ternary operator.
+<span style="color:#000;font-weight:bold">[</span>sample/audio/adp/audio_aac_adp.c:412<span style="color:#000;font-weight:bold">]</span>: <span style="color:#000;font-weight:bold">(</span>style<span style="color:#000;font-weight:bold">)</span> Same value in both branches of ternary operator.
+<span style="color:#000;font-weight:bold">[</span>sample/audio/adp/audio_aac_adp.c:422<span style="color:#000;font-weight:bold">]</span>: <span style="color:#000;font-weight:bold">(</span>style<span style="color:#000;font-weight:bold">)</span> Same value in both branches of ternary operator.
+<span style="color:#000;font-weight:bold">[</span>sample/audio/adp/audio_aac_adp.c:423<span style="color:#000;font-weight:bold">]</span>: <span style="color:#000;font-weight:bold">(</span>style<span style="color:#000;font-weight:bold">)</span> Same value in both branches of ternary operator.
+<span style="color:#000;font-weight:bold">[</span>sample/audio/adp/audio_aac_adp.c:444<span style="color:#000;font-weight:bold">]</span>: <span style="color:#000;font-weight:bold">(</span>style<span style="color:#000;font-weight:bold">)</span> Same value in both branches of ternary operator.
+<span style="color:#000;font-weight:bold">[</span>sample/audio/adp/audio_aac_adp.c:507<span style="color:#000;font-weight:bold">]</span>: <span style="color:#000;font-weight:bold">(</span>style<span style="color:#000;font-weight:bold">)</span> Same value in both branches of ternary operator.
+<span style="color:#000;font-weight:bold">[</span>sample/audio/adp/audio_aac_adp.c:518<span style="color:#000;font-weight:bold">]</span>: <span style="color:#000;font-weight:bold">(</span>style<span style="color:#000;font-weight:bold">)</span> Same value in both branches of ternary operator.
+<span style="color:#000;font-weight:bold">[</span>sample/audio/adp/audio_aac_adp.c:529<span style="color:#000;font-weight:bold">]</span>: <span style="color:#000;font-weight:bold">(</span>style<span style="color:#000;font-weight:bold">)</span> Same value in both branches of ternary operator.
+Checking sample/audio/adp/audio_aac_adp.c: DUMP_AACDEC...
+Checking sample/audio/adp/audio_aac_adp.c: DUMP_AACENC...
+<span style="color:#000;font-weight:bold">[</span>sample/audio/adp/audio_aac_adp.c:860<span style="color:#000;font-weight:bold">]</span>: <span style="color:#000;font-weight:bold">(</span>style<span style="color:#000;font-weight:bold">)</span> Variable <span style="color:#d14">&#39;pu8TestNum&#39;</span> is assigned a value that is never used.
+1/29 files checked 4% <span style="color:#000;font-weight:bold">done</span>
+Checking sample/audio/sample_audio.c ...
+Checking sample/audio/sample_audio.c: HI_ACODEC_TYPE_TLV320AIC31...
+2/29 files checked 6% <span style="color:#000;font-weight:bold">done</span>
+Checking sample/common/loadbmp.c ...
+<span style="color:#000;font-weight:bold">[</span>sample/common/loadbmp.c:138<span style="color:#000;font-weight:bold">]</span>: <span style="color:#000;font-weight:bold">(</span>style<span style="color:#000;font-weight:bold">)</span> Redundant condition: h!<span style="color:#000;font-weight:bold">=</span>0. <span style="color:#d14">&#39;h==0 || (h!=0 &amp;&amp; stride&gt;4294967295UL/h)&#39;</span> is equivalent to <span style="color:#d14">&#39;h==0 || stride&gt;4294967295UL/h&#39;</span>
+<span style="color:#000;font-weight:bold">[</span>sample/common/loadbmp.c:265<span style="color:#000;font-weight:bold">]</span>: <span style="color:#000;font-weight:bold">(</span>style<span style="color:#000;font-weight:bold">)</span> Redundant condition: h!<span style="color:#000;font-weight:bold">=</span>0. <span style="color:#d14">&#39;h==0 || (h!=0 &amp;&amp; stride&gt;4294967295UL/h)&#39;</span> is equivalent to <span style="color:#d14">&#39;h==0 || stride&gt;4294967295UL/h&#39;</span>
+<span style="color:#000;font-weight:bold">[</span>sample/common/loadbmp.c:414<span style="color:#000;font-weight:bold">]</span>: <span style="color:#000;font-weight:bold">(</span>style<span style="color:#000;font-weight:bold">)</span> Redundant condition: h!<span style="color:#000;font-weight:bold">=</span>0. <span style="color:#d14">&#39;h==0 || (h!=0 &amp;&amp; stride&gt;4294967295UL/h)&#39;</span> is equivalent to <span style="color:#d14">&#39;h==0 || stride&gt;4294967295UL/h&#39;</span>
+<span style="color:#000;font-weight:bold">[</span>sample/common/loadbmp.c:214<span style="color:#000;font-weight:bold">]</span>: <span style="color:#000;font-weight:bold">(</span>style<span style="color:#000;font-weight:bold">)</span> The scope of the variable <span style="color:#d14">&#39;pDst&#39;</span> can be reduced.
+<span style="color:#000;font-weight:bold">[</span>sample/common/loadbmp.c:364<span style="color:#000;font-weight:bold">]</span>: <span style="color:#000;font-weight:bold">(</span>style<span style="color:#000;font-weight:bold">)</span> The scope of the variable <span style="color:#d14">&#39;pDst&#39;</span> can be reduced.
+3/29 files checked 8% <span style="color:#000;font-weight:bold">done</span>
+Checking sample/common/sample_comm_audio.c ...
+Checking sample/common/sample_comm_audio.c: HI_ACODEC_TYPE_HDMI...
+Checking sample/common/sample_comm_audio.c: HI_ACODEC_TYPE_NVP6134...
+Checking sample/common/sample_comm_audio.c: HI_ACODEC_TYPE_TLV320AIC31...
+Checking sample/common/sample_comm_audio.c: HI_ACODEC_TYPE_TP2823...
+Checking sample/common/sample_comm_audio.c: HI_ACODEC_TYPE_TW2865...
+Checking sample/common/sample_comm_audio.c: HI_FPGA...
+4/29 files checked 15% <span style="color:#000;font-weight:bold">done</span>
+Checking sample/common/sample_comm_ivs.c ...
+Checking sample/common/sample_comm_ivs.c: HI_FPGA...
+5/29 files checked 18% <span style="color:#000;font-weight:bold">done</span>
+Checking sample/common/sample_comm_sys.c ...
+Checking sample/common/sample_comm_sys.c: HI_FPGA...
+6/29 files checked 20% <span style="color:#000;font-weight:bold">done</span>
+Checking sample/common/sample_comm_vda.c ...
+......
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>可以看到，使用cppcheck对一个源码目录进行静态分析和扫描的过程与对单个C文件进行扫描类似，cppcheck会逐个递归的进入各个子目录，对其中包含的C源码文件进行扫描并输出扫描结果，开发人员只需要按照以上给出的结果对问题进行修改即可；</li>
+</ul>
+<h2 id="cppcheck的常用执行选项">cppcheck的常用执行选项</h2>
+<ul>
+<li>cppcheck输出的消息提示类型使用&ndash;enable选项进行设置：
+<ul>
+<li>&ndash;enable=all：启用所有类型的消息提示；</li>
+<li>&ndash;enable=warning：启用警告消息；</li>
+<li>&ndash;enable=performance：启用性能消息；</li>
+<li>&ndash;enable=information：启用信息消息；</li>
+<li>&ndash;enable=style：启用可移植性和样式信息；</li>
+<li>&ndash;enable=warning,performance：同时启用警告和性能消息；</li>
+</ul>
+</li>
+<li>保存cppcheck的分析结果到一个文本文件中，使用重定向命令即可
+<ul>
+<li>cppcheck sample &ndash;enable=all 2&gt; err.txt；</li>
+</ul>
+</li>
+<li>多线程检查：选项 -j 用于指定需要使用的线程数，对于大型软件的静态扫描尤其有用
+<ul>
+<li>cppcheck -j 4 sample &ndash;enable=all；</li>
+</ul>
+</li>
+<li>使用&ndash;template选项格式化输出信息
+<ul>
+<li>以gcc兼容的格式输出扫描信息：
+<ul>
+<li>cppcheck sample/ &ndash;enable=all &ndash;template=gcc；</li>
+</ul>
+</li>
+<li>以Visual Studio兼容的格式输出扫描信息：
+<ul>
+<li>cppcheck sample/ &ndash;enable=all &ndash;template=vs；</li>
+</ul>
+</li>
+<li>此外也可以使用自定义的方式来格式化输出扫描信息：
+<ul>
+<li>cppcheck &ndash;template=&rdquo;{file},{line},{severity},{id},{message}&rdquo; sample/ &ndash;enable=all；</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>以xml的形式输出扫描信息
+<ul>
+<li>cppcheck &ndash;xml-version=2 sample/ &ndash;enable=all 2&gt; err.xml；
+<ul>
+<li>xml文件中的每一个error节点就是一条扫描输出信息；</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="参考资料">参考资料</h2>
+<ul>
+<li><a href="https://blog.csdn.net/wetest_tencent/article/details/51516347">【代码质量】C++代码质量扫描主流工具深度比较</a></li>
+<li><a href="https://blog.csdn.net/u011012932/article/details/52778149">Cppcheck 用法（上篇）</a></li>
+</ul>
+
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="http://www.pavelhan.tech">Pavel Han</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="http://www.pavelhan.tech/post/2020-06-01-00-%E5%9C%A8Debian%E4%B8%8B%E4%BD%BF%E7%94%A8CppCheck%E5%AF%B9C%E4%BB%A3%E7%A0%81%E8%BF%9B%E8%A1%8C%E9%9D%99%E6%80%81%E6%89%AB%E6%8F%8F/">http://www.pavelhan.tech/post/2020-06-01-00-%E5%9C%A8Debian%E4%B8%8B%E4%BD%BF%E7%94%A8CppCheck%E5%AF%B9C%E4%BB%A3%E7%A0%81%E8%BF%9B%E8%A1%8C%E9%9D%99%E6%80%81%E6%89%AB%E6%8F%8F/</a></li>
+        <li><strong>版权声明：</strong>本作品采用<a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可，非商业转载请注明出处（作者，原文链接），商业转载请联系作者获得授权。</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='http://www.pavelhan.tech/tags/debian'>debian</a></li>
+                
+                <li><a href='http://www.pavelhan.tech/tags/CppCheck'>CppCheck</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+</div>
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='http://www.pavelhan.tech/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="http://www.pavelhan.tech">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-06-01-00-%E5%9C%A8Debian%E4%B8%8B%E4%BD%BF%E7%94%A8CppCheck%E5%AF%B9C%E4%BB%A3%E7%A0%81%E8%BF%9B%E8%A1%8C%E9%9D%99%E6%80%81%E6%89%AB%E6%8F%8F/" title="在Debian/Linux下使用CppCheck对C代码进行静态扫描">在Debian/Linux下使用CppCheck对C代码进行静态扫描</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-05-26-00-%E6%B5%B7%E6%80%9D35XX%E7%B3%BB%E5%88%97HiMPP%E6%A1%86%E6%9E%B6%E5%BC%80%E5%8F%91%E5%8F%82%E8%80%83%E4%B9%8BVI%E6%A8%A1%E5%9D%97/" title="海思35XX系列HiMPP框架开发参考之VI模块">海思35XX系列HiMPP框架开发参考之VI模块</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-05-22-00-GPS%E7%9A%84NMEA%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90%E5%8F%8AGPS&#43;%E5%8C%97%E6%96%97%E5%8F%8C%E6%A8%A1%E6%A8%A1%E5%9D%97TD3020C%E4%BB%8B%E7%BB%8D/" title="GPS的NMEA数据格式解析及GPS/北斗双模模块TD3020C介绍">GPS的NMEA数据格式解析及GPS/北斗双模模块TD3020C介绍</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-05-18-00-BT601&#43;BT656&#43;BT1120%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E8%A7%A3%E6%9E%90/" title="BT601/BT656/BT1120的基本概念解析">BT601/BT656/BT1120的基本概念解析</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-05-14-00-%E6%A8%A1%E6%8B%9F%E9%AB%98%E6%B8%85%E8%A7%86%E9%A2%91%E4%BC%A0%E8%BE%93%E6%8A%80%E6%9C%AF/" title="模拟高清视频传输技术：AHD，HD-TVI，HD-CVI">模拟高清视频传输技术：AHD，HD-TVI，HD-CVI</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-05-12-00-H.264%E7%9A%84%E5%87%A0%E4%B8%AA%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/" title="H.264的几个基本概念: IDR, dts/pts">H.264的几个基本概念: IDR, dts/pts</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-05-10-00-WiFi%E7%9A%84%E4%BD%8E%E5%8A%9F%E8%80%97%E7%AD%96%E7%95%A5%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6%E6%80%BB%E7%BB%93/" title="WiFi的低功耗策略实现机制总结">WiFi的低功耗策略实现机制总结</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-05-07-00-AES%E7%9A%84%E5%8A%A0%E5%AF%86%E6%A8%A1%E5%BC%8F%E6%80%BB%E7%BB%93/" title="AES的加密模式总结">AES的加密模式总结</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-05-06-00-Hugo&#43;Github%E9%9D%99%E6%80%81%E5%8D%9A%E5%AE%A2%E5%BB%BA%E7%AB%99%E5%91%BD%E4%BB%A4%E9%80%9F%E6%9F%A5/" title="Hugo&#43;Github静态博客建站命令速查">Hugo&#43;Github静态博客建站命令速查</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+<ul class="widget-list">
+    
+    <li><a href="http://www.pavelhan.tech/categories/WiFi/">WiFi (1)</a></li>
+    
+    <li><a href="http://www.pavelhan.tech/categories/%E7%A1%AC%E4%BB%B6/">硬件 (2)</a></li>
+    
+    <li><a href="http://www.pavelhan.tech/categories/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">网络安全 (1)</a></li>
+    
+    <li><a href="http://www.pavelhan.tech/categories/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/">软件工程 (1)</a></li>
+    
+    <li><a href="http://www.pavelhan.tech/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/">音视频 (3)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">标签</h3>
+<div class="tagcloud">
+    
+    <a href="http://www.pavelhan.tech/tags/AES/">AES</a>
+    
+    <a href="http://www.pavelhan.tech/tags/AHD/">AHD</a>
+    
+    <a href="http://www.pavelhan.tech/tags/BT1120/">BT1120</a>
+    
+    <a href="http://www.pavelhan.tech/tags/BT656/">BT656</a>
+    
+    <a href="http://www.pavelhan.tech/tags/CppCheck/">CppCheck</a>
+    
+    <a href="http://www.pavelhan.tech/tags/GPS/">GPS</a>
+    
+    <a href="http://www.pavelhan.tech/tags/H.264/">H.264</a>
+    
+    <a href="http://www.pavelhan.tech/tags/Hi3520DV400/">Hi3520DV400</a>
+    
+    <a href="http://www.pavelhan.tech/tags/Hi3521DV100/">Hi3521DV100</a>
+    
+    <a href="http://www.pavelhan.tech/tags/NMEA/">NMEA</a>
+    
+    <a href="http://www.pavelhan.tech/tags/WiFi/">WiFi</a>
+    
+    <a href="http://www.pavelhan.tech/tags/debian/">debian</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E4%BD%8E%E5%8A%9F%E8%80%97/">低功耗</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E5%8C%97%E6%96%97/">北斗</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E6%B5%B7%E6%80%9D/">海思</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">网络安全</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/">音视频</a>
+    
+</div>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="http://www.pavelhan.tech/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+    <footer id="footer">
+    <div class="container">
+        &copy; 2020 <a href="http://www.pavelhan.tech">Pavel Han的博客 By Pavel Han</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
+        <a href="https://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/flysnow-org/maupassant-hugo" target="_blank">maupassant</a>.
+        
+    </div>
+</footer>
+
+
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-166241725-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+    <script src='/js/douban.js'></script>
+
+</body>
+
+</html>
