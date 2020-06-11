@@ -6,10 +6,19 @@
     <description>Recent content in Categories on Pavel Han的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Wed, 03 Jun 2020 13:42:10 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 10 Jun 2020 16:42:10 +0800</lastBuildDate>
     
 	<atom:link href="http://www.pavelhan.tech/categories/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>硬件</title>
+      <link>http://www.pavelhan.tech/categories/%E7%A1%AC%E4%BB%B6/</link>
+      <pubDate>Wed, 10 Jun 2020 16:42:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/categories/%E7%A1%AC%E4%BB%B6/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>Linux</title>
@@ -26,15 +35,6 @@
       <pubDate>Mon, 01 Jun 2020 18:42:10 +0800</pubDate>
       
       <guid>http://www.pavelhan.tech/categories/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>硬件</title>
-      <link>http://www.pavelhan.tech/categories/%E7%A1%AC%E4%BB%B6/</link>
-      <pubDate>Tue, 26 May 2020 10:42:10 +0800</pubDate>
-      
-      <guid>http://www.pavelhan.tech/categories/%E7%A1%AC%E4%BB%B6/</guid>
       <description></description>
     </item>
     

@@ -6,20 +6,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>GPS的NMEA数据格式解析及GPS/北斗双模模块TD3020C介绍 | Pavel Han的博客</title>
-    <meta property="og:title" content="GPS的NMEA数据格式解析及GPS/北斗双模模块TD3020C介绍 - Pavel Han的博客">
+    <title>锂电池的基础知识 | Pavel Han的博客</title>
+    <meta property="og:title" content="锂电池的基础知识 - Pavel Han的博客">
     <meta property="og:type" content="article">
         
-    <meta property="article:published_time" content='2020-05-22T15:35:10&#43;08:00'>
+    <meta property="article:published_time" content='2020-06-10T16:42:10&#43;08:00'>
         
         
-    <meta property="article:modified_time" content='2020-05-22T15:35:10&#43;08:00'>
+    <meta property="article:modified_time" content='2020-06-10T16:42:10&#43;08:00'>
         
     <meta name="Keywords" content="">
-    <meta name="description" content="GPS的NMEA数据格式解析及GPS/北斗双模模块TD3020C介绍">
+    <meta name="description" content="锂电池的基础知识">
         
     <meta name="author" content="Pavel Han">
-    <meta property="og:url" content="http://www.pavelhan.tech/post/2020-05-22-00-GPS%E7%9A%84NMEA%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90%E5%8F%8AGPS&#43;%E5%8C%97%E6%96%97%E5%8F%8C%E6%A8%A1%E6%A8%A1%E5%9D%97TD3020C%E4%BB%8B%E7%BB%8D/">
+    <meta property="og:url" content="http://www.pavelhan.tech/post/2020-06-10-00-%E9%94%82%E7%94%B5%E6%B1%A0%E7%9A%84%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 
     <link rel="stylesheet" href='/css/normalize.css'>
@@ -145,12 +145,11 @@
     <div class="post-toc-content">
         <nav id="TableOfContents">
   <ul>
-    <li><a href="#nmea数据格式">NMEA数据格式</a></li>
-    <li><a href="#常用的nmea-0183语句">常用的NMEA-0183语句</a></li>
-    <li><a href="#gprmcbdrmc">GPRMC/BDRMC</a></li>
-    <li><a href="#gpggabdgga">GPGGA/BDGGA</a></li>
-    <li><a href="#定位模块nmea数据解析的小结">定位模块NMEA数据解析的小结</a></li>
-    <li><a href="#gps北斗双模模块td3020c的使用介绍">GPS/北斗双模模块TD3020C的使用介绍</a></li>
+    <li><a href="#锂电池的组成结构">锂电池的组成结构</a></li>
+    <li><a href="#锂电池的工作原理">锂电池的工作原理</a></li>
+    <li><a href="#锂电池的主要参数">锂电池的主要参数</a></li>
+    <li><a href="#锂电池充放电过程">锂电池充放电过程</a></li>
+    <li><a href="#参考资料">参考资料：</a></li>
   </ul>
 </nav>
     </div>
@@ -184,10 +183,10 @@
 </script>
     <article class="post">
         <header>
-            <h1 class="post-title">GPS的NMEA数据格式解析及GPS/北斗双模模块TD3020C介绍</h1>
+            <h1 class="post-title">锂电池的基础知识</h1>
         </header>
         <date class="post-meta meta-date">
-            2020年5月22日
+            2020年6月10日
         </date>
         
         <div class="post-meta">
@@ -205,182 +204,148 @@
         
         
         <div class="post-content">
-            <h2 id="nmea数据格式">NMEA数据格式</h2>
-<p>NEMA-0183是GPS接收机应该遵守的标准协议，也是当前世界上GPS接收机上使用最广泛的协议，绝大多数的GPS接收机，包括北斗模块在内都遵守或者至少兼容这个协议。</p>
-<p>NMEA语句的标准格式定义如下：</p>
-<p><strong>$&lt;语句类型标识&gt;，&lt;数据字段&gt;，&lt;数据字段&gt;，&hellip;&hellip;，&lt;数据字段&gt;*&lt;校验和&gt;[CR][LF]</strong></p>
+            <h2 id="锂电池的组成结构">锂电池的组成结构</h2>
+<p>锂电池在结构上主要分为四个部分：正极，负极，电解液，隔膜。</p>
 <ul>
-<li>语句类型标识由两部分组成：语句标识符+语句格式符；
+<li>正极：磷酸铁LFP，三元材料（镍钴锰NCM/镍钴铝NCA）；
 <ul>
-<li>北斗和GPS使用不同的语句标识符符，北斗的语句标识符是BD，GPS的则是GP；</li>
-<li>后面的语句格式符是通用的，例如都使用GGA表示位置信息，VTG表示地面速度信息。</li>
+<li>LFP能量密度和低温性能比三元材料差很多，但是安全性方面要好很多；</li>
 </ul>
 </li>
-<li>每种不同的NEMA语句包含有多个独立的定义不同的数据字段，各个数据字段使用逗号分割开；</li>
-<li>&lt;校验和&gt;的计算是从$到*之间的所有字符；</li>
-<li>CR和LF则是标准的回车换行符。</li>
-</ul>
-<p>在应用中，无论是使用标准的GPS模块还是国内的北斗模块，模块本身输出的定位等信息的格式和协议基本上都是遵循NEMA-0183标准（只是语句的标识符稍有差异）：</p>
-<p><img src="/images/2020-05-22-00-GPS%E7%9A%84NMEA%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90%E5%8F%8AGPS+%E5%8C%97%E6%96%97%E5%8F%8C%E6%A8%A1%E6%A8%A1%E5%9D%97TD3020C%E4%BB%8B%E7%BB%8D/1.png" alt="1"></p>
-<p>而在硬件方面，基本上大部分GPS和北斗模块以及双模模块都采用标准的串口输出这些NEMA语句，因此无论在硬件层面还是软件层面，都可以很方便做到兼容和替换。</p>
-<h2 id="常用的nmea-0183语句">常用的NMEA-0183语句</h2>
-<p>NMEA-0183协议定义的语句非常多，但是常用的兼容性最广的语句主要有：</p>
+<li>负极：基本上都是使用石墨；</li>
+<li>隔膜：放置于两极之间，作为隔离正负极的装置，以避免两极上的活性物质直接接触而造成电池内部的短路，从而造成安全性事故（对安全性要求较高的应用，都会要求对锂电池做穿刺测试来保证即使隔膜刺穿的情况下，也不会造成严重的安全性事故）。
 <ul>
-<li>$GPGGA：定位信息</li>
-<li>$GPGSA：当前卫星信息</li>
-<li>$GPGSV：可见卫星信息</li>
-<li>$GPRMC：推荐定位信息数据格式</li>
-<li>$GPVTG：地面速度信息</li>
-<li>$GPGLL：地理定位信息</li>
-</ul>
-<p>对于我们在应用中使用GPS或者北斗模块而言，主要使用到其提供的以下功能：</p>
-<ul>
-<li>定位的经纬度信息；</li>
-<li>速度及运动方向信息；</li>
-<li>海拔高度；</li>
-<li>校时；</li>
-</ul>
-<p>因此对于我们的应用而言，只需要关注和解析定位模块输出的以下语句即可：</p>
-<ul>
-<li>GGA：经纬度，GPS状态，可用卫星数量，海拔高度；</li>
-<li>RMC：经纬度，UTC时间（精确到ms），磁偏角；</li>
-<li>VTG：速度及其方向；</li>
-</ul>
-<p>以下链接是一个NEMA数据的解析库，可以在应用中尝试直接使用这个库来实现对所需要信息的解析处理，避免重复造轮子：
-<a href="http://nmea.sourceforge.net/#downloads">http://nmea.sourceforge.net/#downloads</a></p>
-<h2 id="gprmcbdrmc">GPRMC/BDRMC</h2>
-<p>RMC数据帧的结构及其各个字段的定义如下：
-<strong>$GPRMC,&lt;1&gt;,&lt;2&gt;,&lt;3&gt;,&lt;4&gt;,&lt;5&gt;,&lt;6&gt;,&lt;7&gt;,&lt;8&gt;,&lt;9&gt;,&lt;10&gt;,&lt;11&gt;,&lt;12&gt;*hh[CR][LF]</strong></p>
-<ul>
-<li>&lt;1&gt; UTC时间，hhmmss（时分秒）格式</li>
-<li>&lt;2&gt; 定位状态，A=有效定位，V=无效定位</li>
-<li>&lt;3&gt; 纬度ddmm.mmmm（度分）格式（前面的0也将被传输）</li>
-<li>&lt;4&gt; 纬度半球N（北半球）或S（南半球）</li>
-<li>&lt;5&gt; 经度dddmm.mmmm（度分）格式（前面的0也将被传输）</li>
-<li>&lt;6&gt; 经度半球E（东经）或W（西经）</li>
-<li>&lt;7&gt; 地面速率（000.0~999.9节，前面的0也将被传输）</li>
-<li>&lt;8&gt; 地面航向（000.0~359.9度，以真北为参考基准，前面的0也将被传输）</li>
-<li>&lt;9&gt; UTC日期，ddmmyy（日月年）格式</li>
-<li>&lt;10&gt; 磁偏角（000.0~180.0度，前面的0也将被传输）</li>
-<li>&lt;11&gt; 磁偏角方向，E（东）或W（西）</li>
-<li>&lt;12&gt; 模式指示（仅NMEA0183 3.00版本输出，A=自主定位，D=差分，E=估算，N=数据无效）</li>
-<li>*: 语句结束标志符</li>
-<li>hh：从$开始到*之间的所有ASCII码的异或校验</li>
-<li>[CR] 回车符，结束标记</li>
-<li>[LF] 换行符，结束标记</li>
-</ul>
-<p>RMC语句中包含的重要信息有：UTC时间，经纬度，定位状态，速度（以节为单位，需要自行换算为km/h）及其方向，磁偏角等；</p>
-<ul>
-<li>可以看到，RMC语句中基本上包含了我们所关注的绝大多数常用信息；</li>
-<li>如果需要获取以km/h为单位的速度信息，可以解析GPVTG语句，该语句中同时包含有以节为单位和以km/h为单位的速度信息；</li>
-</ul>
-<h2 id="gpggabdgga">GPGGA/BDGGA</h2>
-<p>GGA数据帧的结构及其各个字段的定义如下：
-<strong>$GPGGA,&lt;1&gt;,&lt;2&gt;,&lt;3&gt;,&lt;4&gt;,&lt;5&gt;,&lt;6&gt;,&lt;7&gt;,&lt;8&gt;,&lt;9&gt;,M,&lt;10&gt;,M,&lt;11&gt;,&lt;12&gt;*xx<!-- raw HTML omitted --><!-- raw HTML omitted --></strong></p>
-<ul>
-<li>
-<p>$GPGGA：起始引导符及语句格式说明，如果是北斗模块的话就是BDGGA；</p>
-</li>
-<li>
-<p>&lt;1&gt; UTC时间，格式为hhmmss.sss；</p>
-</li>
-<li>
-<p>&lt;2&gt; 纬度，格式为ddmm.mmmm(第一位是零也将传送)；</p>
-</li>
-<li>
-<p>&lt;3&gt; 纬度半球，N或S(北纬或南纬)</p>
-</li>
-<li>
-<p>&lt;4&gt; 经度，格式为dddmm.mmmm(第一位零也将传送)；</p>
-</li>
-<li>
-<p>&lt;5&gt; 经度半球，E或W(东经或西经)</p>
-</li>
-<li>
-<p>&lt;6&gt; GPS状态， 0初始化， 1单点定位， 2码差分， 3无效PPS， 4固定解， 5浮点解， 6正在估算 7，人工输入固定值， 8模拟模式， 9WAAS差分</p>
-</li>
-<li>
-<p>&lt;7&gt; 使用卫星数量，从00到12(第一个零也将传送)</p>
-</li>
-<li>
-<p>&lt;8&gt; HDOP-水平精度因子，0.5到99.9，一般认为HDOP越小，质量越好。</p>
-</li>
-<li>
-<p>&lt;9&gt; 海拔高度，-9999.9到9999.9米</p>
-</li>
-<li>
-<p>M 指海拔单位为米</p>
-</li>
-<li>
-<p>&lt;10&gt; 大地水准面高度异常差值，-9999.9到9999.9米</p>
-</li>
-<li>
-<p>M 指单位米</p>
-</li>
-<li>
-<p>&lt;11&gt; 差分GPS数据期限(RTCM SC-104)，最后设立RTCM传送的秒数量，如不是差分定位则为空</p>
-</li>
-<li>
-<p>&lt;12&gt; 差分参考基站标号，从0000到1023(首位0也将传送)。</p>
-</li>
-<li>
-<p>*：语句结束标志符</p>
-</li>
-<li>
-<p>xx 从$开始到*之间的所有ASCII码的异或校验</p>
-</li>
-<li>
-<p>[CR] 回车符，结束标记</p>
-</li>
-<li>
-<p>[LF] 换行符，结束标记</p>
-</li>
-</ul>
-<p>GGA语句中比较重要的信息就是：经纬度，GPS状态，当前使用的卫星数量，海拔高度；</p>
-<h2 id="定位模块nmea数据解析的小结">定位模块NMEA数据解析的小结</h2>
-<ul>
-<li>从以上整理的数据可以看出来，GPGGA和GPRMC均包含有经纬度等定位信息，那我们在应用中应该用哪一个呢？其实，GPGGA是GPS定位信息，而​GPRMC是推荐定位信息，所以用GPRMC会比较准确。</li>
-<li>考虑到我们普通应用中需要从定位模块中获取的信息类型，基本上我们要用到的大部分信息在GPRMC语句中都已经包含了，所以只需要对GPRMC语句进行解析就可以了。</li>
-</ul>
-<h2 id="gps北斗双模模块td3020c的使用介绍">GPS/北斗双模模块TD3020C的使用介绍</h2>
-<p>TD3020C是东莞市泰斗微电子推出的一款GPS和北斗二代双模导航定位模块，模块尺寸22.4mm x 17mm x 2.0mm，采样28pin邮票孔封装，与主流的GPS模块（例如UBlox的LEA-5/6系列）在硬件上做到pin to pin兼容。</p>
-<p><img src="/images/2020-05-22-00-GPS%E7%9A%84NMEA%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90%E5%8F%8AGPS+%E5%8C%97%E6%96%97%E5%8F%8C%E6%A8%A1%E6%A8%A1%E5%9D%97TD3020C%E4%BB%8B%E7%BB%8D/2.png" alt="2"></p>
-<p>典型应用的走线图如下所示：</p>
-<p><img src="/images/2020-05-22-00-GPS%E7%9A%84NMEA%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90%E5%8F%8AGPS+%E5%8C%97%E6%96%97%E5%8F%8C%E6%A8%A1%E6%A8%A1%E5%9D%97TD3020C%E4%BB%8B%E7%BB%8D/3.png" alt="3"></p>
-<p>主要包含的接口如下：</p>
-<ul>
-<li>电源接口；</li>
-<li>天线接口：GPS和北斗共用同一个外置有源天线接口；</li>
-<li>休眠模式控制接口
-<ul>
-<li>模块通过外部休眠模式引脚控制进入休眠状态，功耗可降至5mA以下；</li>
+<li>隔膜能够让带电的锂离子通过，以形成通路，电池充放电的过程中锂离子就是通过隔膜从一极移动到另外一极。</li>
 </ul>
 </li>
-<li>两组UART接口
+<li>电解液：是电池在充放电过程中Li离子传输的载体，一般由高纯度的有机溶剂、电解质锂盐、必要的添加剂等原料，在一定条件下、按一定比例配制而成的。</li>
+</ul>
+<h2 id="锂电池的工作原理">锂电池的工作原理</h2>
 <ul>
-<li>串口1（TXD1/RXD1），在UTC秒边界输出NMEA数据，也可以通过这个串口控制模块的工作模式、输出波特率等；该串口默认波特率为9600；</li>
-<li>串口2（TXD2/RXD2），备用串口，用于输出自定义格式的数据，也可以用于对模块进行软件升级。</li>
+<li>锂系电池可以分为锂电池和锂离子电池。我们日常生活中使用的手机、充电池等实际上都是锂离子电池，只是人们将其俗称为锂电池。真正的锂电池由于危险性比较大，很少用于日常的电子产品中。</li>
+<li>锂离子电池工作原理的简单总结就是：锂电池是一种充电电池，它本质上主要是依靠锂原子在正极和负极之间移动来工作，因此锂离子电池也称为摇摆电池。
+<ul>
+<li>充电过程中，Li原子会分解为一个锂离子Li+和一个电子，电子会通过外边的充电电路移动到负极，锂离子Li+则通过电解液移动到负极，因此充电过程中正极分解出来的Li+和电子都会移动到负极，重新组合成锂原子，整个充电的过程也就是正极的锂原子移动到负极的过程；
+<ul>
+<li>充电过程中，正极的锂原子分解为一个锂离子Li+和一个电子的过程称为脱嵌，而在负极锂离子Li+和电子重新组合为锂原子的过程则称之为插入。</li>
 </ul>
 </li>
-<li>GPIO接口
+<li>放电的过程则刚好相反，负极的锂原子会分解为一个锂离子Li+和一个电子，电子会通过外边的放电电路移动到正极，锂离子Li+则通过电解液移动到正极，Li+和电子在正极重新再组合为锂原子；因此放电的过程实际上就是锂原子由负极向正极移动的过程；
 <ul>
-<li>包含3个GPIO接口，可以根据用户需求定义这些GPIO接口的功能。</li>
+<li>放电过程中，负极的锂原子分解为一个锂离子Li+和一个电子的过程称之为脱插；在正极重新组合为锂原子的过程则称之为嵌入。</li>
+</ul>
+</li>
+<li>对电池而言，我们正常的使用电子设备的过程实际上就是所谓的电池放电的过程。</li>
 </ul>
 </li>
 </ul>
-<p>TD3020C在正常工作中除了能够按照NEMA标准输出经纬度等信息以外，还可以通过UART1来控制模块的定位模式、波特率等运行参数。</p>
+<h2 id="锂电池的主要参数">锂电池的主要参数</h2>
 <ul>
-<li>定位模式的切换指令：可以支持GPS和北斗的独立工作模式和混合工作模式；</li>
-</ul>
-<p><img src="/images/2020-05-22-00-GPS%E7%9A%84NMEA%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90%E5%8F%8AGPS+%E5%8C%97%E6%96%97%E5%8F%8C%E6%A8%A1%E6%A8%A1%E5%9D%97TD3020C%E4%BB%8B%E7%BB%8D/4.png" alt="4"></p>
+<li>电池容量/标称容量
 <ul>
-<li>波特率设置指令：设置串口输出的波特率；</li>
+<li>电池正常使用能够容纳或者释放的电量，由电池内包含的活性物质的数量来决定。</li>
+<li>一般按照使用电流与放电时间的乘积来计算，因此单位是mAh（毫安时）或者Ah（安时）。例如标准的18650电池的标称容量为2200mAh。</li>
 </ul>
-<p><img src="/images/2020-05-22-00-GPS%E7%9A%84NMEA%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90%E5%8F%8AGPS+%E5%8C%97%E6%96%97%E5%8F%8C%E6%A8%A1%E6%A8%A1%E5%9D%97TD3020C%E4%BB%8B%E7%BB%8D/5.png" alt="5"></p>
+</li>
+<li>化学容量QMax
 <ul>
-<li>GPS/北斗模块NMEA信息输出更新率设置指令：</li>
+<li>理论上电池中活性物质所能提供的最大化学能量。由于电池使用的过程中存在的内阻以及低压保护机制等因素，电池的实际使用容量（也就是标称容量）会低于其化学容量QMax。</li>
 </ul>
-<p><img src="/images/2020-05-22-00-GPS%E7%9A%84NMEA%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90%E5%8F%8AGPS+%E5%8C%97%E6%96%97%E5%8F%8C%E6%A8%A1%E6%A8%A1%E5%9D%97TD3020C%E4%BB%8B%E7%BB%8D/6.png" alt="6"></p>
+</li>
+<li>标称电压
+<ul>
+<li>锂电池的放电曲线图呈现出抛物线的特性，其中4.3V降到3.7V以及3.7V降到3.0V，这两段变化都是很快的。电池会在3.7V左右放电维持很长时间，几乎占到了电池放电时间的3/4的时间，锂电池的标称电压就是指维持放电时间最长的那段电压。</li>
+<li>开路电压 VS 工作电压
+<ul>
+<li>电池在外部不接任何负载的情况下，测量电池正负极之间的电位差，实际上也就是电池的开路电压即OCV。</li>
+<li>与电压相关的另外一个概念是工作电压，与开路电压相对应，即电池外接上负载，有电流流过的情况下测量电池正负极之间的电位差。</li>
+<li>因为电池内阻的存在，在放电状态即外接负载的情况下，工作电压低于开路电压；在充电状态即外接充电电源的情况下，工作电压高于开路电压。</li>
+</ul>
+</li>
+<li>锂离子电池的标称电压一般为3.7V或者3.8V。</li>
+</ul>
+</li>
+<li>充电限制电压
+<ul>
+<li>锂电池在充电的过程中电池电压的开路电压会不断上升，当充电电池电量基本充饱，电极极板上的活性物质基本已经达到饱和状态，这个时候再继续充电，电池的电压也不会继续上升，这个时候的电压就是充电终止电压。</li>
+<li>锂离子电池的充电终止电压一般为4.2V、4.35V或者4.4V。</li>
+</ul>
+</li>
+<li>放电终止电压
+<ul>
+<li>是指电池在放电工作状态下运行输出的最低电压。一般来讲单元锂离子电池的放电终止电压电压为2.7V。</li>
+<li>锂电池绝对不能过放电！一旦电池的放电电压低于2.7V，可能会导致电池报废，因此一般会在电池内部加装保护电路，一旦检测到电池电压过低就会自动切断，停止放电。</li>
+</ul>
+</li>
+<li>电池内阻
+<ul>
+<li>电池的内阻由两极极板和离子流的阻抗决定。在充放电的过程中，极板的电阻是保持不变的，但是离子流的阻抗随电解液浓度和带电粒子的增减而变化。</li>
+<li>当锂电池的开路电压OCV降低的时候，电池内阻阻抗会增大，因此这就是为什么在电池处于低电状态（OCV电压低于3V）下，要先进行小电流的预充电（涓流充电），等待开路电压上升到一定程度（阻抗在这一过程中会降低）后再使用大电流快充，这样可以有效防止在电池内阻较大的情况下使用大电流充电导致电池发热量过大带来的安全性隐患。</li>
+<li>电池内阻的单位一般是毫欧姆，内阻大的电池，在充放电的时候，内部功耗大发热严重，会造成电池的加速老化和寿命衰减，同时也会限制大倍率的充放电应用，因此内阻越小，电池的寿命和倍率性能也就会越好。</li>
+</ul>
+</li>
+<li>电池充放电倍率C
+<ul>
+<li>电池的充放电倍率C实际上是一个相对电流参数，电池的C参数越高，意味着该电池能够支持更高的快充速度和充电电流，也就意味着该电池能够支持更大的放电电流。
+<ul>
+<li>电池都有最大放电电流和最大充电电流的限制，如果使用过程中超过了这个限制就会损坏电池的使用寿命。</li>
+</ul>
+</li>
+<li>1C表示电池最高可以支持1小时从低电充电到100%，0.5则表示需要2小时充满。以18650电池为例，该电池容量是2200mAh，1C就是2200mA，0.5C就是1100mA。</li>
+<li>总的来说，电池的充放电倍率参数C，决定了我们可以以多快的速度，将一定的能量存储到电池里面；或者能够以多快的速度（或者多大的放电电流）将电池里面的能量释放出来。</li>
+</ul>
+</li>
+<li>自放电率
+<ul>
+<li>是指在一段时间内，电池没有使用的情况下，会自动损失的电量占总容量的百分比。</li>
+<li>一般在常温下锂离子电池自放电率为5-8%。</li>
+</ul>
+</li>
+</ul>
+<h2 id="锂电池充放电过程">锂电池充放电过程</h2>
+<p>典型的充电过程：</p>
+<ul>
+<li>
+<p>充电开始时，应先检测待充电电池的电压，如果电压低于3V，要先进行预充电，充电电流为设定电流 的1/10，一般选0.05C左右；</p>
+</li>
+<li>
+<p>电压升到3V后，进入标准充电过程。标准充电过程为：以设定电流进行<strong>恒流充电</strong>，电池电压升到4.20V时，改为<strong>恒压充电</strong>，保持充电电压为4.20V。此时，充电电流逐渐下降，当电流下降至设定充电电流的1/10时（即充电电流达到一定阈值后就认为电已经充满了），充电结束。</p>
+</li>
+<li>
+<p>下图为典型的锂电池充电曲线图：</p>
+</li>
+<li>
+<p><img src="/images/2020-06-10-00-%E9%94%82%E7%94%B5%E6%B1%A0%E7%9A%84%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/1.jpg" alt="1"></p>
+</li>
+<li>
+<p>一般锂电池的充电电流设定为0.2C到1C之间，充电电流越大，充电越快，但是：</p>
+<ul>
+<li>电池发热也会越大；使用过大的电流充电，容量充不满；</li>
+<li>因此一般都是使用比较大的电流充到快满的状态，然后再用小电流充满；</li>
+</ul>
+</li>
+</ul>
+<p>典型的放电过程：</p>
+<ul>
+<li>
+<p>下图为典型的锂电池放电曲线图：</p>
+</li>
+<li>
+<p><img src="/images/2020-06-10-00-%E9%94%82%E7%94%B5%E6%B1%A0%E7%9A%84%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/2.jpg" alt="2"></p>
+</li>
+<li>
+<p>整个放电的过程中，电池电压会快速从满电电压下降到锂电池的标称工作电压，在标称工作电压的位置持续工作很长时间，在电量即将耗尽的时候又以很快的速度下降到截止电压（例如上图的3V），当电池电压下降到放电截至电压，电池就会启动保护机制停止放电。</p>
+</li>
+<li>
+<p>电池放电电流越大，放电容量越小，电压下降更快。</p>
+</li>
+</ul>
+<h2 id="参考资料">参考资料：</h2>
+<ul>
+<li><a href="https://www.bilibili.com/video/BV1Kt411n7TC">锂电池安全吗？电动汽车为什么会自燃？李永乐老师教你安全使用电池</a></li>
+<li><a href="https://m.sohu.com/a/258465948_560178">锂电池性能各参数解析</a></li>
+<li><a href="http://www.elecfans.com/yuanqijian/dianchi/lidianchi/20180416662812.html">一文解析锂电池工作原理及应用</a></li>
+</ul>
 
         </div>
 
@@ -388,7 +353,7 @@
 <div class="post-archive">
     <ul class="post-copyright">
         <li><strong>原文作者：</strong><a rel="author" href="http://www.pavelhan.tech">Pavel Han</a></li>
-        <li style="word-break:break-all"><strong>原文链接：</strong><a href="http://www.pavelhan.tech/post/2020-05-22-00-GPS%E7%9A%84NMEA%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90%E5%8F%8AGPS&#43;%E5%8C%97%E6%96%97%E5%8F%8C%E6%A8%A1%E6%A8%A1%E5%9D%97TD3020C%E4%BB%8B%E7%BB%8D/">http://www.pavelhan.tech/post/2020-05-22-00-GPS%E7%9A%84NMEA%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90%E5%8F%8AGPS&#43;%E5%8C%97%E6%96%97%E5%8F%8C%E6%A8%A1%E6%A8%A1%E5%9D%97TD3020C%E4%BB%8B%E7%BB%8D/</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="http://www.pavelhan.tech/post/2020-06-10-00-%E9%94%82%E7%94%B5%E6%B1%A0%E7%9A%84%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">http://www.pavelhan.tech/post/2020-06-10-00-%E9%94%82%E7%94%B5%E6%B1%A0%E7%9A%84%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/</a></li>
         <li><strong>版权声明：</strong>本作品采用<a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可，非商业转载请注明出处（作者，原文链接），商业转载请联系作者获得授权。</li>
     </ul>
 </div>
@@ -403,11 +368,7 @@
             
             <ul class="clearfix">
                 
-                <li><a href='http://www.pavelhan.tech/tags/GPS'>GPS</a></li>
-                
-                <li><a href='http://www.pavelhan.tech/tags/%E5%8C%97%E6%96%97'>北斗</a></li>
-                
-                <li><a href='http://www.pavelhan.tech/tags/NMEA'>NMEA</a></li>
+                <li><a href='http://www.pavelhan.tech/tags/%E9%94%82%E7%94%B5%E6%B1%A0'>锂电池</a></li>
                 
             </ul>
             
