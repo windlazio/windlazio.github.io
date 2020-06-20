@@ -6,10 +6,19 @@
     <description>Recent content in 软件工程 on Pavel Han的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Mon, 01 Jun 2020 18:42:10 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 19 Jun 2020 16:42:10 +0800</lastBuildDate>
     
 	<atom:link href="http://www.pavelhan.tech/categories/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>在Debian/Linux环境下配置C/C&#43;&#43;的Jenkins持续集成环境</title>
+      <link>http://www.pavelhan.tech/post/2020-06-19-00-%E5%9C%A8Debian%E4%B8%8B%E9%85%8D%E7%BD%AEC&#43;&#43;%E7%9A%84Jenkins%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90%E7%8E%AF%E5%A2%83/</link>
+      <pubDate>Fri, 19 Jun 2020 16:42:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/post/2020-06-19-00-%E5%9C%A8Debian%E4%B8%8B%E9%85%8D%E7%BD%AEC&#43;&#43;%E7%9A%84Jenkins%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90%E7%8E%AF%E5%A2%83/</guid>
+      <description>安装Java JDK环境 从Oracle官网上下载最新版本的JDK包； https://www.oracle.com/java/technologies/javase-downloads.html 当前最新版本是14.0.1。 因为是在Debian系统上使用，因此选择下载jdk安装文件的deb版本：jdk-14.0.1_linux-x64_bin.deb。 安装以上下载到的jdk deb包并查看安装位置： 1 2 3 4</description>
+    </item>
     
     <item>
       <title>在Debian/Linux下使用CppCheck对C代码进行静态扫描</title>

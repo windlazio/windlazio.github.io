@@ -6,10 +6,37 @@
     <description>Recent content in Tags on Pavel Han的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Wed, 10 Jun 2020 16:42:10 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 19 Jun 2020 16:42:10 +0800</lastBuildDate>
     
 	<atom:link href="http://www.pavelhan.tech/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>CI</title>
+      <link>http://www.pavelhan.tech/tags/CI/</link>
+      <pubDate>Fri, 19 Jun 2020 16:42:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/tags/CI/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Jenkins</title>
+      <link>http://www.pavelhan.tech/tags/Jenkins/</link>
+      <pubDate>Fri, 19 Jun 2020 16:42:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/tags/Jenkins/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>软件工程</title>
+      <link>http://www.pavelhan.tech/tags/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/</link>
+      <pubDate>Fri, 19 Jun 2020 16:42:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/tags/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>锂电池</title>
