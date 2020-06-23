@@ -6,10 +6,19 @@
     <description>Recent content in Posts on Pavel Han的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Fri, 19 Jun 2020 16:42:10 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 22 Jun 2020 09:23:10 +0800</lastBuildDate>
     
 	<atom:link href="http://www.pavelhan.tech/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>TI的电量跟踪技术Impedance Track学习总结</title>
+      <link>http://www.pavelhan.tech/post/2020-06-22-00-TI%E7%9A%84%E7%94%B5%E9%87%8F%E8%B7%9F%E8%B8%AA%E6%8A%80%E6%9C%AFImpedance-Track%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/</link>
+      <pubDate>Mon, 22 Jun 2020 09:23:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/post/2020-06-22-00-TI%E7%9A%84%E7%94%B5%E9%87%8F%E8%B7%9F%E8%B8%AA%E6%8A%80%E6%9C%AFImpedance-Track%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/</guid>
+      <description>电池及电量计的主要参数列表： QMax：电池的总的化学容量； OCV：Open Circuit Voltage，电池输出的开路电压； 通常认为电池耗电处于Relaxation状态（此时的电流很小）下的电池电压也是OCV电压； DOD：Depth of Discharge，放电深度； 电量计内部包含有放电深度DO</description>
+    </item>
     
     <item>
       <title>在Debian/Linux环境下配置C/C&#43;&#43;的Jenkins持续集成环境</title>

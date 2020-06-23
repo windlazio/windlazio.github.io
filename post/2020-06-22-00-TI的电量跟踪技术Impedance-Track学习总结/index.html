@@ -6,20 +6,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>GPS的NMEA数据格式解析及GPS/北斗双模模块TD3020C介绍 | Pavel Han的博客</title>
-    <meta property="og:title" content="GPS的NMEA数据格式解析及GPS/北斗双模模块TD3020C介绍 - Pavel Han的博客">
+    <title>TI的电量跟踪技术Impedance Track学习总结 | Pavel Han的博客</title>
+    <meta property="og:title" content="TI的电量跟踪技术Impedance Track学习总结 - Pavel Han的博客">
     <meta property="og:type" content="article">
         
-    <meta property="article:published_time" content='2020-05-22T15:35:10&#43;08:00'>
+    <meta property="article:published_time" content='2020-06-22T09:23:10&#43;08:00'>
         
         
-    <meta property="article:modified_time" content='2020-05-22T15:35:10&#43;08:00'>
+    <meta property="article:modified_time" content='2020-06-22T09:23:10&#43;08:00'>
         
     <meta name="Keywords" content="">
-    <meta name="description" content="GPS的NMEA数据格式解析及GPS/北斗双模模块TD3020C介绍">
+    <meta name="description" content="TI的电量跟踪技术Impedance Track学习总结">
         
     <meta name="author" content="Pavel Han">
-    <meta property="og:url" content="http://www.pavelhan.tech/post/2020-05-22-00-GPS%E7%9A%84NMEA%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90%E5%8F%8AGPS&#43;%E5%8C%97%E6%96%97%E5%8F%8C%E6%A8%A1%E6%A8%A1%E5%9D%97TD3020C%E4%BB%8B%E7%BB%8D/">
+    <meta property="og:url" content="http://www.pavelhan.tech/post/2020-06-22-00-TI%E7%9A%84%E7%94%B5%E9%87%8F%E8%B7%9F%E8%B8%AA%E6%8A%80%E6%9C%AFImpedance-Track%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 
     <link rel="stylesheet" href='/css/normalize.css'>
@@ -145,12 +145,14 @@
     <div class="post-toc-content">
         <nav id="TableOfContents">
   <ul>
-    <li><a href="#nmea数据格式">NMEA数据格式</a></li>
-    <li><a href="#常用的nmea-0183语句">常用的NMEA-0183语句</a></li>
-    <li><a href="#gprmcbdrmc">GPRMC/BDRMC</a></li>
-    <li><a href="#gpggabdgga">GPGGA/BDGGA</a></li>
-    <li><a href="#定位模块nmea数据解析的小结">定位模块NMEA数据解析的小结</a></li>
-    <li><a href="#gps北斗双模模块td3020c的使用介绍">GPS/北斗双模模块TD3020C的使用介绍</a></li>
+    <li><a href="#电池及电量计的主要参数列表">电池及电量计的主要参数列表：</a></li>
+    <li><a href="#影响电量计算的因素">影响电量计算的因素</a></li>
+    <li><a href="#电量计电量计算模式的切换">电量计电量计算模式的切换</a></li>
+    <li><a href="#在不同模式下评估电池的放电深度dod">在不同模式下评估电池的放电深度DOD</a></li>
+    <li><a href="#qmax的更新">QMax的更新</a></li>
+    <li><a href="#电池内阻ra的更新">电池内阻Ra的更新</a></li>
+    <li><a href="#rmfcc和soc的计算和更新">RM、FCC和SOC的计算和更新</a></li>
+    <li><a href="#参考资料">参考资料：</a></li>
   </ul>
 </nav>
     </div>
@@ -184,10 +186,10 @@
 </script>
     <article class="post">
         <header>
-            <h1 class="post-title">GPS的NMEA数据格式解析及GPS/北斗双模模块TD3020C介绍</h1>
+            <h1 class="post-title">TI的电量跟踪技术Impedance Track学习总结</h1>
         </header>
         <date class="post-meta meta-date">
-            2020年5月22日
+            2020年6月22日
         </date>
         
         <div class="post-meta">
@@ -205,182 +207,167 @@
         
         
         <div class="post-content">
-            <h2 id="nmea数据格式">NMEA数据格式</h2>
-<p>NEMA-0183是GPS接收机应该遵守的标准协议，也是当前世界上GPS接收机上使用最广泛的协议，绝大多数的GPS接收机，包括北斗模块在内都遵守或者至少兼容这个协议。</p>
-<p>NMEA语句的标准格式定义如下：</p>
-<p><strong>$&lt;语句类型标识&gt;，&lt;数据字段&gt;，&lt;数据字段&gt;，&hellip;&hellip;，&lt;数据字段&gt;*&lt;校验和&gt;[CR][LF]</strong></p>
+            <h2 id="电池及电量计的主要参数列表">电池及电量计的主要参数列表：</h2>
 <ul>
-<li>语句类型标识由两部分组成：语句标识符+语句格式符；
+<li>QMax：电池的总的化学容量；</li>
+<li>OCV：Open Circuit Voltage，电池输出的开路电压；
 <ul>
-<li>北斗和GPS使用不同的语句标识符符，北斗的语句标识符是BD，GPS的则是GP；</li>
-<li>后面的语句格式符是通用的，例如都使用GGA表示位置信息，VTG表示地面速度信息。</li>
+<li>通常认为电池耗电处于Relaxation状态（此时的电流很小）下的电池电压也是OCV电压；</li>
 </ul>
 </li>
-<li>每种不同的NEMA语句包含有多个独立的定义不同的数据字段，各个数据字段使用逗号分割开；</li>
-<li>&lt;校验和&gt;的计算是从$到*之间的所有字符；</li>
-<li>CR和LF则是标准的回车换行符。</li>
-</ul>
-<p>在应用中，无论是使用标准的GPS模块还是国内的北斗模块，模块本身输出的定位等信息的格式和协议基本上都是遵循NEMA-0183标准（只是语句的标识符稍有差异）：</p>
-<p><img src="/images/2020-05-22-00-GPS%E7%9A%84NMEA%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90%E5%8F%8AGPS+%E5%8C%97%E6%96%97%E5%8F%8C%E6%A8%A1%E6%A8%A1%E5%9D%97TD3020C%E4%BB%8B%E7%BB%8D/1.png" alt="1"></p>
-<p>而在硬件方面，基本上大部分GPS和北斗模块以及双模模块都采用标准的串口输出这些NEMA语句，因此无论在硬件层面还是软件层面，都可以很方便做到兼容和替换。</p>
-<h2 id="常用的nmea-0183语句">常用的NMEA-0183语句</h2>
-<p>NMEA-0183协议定义的语句非常多，但是常用的兼容性最广的语句主要有：</p>
+<li>DOD：Depth of Discharge，放电深度；
 <ul>
-<li>$GPGGA：定位信息</li>
-<li>$GPGSA：当前卫星信息</li>
-<li>$GPGSV：可见卫星信息</li>
-<li>$GPRMC：推荐定位信息数据格式</li>
-<li>$GPVTG：地面速度信息</li>
-<li>$GPGLL：地理定位信息</li>
-</ul>
-<p>对于我们在应用中使用GPS或者北斗模块而言，主要使用到其提供的以下功能：</p>
-<ul>
-<li>定位的经纬度信息；</li>
-<li>速度及运动方向信息；</li>
-<li>海拔高度；</li>
-<li>校时；</li>
-</ul>
-<p>因此对于我们的应用而言，只需要关注和解析定位模块输出的以下语句即可：</p>
-<ul>
-<li>GGA：经纬度，GPS状态，可用卫星数量，海拔高度；</li>
-<li>RMC：经纬度，UTC时间（精确到ms），磁偏角；</li>
-<li>VTG：速度及其方向；</li>
-</ul>
-<p>以下链接是一个NEMA数据的解析库，可以在应用中尝试直接使用这个库来实现对所需要信息的解析处理，避免重复造轮子：
-<a href="http://nmea.sourceforge.net/#downloads">http://nmea.sourceforge.net/#downloads</a></p>
-<h2 id="gprmcbdrmc">GPRMC/BDRMC</h2>
-<p>RMC数据帧的结构及其各个字段的定义如下：
-<strong>$GPRMC,&lt;1&gt;,&lt;2&gt;,&lt;3&gt;,&lt;4&gt;,&lt;5&gt;,&lt;6&gt;,&lt;7&gt;,&lt;8&gt;,&lt;9&gt;,&lt;10&gt;,&lt;11&gt;,&lt;12&gt;*hh[CR][LF]</strong></p>
-<ul>
-<li>&lt;1&gt; UTC时间，hhmmss（时分秒）格式</li>
-<li>&lt;2&gt; 定位状态，A=有效定位，V=无效定位</li>
-<li>&lt;3&gt; 纬度ddmm.mmmm（度分）格式（前面的0也将被传输）</li>
-<li>&lt;4&gt; 纬度半球N（北半球）或S（南半球）</li>
-<li>&lt;5&gt; 经度dddmm.mmmm（度分）格式（前面的0也将被传输）</li>
-<li>&lt;6&gt; 经度半球E（东经）或W（西经）</li>
-<li>&lt;7&gt; 地面速率（000.0~999.9节，前面的0也将被传输）</li>
-<li>&lt;8&gt; 地面航向（000.0~359.9度，以真北为参考基准，前面的0也将被传输）</li>
-<li>&lt;9&gt; UTC日期，ddmmyy（日月年）格式</li>
-<li>&lt;10&gt; 磁偏角（000.0~180.0度，前面的0也将被传输）</li>
-<li>&lt;11&gt; 磁偏角方向，E（东）或W（西）</li>
-<li>&lt;12&gt; 模式指示（仅NMEA0183 3.00版本输出，A=自主定位，D=差分，E=估算，N=数据无效）</li>
-<li>*: 语句结束标志符</li>
-<li>hh：从$开始到*之间的所有ASCII码的异或校验</li>
-<li>[CR] 回车符，结束标记</li>
-<li>[LF] 换行符，结束标记</li>
-</ul>
-<p>RMC语句中包含的重要信息有：UTC时间，经纬度，定位状态，速度（以节为单位，需要自行换算为km/h）及其方向，磁偏角等；</p>
-<ul>
-<li>可以看到，RMC语句中基本上包含了我们所关注的绝大多数常用信息；</li>
-<li>如果需要获取以km/h为单位的速度信息，可以解析GPVTG语句，该语句中同时包含有以节为单位和以km/h为单位的速度信息；</li>
-</ul>
-<h2 id="gpggabdgga">GPGGA/BDGGA</h2>
-<p>GGA数据帧的结构及其各个字段的定义如下：
-<strong>$GPGGA,&lt;1&gt;,&lt;2&gt;,&lt;3&gt;,&lt;4&gt;,&lt;5&gt;,&lt;6&gt;,&lt;7&gt;,&lt;8&gt;,&lt;9&gt;,M,&lt;10&gt;,M,&lt;11&gt;,&lt;12&gt;*xx<!-- raw HTML omitted --><!-- raw HTML omitted --></strong></p>
-<ul>
-<li>
-<p>$GPGGA：起始引导符及语句格式说明，如果是北斗模块的话就是BDGGA；</p>
-</li>
-<li>
-<p>&lt;1&gt; UTC时间，格式为hhmmss.sss；</p>
-</li>
-<li>
-<p>&lt;2&gt; 纬度，格式为ddmm.mmmm(第一位是零也将传送)；</p>
-</li>
-<li>
-<p>&lt;3&gt; 纬度半球，N或S(北纬或南纬)</p>
-</li>
-<li>
-<p>&lt;4&gt; 经度，格式为dddmm.mmmm(第一位零也将传送)；</p>
-</li>
-<li>
-<p>&lt;5&gt; 经度半球，E或W(东经或西经)</p>
-</li>
-<li>
-<p>&lt;6&gt; GPS状态， 0初始化， 1单点定位， 2码差分， 3无效PPS， 4固定解， 5浮点解， 6正在估算 7，人工输入固定值， 8模拟模式， 9WAAS差分</p>
-</li>
-<li>
-<p>&lt;7&gt; 使用卫星数量，从00到12(第一个零也将传送)</p>
-</li>
-<li>
-<p>&lt;8&gt; HDOP-水平精度因子，0.5到99.9，一般认为HDOP越小，质量越好。</p>
-</li>
-<li>
-<p>&lt;9&gt; 海拔高度，-9999.9到9999.9米</p>
-</li>
-<li>
-<p>M 指海拔单位为米</p>
-</li>
-<li>
-<p>&lt;10&gt; 大地水准面高度异常差值，-9999.9到9999.9米</p>
-</li>
-<li>
-<p>M 指单位米</p>
-</li>
-<li>
-<p>&lt;11&gt; 差分GPS数据期限(RTCM SC-104)，最后设立RTCM传送的秒数量，如不是差分定位则为空</p>
-</li>
-<li>
-<p>&lt;12&gt; 差分参考基站标号，从0000到1023(首位0也将传送)。</p>
-</li>
-<li>
-<p>*：语句结束标志符</p>
-</li>
-<li>
-<p>xx 从$开始到*之间的所有ASCII码的异或校验</p>
-</li>
-<li>
-<p>[CR] 回车符，结束标记</p>
-</li>
-<li>
-<p>[LF] 换行符，结束标记</p>
-</li>
-</ul>
-<p>GGA语句中比较重要的信息就是：经纬度，GPS状态，当前使用的卫星数量，海拔高度；</p>
-<h2 id="定位模块nmea数据解析的小结">定位模块NMEA数据解析的小结</h2>
-<ul>
-<li>从以上整理的数据可以看出来，GPGGA和GPRMC均包含有经纬度等定位信息，那我们在应用中应该用哪一个呢？其实，GPGGA是GPS定位信息，而​GPRMC是推荐定位信息，所以用GPRMC会比较准确。</li>
-<li>考虑到我们普通应用中需要从定位模块中获取的信息类型，基本上我们要用到的大部分信息在GPRMC语句中都已经包含了，所以只需要对GPRMC语句进行解析就可以了。</li>
-</ul>
-<h2 id="gps北斗双模模块td3020c的使用介绍">GPS/北斗双模模块TD3020C的使用介绍</h2>
-<p>TD3020C是东莞市泰斗微电子推出的一款GPS和北斗二代双模导航定位模块，模块尺寸22.4mm x 17mm x 2.0mm，采样28pin邮票孔封装，与主流的GPS模块（例如UBlox的LEA-5/6系列）在硬件上做到pin to pin兼容。</p>
-<p><img src="/images/2020-05-22-00-GPS%E7%9A%84NMEA%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90%E5%8F%8AGPS+%E5%8C%97%E6%96%97%E5%8F%8C%E6%A8%A1%E6%A8%A1%E5%9D%97TD3020C%E4%BB%8B%E7%BB%8D/2.png" alt="2"></p>
-<p>典型应用的走线图如下所示：</p>
-<p><img src="/images/2020-05-22-00-GPS%E7%9A%84NMEA%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90%E5%8F%8AGPS+%E5%8C%97%E6%96%97%E5%8F%8C%E6%A8%A1%E6%A8%A1%E5%9D%97TD3020C%E4%BB%8B%E7%BB%8D/3.png" alt="3"></p>
-<p>主要包含的接口如下：</p>
-<ul>
-<li>电源接口；</li>
-<li>天线接口：GPS和北斗共用同一个外置有源天线接口；</li>
-<li>休眠模式控制接口
-<ul>
-<li>模块通过外部休眠模式引脚控制进入休眠状态，功耗可降至5mA以下；</li>
+<li>电量计内部包含有放电深度DOD与电池开路电压OCV之间的查找表，在电池无负载即开路的状态下通过查这个表可以得到比较准取的电池放电情况；</li>
+<li>电量计算法计算得到的DOD，决定了是否应该更新当前的电池内阻参数，以及开始计算和更新RC/FCC的时机。</li>
 </ul>
 </li>
-<li>两组UART接口
+<li>SOC：State of Charge，实际上也就是当前剩余电量的百分比；
 <ul>
-<li>串口1（TXD1/RXD1），在UTC秒边界输出NMEA数据，也可以通过这个串口控制模块的工作模式、输出波特率等；该串口默认波特率为9600；</li>
-<li>串口2（TXD2/RXD2），备用串口，用于输出自定义格式的数据，也可以用于对模块进行软件升级。</li>
+<li>具体的计算公式为SOC=Q/QMax=RM/FCC；</li>
 </ul>
 </li>
-<li>GPIO接口
+<li>RM：Remaining Capacity，剩余的电池容量；
 <ul>
-<li>包含3个GPIO接口，可以根据用户需求定义这些GPIO接口的功能。</li>
+<li>Remaining capacity calculations occur immediately after discharge onset, at every resistance update, and after entering relaxation mode。</li>
+</ul>
+</li>
+<li>FCC：Full-Charge Capacity，满充情况下的电池可以实际使用的容量；
+<ul>
+<li>FCC实际上是电池在满充状态下，以一定的放电速度放电到截止电压的情况下，电池释放出来的总的容量，实际上此时电池内部仍然残留部分容量，也就是Reserve Capacity。</li>
+<li>与放电速度和当前温度有关，放电速度越快，温度越低的情况下，FCC越小，因为在这种情况下电池内阻的存在导致电池更快到达截止电压；</li>
+</ul>
+</li>
+<li>Ra：电池内阻参数
+<ul>
+<li>电池内阻在不同的放电深度情况下不同，电量越低电池内阻越大，在接近电池截至电压时达到最大；</li>
+<li>电量计在校正过程中会根据电池的情况自动计算出来的15组电池内阻参数Ra0-Ra14，同时这些内阻参数在Impedance Track算法运行的过程中动态更新；</li>
+<li>电池内阻的计算公式：（OCV-BatteryVoltageUnderLoad）/AverageLoad Cuurent；</li>
 </ul>
 </li>
 </ul>
-<p>TD3020C在正常工作中除了能够按照NEMA标准输出经纬度等信息以外，还可以通过UART1来控制模块的定位模式、波特率等运行参数。</p>
+<h2 id="影响电量计算的因素">影响电量计算的因素</h2>
 <ul>
-<li>定位模式的切换指令：可以支持GPS和北斗的独立工作模式和混合工作模式；</li>
-</ul>
-<p><img src="/images/2020-05-22-00-GPS%E7%9A%84NMEA%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90%E5%8F%8AGPS+%E5%8C%97%E6%96%97%E5%8F%8C%E6%A8%A1%E6%A8%A1%E5%9D%97TD3020C%E4%BB%8B%E7%BB%8D/4.png" alt="4"></p>
+<li>
+<p>负载状况</p>
 <ul>
-<li>波特率设置指令：设置串口输出的波特率；</li>
-</ul>
-<p><img src="/images/2020-05-22-00-GPS%E7%9A%84NMEA%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90%E5%8F%8AGPS+%E5%8C%97%E6%96%97%E5%8F%8C%E6%A8%A1%E6%A8%A1%E5%9D%97TD3020C%E4%BB%8B%E7%BB%8D/5.png" alt="5"></p>
+<li>下图中实线和虚线分别为在一定的负载影响下和无负载情况下的电池电压&mdash;电量曲线；
 <ul>
-<li>GPS/北斗模块NMEA信息输出更新率设置指令：</li>
+<li><img src="/images/2020-06-22-00-TI%E7%9A%84%E7%94%B5%E9%87%8F%E8%B7%9F%E8%B8%AA%E6%8A%80%E6%9C%AFImpedanceTrack%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/1.png" alt="1"></li>
 </ul>
-<p><img src="/images/2020-05-22-00-GPS%E7%9A%84NMEA%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90%E5%8F%8AGPS+%E5%8C%97%E6%96%97%E5%8F%8C%E6%A8%A1%E6%A8%A1%E5%9D%97TD3020C%E4%BB%8B%E7%BB%8D/6.png" alt="6"></p>
+</li>
+</ul>
+</li>
+<li>
+<p>温度</p>
+<ul>
+<li><img src="/images/2020-06-22-00-TI%E7%9A%84%E7%94%B5%E9%87%8F%E8%B7%9F%E8%B8%AA%E6%8A%80%E6%9C%AFImpedanceTrack%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/2.png" alt="2"></li>
+</ul>
+</li>
+<li>
+<p>充放电循环次数（老化）</p>
+<ul>
+<li>电池内部的电量随着充放电次数的增加逐渐减少，也就是电池在使用过程中的老化现象。</li>
+<li><img src="/images/2020-06-22-00-TI%E7%9A%84%E7%94%B5%E9%87%8F%E8%B7%9F%E8%B8%AA%E6%8A%80%E6%9C%AFImpedanceTrack%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/3.png" alt="3"></li>
+</ul>
+</li>
+</ul>
+<h2 id="电量计电量计算模式的切换">电量计电量计算模式的切换</h2>
+<p>三种电量计算状态：Relaxation，Charging，Discharge。</p>
+<p>三个电流阈值：Quit Current Threshold，Charge Current Threshold，Discharge Current Threshold。</p>
+<p>三个Relax Time：Charge Relax Time，Quit Relax Time，Discharge Relax Time。</p>
+<p><img src="/images/2020-06-22-00-TI%E7%9A%84%E7%94%B5%E9%87%8F%E8%B7%9F%E8%B8%AA%E6%8A%80%E6%9C%AFImpedanceTrack%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/4.png" alt="4"></p>
+<ul>
+<li>电量计电量计算模式处于Charging模式的情况下：当电量计检测到的平均电流小于Quit Current Threshold，并且维持时间的长度大于Charge Relax Time，电量计的电量计算模式由Charging模式切换为Relaxation模式；</li>
+<li>电量计电量计算模式处于Relaxation模式的情况下：当电量计检测到的平均电流大于Discharge Current Threshold，并且维持时间大于Quit Relax Time，电量计的电量计算模式由Relaxation模式切换为Discharging模式；</li>
+<li>电量计电量计算模式处于Discharging模式的情况下：当电量计检测到的平均电流小于Quit Current Threshold，并且维持时间的长度大于Discharge Relax Time，电量计的电量计算模式由Discharging模式切换为Relaxation模式；</li>
+<li>电量计电量计算模式处于Relaxation模式的情况下：当电量计检测到的平均电流大于Charge Current Threshold，并且维持时间大于Quit Relax Time，电量计的电量计算模式由Relaxation模式切换为Charging模式；</li>
+</ul>
+<h2 id="在不同模式下评估电池的放电深度dod">在不同模式下评估电池的放电深度DOD</h2>
+<p>在Relaxation状态下，电池进入Relaxation模式超过30min之后，开始检测电压的变化情况，如果dv/dt&lt;4uV/s的条件成立（即电池电压的变化幅度极小），电量计会每100s测量一次电池的开路电压，然后基于电量计内置的OCV-DOD曲线计算当前的放电深度更新到参数DOD0中，同时把参数PassedCharge复位为0；</p>
+<ul>
+<li>在这个过程中，如果通过电量计的电流不为0，还需要对读取到的OCV做IR补偿：根据在这个放电深度状况下的查找与该放电深度对应的电池内阻参数Ra，然后使用校正后的OCV&rsquo;(OCV'=OCV-I*Ra)查OCV-DOD曲线计算当前的放电深度；</li>
+</ul>
+<p>而在电池处于Charging或者Discharging的状态下，当前的放电深度DOD使用以下公式进行计算：
+DOD=DOD0+PassedCharge/QMax；</p>
+<ul>
+<li>其中的DOD0是在电池处于Relaxation状态的情况下最后更新的DOD参数，PassedCharge也是在电池上次更新DOD参数时复位为0，开始累积通过电量计的电量；</li>
+</ul>
+<p><strong>实际上电池的OCV与放电深度DOD之间的对应关系/查找表内置在电量计芯片中，也就是所谓的Chemistry Profile。对于BQ27426而言，这个电量计芯片中内置了3种Chemistry Profile（也就是电量计的预定义放电曲线），分别对应于标准的4.2V、4.35V和4.4V锂电池，可以通过ChemID命令读取和设置要使用的Chemistry Profile。而对于一些相对特殊的锂电池，TI的BQ2750x系列的电量计芯片支持通过写入一个.senc电量计参数文件来实现电量计曲线的自定义支持。</strong></p>
+<h2 id="qmax的更新">QMax的更新</h2>
+<p>QMax在两次独立的DOD更新（即这两次DOD更新之间必须要包含一个Charge或者Discharge状态）之后进行计算；</p>
+<ul>
+<li>即DOD1在Relaxation状态下测量后保存下来，然后进入Charge或者Discharge状态，然后重新进入Relaxation状态后完成新的DOD2测量之后，基于以下公式更新QMax：
+<ul>
+<li>QMax=PassedCharge/|DOD2-DOD1|；</li>
+<li>PassedCharge是两次DOD更新计算之间通过库仑计测量通过电量计的电量；</li>
+</ul>
+</li>
+<li>DOD1和DOD2更新时一定要保证电量计处于深度的Relaxation状态，即进入Relaxation状态超过半小时，并且dv/dt&lt;4uV/s的条件成立；</li>
+</ul>
+<p>为了确保QMax更新计算的准确度和精度，以上更新在温度高于40摄氏度，或者低于10摄氏度的情况下不会进行；在DOD1和DOD2其中一个电压处于3737mV和3800mV之间也不会进行更新；</p>
+<h2 id="电池内阻ra的更新">电池内阻Ra的更新</h2>
+<p>电池内阻在电池处于放电状态Discharge状态下进行计算和更新。
+按照以下公式计算当前DOD情况下的内阻参数：</p>
+<ul>
+<li>dV=V-OCV（DOD，T）</li>
+<li>R(DOD)=dV/I</li>
+</ul>
+<p>以上公式中V为在当前放电状态下测量到的电池电压，OCV（DOD，T）为根据电池内部曲线通过当前DOD查表得到的开路电压；
+以上电池内阻参数在电池处于放电状态下持续运行计算保存在内存中，在DOD状态进入以下节点时写入Data Flash：</p>
+<p>Index   SOC    DOD</p>
+<p>Ra 0  100%      0</p>
+<p>Ra 1  88.9%     11.1%</p>
+<p>Ra 2  77.8%     22.2%</p>
+<p>Ra 3  66.7%     33.3%</p>
+<p>Ra 4  55.6%     44.4%</p>
+<p>Ra 5  44.5%     55.5%</p>
+<p>Ra 6  33.4%     66.6%</p>
+<p>Ra 7  22.3%     77.7%</p>
+<p>Ra 8  19%        81%</p>
+<p>Ra 9  15.7%     84.3%</p>
+<p>Ra 10 12.4%    87.6%</p>
+<p>Ra 11 9.1%      90.9%</p>
+<p>Ra 12 5.8%      94.2%</p>
+<p>Ra 13 2.5%      97.5%</p>
+<p>Ra 14 0%        100%</p>
+<h2 id="rmfcc和soc的计算和更新">RM、FCC和SOC的计算和更新</h2>
+<p>RM(Remaining Capacity)使用电压模拟（Voltage Simulation）的方式来进行计算，大体的流程是：</p>
+<p>从当前的DOD也就是DODStart开始计算：</p>
+<p>DODStart=DOD0+PassedCharge/QMax；</p>
+<ul>
+<li>DOD0是上次电池处于深度Relax模式下根据电池开路电压测量到的放电深度；</li>
+<li>PassedCharge是从上次DOD0测量开始计算通过电量计的电量；</li>
+</ul>
+<p>基于以下公式模拟计算带载状态下的放电曲线：
+V(DODx,T) =OCV(DODx,T)+ I×R(DODx,T)</p>
+<ul>
+<li>DODx是从DODStart开始，以4%的递增步进速度进行曲线的递增计算；</li>
+<li>OCV(DODx,T)为该DOD状态和温度状态下，得到的对应开路电压；</li>
+<li>I为当前的负载电流大小；</li>
+<li>R(DODx,T)为该DOD状态和温度状态下，对应的电池内阻大小；</li>
+<li>V(DODx,T)为该DOD状态和温度状态下，模拟计算得到的带载状态下的电压大小；</li>
+</ul>
+<p>配合下图对以上计算过程进行理解：</p>
+<p><img src="/images/2020-06-22-00-TI%E7%9A%84%E7%94%B5%E9%87%8F%E8%B7%9F%E8%B8%AA%E6%8A%80%E6%9C%AFImpedanceTrack%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/5.png" alt="5"></p>
+<p>通过以上模拟曲线进行计算，当计算得到的V(DODx,T)等于电池的截至电压的情况下，通过查询电池OCV的放电曲线此时对应的DOD，就是所谓的DODFinal。</p>
+<p>RM=（DODFinal-DODStart）*QMax；</p>
+<p>FCC包含三个部分：
+FCC=QStart+PassedCharge+RM。</p>
+<ul>
+<li>QStart是电池从满电状态下到DOD0状态下所消耗的电量；</li>
+<li>PassedCharge在DOD0更新的时候被复位为0，从此刻开始累积的通过电量计的电量；</li>
+<li>RM为按照以上电压模拟的公式计算到的剩余电量；；</li>
+</ul>
+<p>SOC的计算公式如下：</p>
+<ul>
+<li>SOC=RM*100/FCC。</li>
+</ul>
+<p>这个不断更新和计算的SOC就是最终提供给用户显示出来的电量的百分比。</p>
+<h2 id="参考资料">参考资料：</h2>
+<ul>
+<li>SLUA450：Theory and Implementation of Impedance Track Battery Fuel-Guaging Algorithm in BQ2750x Family；</li>
+<li>SLUA375：Impedance Track Gas Gauge for Noices；</li>
+</ul>
 
         </div>
 
@@ -388,7 +375,7 @@
 <div class="post-archive">
     <ul class="post-copyright">
         <li><strong>原文作者：</strong><a rel="author" href="http://www.pavelhan.tech">Pavel Han</a></li>
-        <li style="word-break:break-all"><strong>原文链接：</strong><a href="http://www.pavelhan.tech/post/2020-05-22-00-GPS%E7%9A%84NMEA%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90%E5%8F%8AGPS&#43;%E5%8C%97%E6%96%97%E5%8F%8C%E6%A8%A1%E6%A8%A1%E5%9D%97TD3020C%E4%BB%8B%E7%BB%8D/">http://www.pavelhan.tech/post/2020-05-22-00-GPS%E7%9A%84NMEA%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90%E5%8F%8AGPS&#43;%E5%8C%97%E6%96%97%E5%8F%8C%E6%A8%A1%E6%A8%A1%E5%9D%97TD3020C%E4%BB%8B%E7%BB%8D/</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="http://www.pavelhan.tech/post/2020-06-22-00-TI%E7%9A%84%E7%94%B5%E9%87%8F%E8%B7%9F%E8%B8%AA%E6%8A%80%E6%9C%AFImpedance-Track%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/">http://www.pavelhan.tech/post/2020-06-22-00-TI%E7%9A%84%E7%94%B5%E9%87%8F%E8%B7%9F%E8%B8%AA%E6%8A%80%E6%9C%AFImpedance-Track%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/</a></li>
         <li><strong>版权声明：</strong>本作品采用<a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可，非商业转载请注明出处（作者，原文链接），商业转载请联系作者获得授权。</li>
     </ul>
 </div>
@@ -398,16 +385,23 @@
 
         
 
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/post/2020-06-10-00-%E9%94%82%E7%94%B5%E6%B1%A0%E7%9A%84%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">锂电池的基础知识</a></li>
+        
+    </ul>
+</div>
+
 
         <div class="post-meta meta-tags">
             
             <ul class="clearfix">
                 
-                <li><a href='http://www.pavelhan.tech/tags/GPS'>GPS</a></li>
+                <li><a href='http://www.pavelhan.tech/tags/%E7%94%B5%E9%87%8F%E8%AE%A1'>电量计</a></li>
                 
-                <li><a href='http://www.pavelhan.tech/tags/%E5%8C%97%E6%96%97'>北斗</a></li>
-                
-                <li><a href='http://www.pavelhan.tech/tags/NMEA'>NMEA</a></li>
+                <li><a href='http://www.pavelhan.tech/tags/%E9%94%82%E7%94%B5%E6%B1%A0'>锂电池</a></li>
                 
             </ul>
             
