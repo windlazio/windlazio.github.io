@@ -6,10 +6,19 @@
     <description>Recent content in Linux on Pavel Han的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Wed, 03 Jun 2020 13:42:10 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 07 Jul 2020 14:03:10 +0800</lastBuildDate>
     
 	<atom:link href="http://www.pavelhan.tech/tags/Linux/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Linux的磁盘加密技术LUKS</title>
+      <link>http://www.pavelhan.tech/post/2020-07-07-00-Linux%E7%9A%84%E7%A3%81%E7%9B%98%E5%8A%A0%E5%AF%86%E6%8A%80%E6%9C%AFLUKS/</link>
+      <pubDate>Tue, 07 Jul 2020 14:03:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/post/2020-07-07-00-Linux%E7%9A%84%E7%A3%81%E7%9B%98%E5%8A%A0%E5%AF%86%E6%8A%80%E6%9C%AFLUKS/</guid>
+      <description>Linux系统的磁盘加密技术LUKS简介 LUKS：Linux Unified Key Setup。 LUKS是Linux系统为硬盘分区进行加密操作提供的一个标准，能够通用于各种Linux系统发布版本中。 使用LUKS技术对磁盘分区进行加密后，必须要先输入密码对其进行解密后才能把这个加密分区挂载到文件系统中</description>
+    </item>
     
     <item>
       <title>Linux IPC机制之消息队列</title>

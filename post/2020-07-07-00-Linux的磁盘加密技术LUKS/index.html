@@ -1,0 +1,653 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Linux的磁盘加密技术LUKS | Pavel Han的博客</title>
+    <meta property="og:title" content="Linux的磁盘加密技术LUKS - Pavel Han的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2020-07-07T14:03:10&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2020-07-07T14:03:10&#43;08:00'>
+        
+    <meta name="Keywords" content="">
+    <meta name="description" content="Linux的磁盘加密技术LUKS">
+        
+    <meta name="author" content="Pavel Han">
+    <meta property="og:url" content="http://www.pavelhan.tech/post/2020-07-07-00-Linux%E7%9A%84%E7%A3%81%E7%9B%98%E5%8A%A0%E5%AF%86%E6%8A%80%E6%9C%AFLUKS/">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-4031353640611810",
+        enable_page_level_ads: true
+    });
+    </script>
+    
+
+
+    
+    
+        <link rel="stylesheet" href='/css/douban.css'>
+    
+        <link rel="stylesheet" href='/css/other.css'>
+    
+</head>
+
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="http://www.pavelhan.tech">
+                        Pavel Han的博客
+                    </a>
+                
+                <p class="description">专注于音视频、摄像头、消费类电子、智能硬件、物联网等行业</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="http://www.pavelhan.tech">首页</a>
+                    
+                    <a  href="http://www.pavelhan.tech/archives/" title="归档">归档</a>
+                    
+                    <a  href="http://www.pavelhan.tech/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#linux系统的磁盘加密技术luks简介">Linux系统的磁盘加密技术LUKS简介</a></li>
+    <li><a href="#cryptsetup的基本使用">cryptsetup的基本使用</a></li>
+    <li><a href="#在vmware虚拟机上进行分区加密及自动挂载实验">在VMware虚拟机上进行分区加密及自动挂载实验</a></li>
+    <li><a href="#参考资料">参考资料：</a></li>
+  </ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
+    <article class="post">
+        <header>
+            <h1 class="post-title">Linux的磁盘加密技术LUKS</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2020年7月7日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='http://www.pavelhan.tech/categories/Linux'>Linux</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <h2 id="linux系统的磁盘加密技术luks简介">Linux系统的磁盘加密技术LUKS简介</h2>
+<ul>
+<li>LUKS：Linux Unified Key Setup。</li>
+<li>LUKS是Linux系统为硬盘分区进行加密操作提供的一个标准，能够通用于各种Linux系统发布版本中。</li>
+<li>使用LUKS技术对磁盘分区进行加密后，必须要先输入密码对其进行解密后才能把这个加密分区挂载到文件系统中进行访问，没有密码的情况下无法挂载，也就限制了在没有访问密码的情况下，即使把硬盘拿下来也是没有办法访问硬件中原有的数据，这样就保证了硬盘数据的安全性。</li>
+<li>在Linux系统中使用LUKS技术对磁盘分区进行加密需要提前安装cryptsetup软件包。</li>
+<li>使用cryptsetup对分区进行了加密后，这个分区就不再允许直接挂载。LUKS也是一种基于device mapper 机制的加密方案。如果要使用这个分区，必须对这个分区做一个映射，映射到/dev/mapper这个目录里去，我们只能挂载这个映射才能使用。然而做映射的时候是需要输入解密密码的。</li>
+<li>使用LUKS和cryptsetup工具对磁盘分区进行加密的特点：
+<ul>
+<li>加密后不能直接进行挂载，必须先使用cryptsetup命令+输入访问密码把这个加密分区的设备文件映射到device mapper下，然后才能把device mapper的映射文件挂载到文件系统中访问；</li>
+<li>加密后硬盘丢失也不用担心数据被盗，没有访问密码的情况下，无法正常的挂载到新的系统中；</li>
+<li>加密后必须先输入密码进行device mapper映射才能挂载成功并正常使用。</li>
+<li>可以使用cryptsetup工具对一个磁盘分区设置多达8个访问密钥，并且可以在后期使用命令灵活的管理增加以及删除访问密钥；</li>
+</ul>
+</li>
+</ul>
+<h2 id="cryptsetup的基本使用">cryptsetup的基本使用</h2>
+<p>cryptsetup命令的常用参数包括：</p>
+<ul>
+<li>luksFormat：对磁盘分区设置密码
+<ul>
+<li>cryptsetup luksFormat [device file path]</li>
+<li>执行中需要设置一个访问密码，作为以后访问这个磁盘分区的密钥；</li>
+</ul>
+</li>
+<li>luksOpen：建立加密分区设备文件到/dev/mapper下的映射文件
+<ul>
+<li>cryptsetup luksOpen [device file path] [mapper file name]</li>
+<li>执行中需要输入磁盘分区的密钥；</li>
+<li>执行成功后会在/dev/mapper下创建一个以[mapper file name]命名的设备映射文件；</li>
+</ul>
+</li>
+<li>status：查看映射设备文件的状态
+<ul>
+<li>cryptsetup status [mapper file name]</li>
+<li>查看加密分区的挂载状态以及元信息；</li>
+</ul>
+</li>
+<li>luksClose：关闭之前在/dev/mapper下的映射文件
+<ul>
+<li>cryptsetup luksClose [mapper file name]</li>
+<li>执行前需要先把这个分区umount掉，执行 luksClose命令完成后会删除在device mapper下创建的映射文件；</li>
+</ul>
+</li>
+<li>luksAddKey：为磁盘分区增加一个访问密钥
+<ul>
+<li>cryptsetup luksAddKey [device file path]</li>
+<li>最多可以为一个磁盘分区设置8个密钥；</li>
+<li>除了通过键盘输入字符串密钥以外，也可以指定一个磁盘上已经存在的文件为加密磁盘分区的访问密钥：sudo cryptsetup luksAddKey [device file path] [any other file path]</li>
+</ul>
+</li>
+<li>luksReoveKey：从磁盘分区已有的访问密钥列表中删除指定的访问密钥，此后就不能再用这个密钥访问文件系统了
+<ul>
+<li>cryptsetup luksReoveKey [device file path]</li>
+<li>执行时输入需要删除的密钥</li>
+</ul>
+</li>
+</ul>
+<h2 id="在vmware虚拟机上进行分区加密及自动挂载实验">在VMware虚拟机上进行分区加密及自动挂载实验</h2>
+<ul>
+<li>VMware版本：VMware Workstation 15 Player。</li>
+<li>操作系统：Debian 10.0。</li>
+</ul>
+<p>虚拟Linux系统中原有一块虚拟硬盘40GB，对应于/dev/sda，内部包含两个分区/dev/sda1和/sda2；
+在VMware的当前虚拟机系统中通过选项界面再增加一块SCSI硬盘，大小设置为10GB：</p>
+<p><img src="/images/2020-07-07-00-Linux%E7%9A%84%E7%A3%81%E7%9B%98%E5%8A%A0%E5%AF%86%E6%8A%80%E6%9C%AFLUKS/1.png" alt="1">
+新建后启动虚拟机，可以在/dev下看到一个新的设备文件sdb，下一步计划在这个硬盘上创建LUKS加密分区。</p>
+<p><strong>1.在Debian上安装cryptsetup</strong></p>
+<p>sudo apt-get install cryptsetup</p>
+<p><strong>2.使用fdisk工具对新磁盘进行分区</strong></p>
+<p>直接基于新创建的sdb硬盘创建一个主分区，对应于设备文件/dev/sdb1；</p>
+<p><img src="/images/2020-07-07-00-Linux%E7%9A%84%E7%A3%81%E7%9B%98%E5%8A%A0%E5%AF%86%E6%8A%80%E6%9C%AFLUKS/2.png" alt="2"></p>
+<p><strong>3.使用cryptsetup工具对新建立的sdb1分区进行加密；</strong></p>
+<p><img src="/images/2020-07-07-00-Linux%E7%9A%84%E7%A3%81%E7%9B%98%E5%8A%A0%E5%AF%86%E6%8A%80%E6%9C%AFLUKS/3.png" alt="3"></p>
+<p><strong>4.在/dev/mapper下创建sdb1的映射磁盘分区</strong></p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">pavel@debian:~$ ls /dev/mapper/
+control
+pavel@debian:~$ sudo cryptsetup luksOpen /dev/sdb1 crtpt_disk
+输入 /dev/sdb1 的口令：
+pavel@debian:~$ ls /dev/mapper/ -l
+总用量 <span style="color:#099">0</span>
+crw------- <span style="color:#099">1</span> root root 10, <span style="color:#099">236</span> 7月   <span style="color:#099">7</span> 14:23 control
+lrwxrwxrwx <span style="color:#099">1</span> root root       <span style="color:#099">7</span> 7月   <span style="color:#099">7</span> 14:23 crtpt_disk -&gt; ../dm-0
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>crtpt_disk是随便取的，执行cryptsetup luksOpen命令成功后，就会在/dev/mapper下创建与之对应的磁盘分区映射文件，实际上是/dev/dm-0的映射文件；</li>
+<li>通过以上命令创建的这个/dev/mapper/crypt_disk文件在系统重启后会丢失；</li>
+<li><em>此后就可以像使用/dev/sda1一样的方式来使用/dev/mapper/crypt_disk了；</em></li>
+</ul>
+<p><strong>5.对加密分区进行格式化</strong></p>
+<p>此处使用ext4分区格式对/dev/mapper/crtpt_disk进行格式化：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">pavel@debian:~$ sudo mkfs.ext4 /dev/mapper/crtpt_disk
+mke2fs 1.44.5 <span style="color:#000;font-weight:bold">(</span>15-Dec-2018<span style="color:#000;font-weight:bold">)</span>
+Creating filesystem with <span style="color:#099">2617088</span> 4k blocks and <span style="color:#099">655360</span> inodes
+Filesystem UUID: 54a75db9-883c-430f-8ef4-de66fd20a2df
+Superblock backups stored on blocks:
+    32768, 98304, 163840, 229376, 294912, 819200, 884736, <span style="color:#099">1605632</span>
+
+
+Allocating group tables: <span style="color:#000;font-weight:bold">done</span>                            
+Writing inode tables: <span style="color:#000;font-weight:bold">done</span>                            
+Creating journal <span style="color:#000;font-weight:bold">(</span><span style="color:#099">16384</span> blocks<span style="color:#000;font-weight:bold">)</span>: <span style="color:#000;font-weight:bold">done</span>
+Writing superblocks and filesystem accounting information: <span style="color:#000;font-weight:bold">done</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>6.挂载并开始使用加密分区</strong></p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">pavel@debian:~$ sudo mount /dev/sdb1 /mnt/
+mount: /mnt: unknown filesystem <span style="color:#0086b3">type</span> <span style="color:#d14">&#39;crypto_LUKS&#39;</span>.
+pavel@debian:~$ sudo mount /dev/ /mnt/
+Display all <span style="color:#099">163</span> possibilities? <span style="color:#000;font-weight:bold">(</span>y or n<span style="color:#000;font-weight:bold">)</span>
+pavel@debian:~$ sudo mount /dev/mapper/crtpt_disk /mnt/
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>注意，对于这类加密分区而言，不能直接挂载其分区文件/dev/sdb1，而是要挂载前面通过cryptsetup luksOpen命令创建的映射文件/dev/mapper/crypt_disk；</li>
+<li>此后就可以在/mnt中使用这个分区进行数据的读写操作了；</li>
+</ul>
+<p><strong>7.开机自动加载并自动输入密码</strong></p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#998;font-style:italic">###随机创建一个文件，把这个文件作为访问磁盘分区的密码</span>
+pavel@debian:~$ touch crypt_disk_passwd
+pavel@debian:~$ sudo cryptsetup luksAddKey /dev/sdb1 ./crypt_disk_passwd
+输入任意已存在的口令:
+
+<span style="color:#998;font-style:italic">###在/etc/crypttab中增加映射关系：</span>
+<span style="color:#998;font-style:italic"># &lt;target name&gt;    &lt;source device&gt;        &lt;key file&gt;    &lt;options&gt;</span>
+crypt_disk    /dev/sdb1    /home/pavel/crypt_disk_passwd
+
+<span style="color:#998;font-style:italic">###设置开机自动挂载，修改/etc/fstab增加：</span>
+/dev/mapper/crypt_disk    /mnt    ext4    defaults    <span style="color:#099">0</span>    <span style="color:#099">0</span>
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>按照以上流程设置后，开机过程中会自动创建/dev/sdb1的device mapper映射文件crypt_disk，在加载过程中自动输入密码，并自动挂载到挂载点/mnt下，此后就可以在/mnt下正常使用加密分区了；</li>
+</ul>
+<h2 id="参考资料">参考资料：</h2>
+<ul>
+<li>
+<p><a href="https://www.cnblogs.com/xiaogan/p/5791187.html"> 1-14 文件系统的特性与磁盘加密技术</a></p>
+</li>
+<li>
+<p><a href="https://blog.51cto.com/vnimos/1175883">Linux下的磁盘加密LUKS</a></p>
+</li>
+<li>
+<p><a href="https://www.haiyun.me/archives/1225.html">linux使用luks加密硬盘或u盘</a></p>
+</li>
+</ul>
+
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="http://www.pavelhan.tech">Pavel Han</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="http://www.pavelhan.tech/post/2020-07-07-00-Linux%E7%9A%84%E7%A3%81%E7%9B%98%E5%8A%A0%E5%AF%86%E6%8A%80%E6%9C%AFLUKS/">http://www.pavelhan.tech/post/2020-07-07-00-Linux%E7%9A%84%E7%A3%81%E7%9B%98%E5%8A%A0%E5%AF%86%E6%8A%80%E6%9C%AFLUKS/</a></li>
+        <li><strong>版权声明：</strong>本作品采用<a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可，非商业转载请注明出处（作者，原文链接），商业转载请联系作者获得授权。</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/post/2020-06-03-00-Linux-IPC%E6%9C%BA%E5%88%B6%E4%B9%8B%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/">Linux IPC机制之消息队列</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='http://www.pavelhan.tech/tags/Linux'>Linux</a></li>
+                
+                <li><a href='http://www.pavelhan.tech/tags/%E5%8A%A0%E5%AF%86'>加密</a></li>
+                
+                <li><a href='http://www.pavelhan.tech/tags/LUKS'>LUKS</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+</div>
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='http://www.pavelhan.tech/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="http://www.pavelhan.tech">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-07-07-00-Linux%E7%9A%84%E7%A3%81%E7%9B%98%E5%8A%A0%E5%AF%86%E6%8A%80%E6%9C%AFLUKS/" title="Linux的磁盘加密技术LUKS">Linux的磁盘加密技术LUKS</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-06-22-00-TI%E7%9A%84%E7%94%B5%E9%87%8F%E8%B7%9F%E8%B8%AA%E6%8A%80%E6%9C%AFImpedance-Track%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/" title="TI的电量跟踪技术Impedance Track学习总结">TI的电量跟踪技术Impedance Track学习总结</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-06-19-00-%E5%9C%A8Debian%E4%B8%8B%E9%85%8D%E7%BD%AEC&#43;&#43;%E7%9A%84Jenkins%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90%E7%8E%AF%E5%A2%83/" title="在Debian/Linux环境下配置C/C&#43;&#43;的Jenkins持续集成环境">在Debian/Linux环境下配置C/C&#43;&#43;的Jenkins持续集成环境</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-06-10-00-%E9%94%82%E7%94%B5%E6%B1%A0%E7%9A%84%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" title="锂电池的基础知识">锂电池的基础知识</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-06-03-00-Linux-IPC%E6%9C%BA%E5%88%B6%E4%B9%8B%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" title="Linux IPC机制之消息队列">Linux IPC机制之消息队列</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-06-01-00-%E5%9C%A8Debian%E4%B8%8B%E4%BD%BF%E7%94%A8CppCheck%E5%AF%B9C%E4%BB%A3%E7%A0%81%E8%BF%9B%E8%A1%8C%E9%9D%99%E6%80%81%E6%89%AB%E6%8F%8F/" title="在Debian/Linux下使用CppCheck对C代码进行静态扫描">在Debian/Linux下使用CppCheck对C代码进行静态扫描</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-05-26-00-%E6%B5%B7%E6%80%9D35XX%E7%B3%BB%E5%88%97HiMPP%E6%A1%86%E6%9E%B6%E5%BC%80%E5%8F%91%E5%8F%82%E8%80%83%E4%B9%8BVI%E6%A8%A1%E5%9D%97/" title="海思35XX系列HiMPP框架开发参考之VI模块">海思35XX系列HiMPP框架开发参考之VI模块</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-05-22-00-GPS%E7%9A%84NMEA%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90%E5%8F%8AGPS&#43;%E5%8C%97%E6%96%97%E5%8F%8C%E6%A8%A1%E6%A8%A1%E5%9D%97TD3020C%E4%BB%8B%E7%BB%8D/" title="GPS的NMEA数据格式解析及GPS/北斗双模模块TD3020C介绍">GPS的NMEA数据格式解析及GPS/北斗双模模块TD3020C介绍</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-05-18-00-BT601&#43;BT656&#43;BT1120%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E8%A7%A3%E6%9E%90/" title="BT601/BT656/BT1120的基本概念解析">BT601/BT656/BT1120的基本概念解析</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-05-14-00-%E6%A8%A1%E6%8B%9F%E9%AB%98%E6%B8%85%E8%A7%86%E9%A2%91%E4%BC%A0%E8%BE%93%E6%8A%80%E6%9C%AF/" title="模拟高清视频传输技术：AHD，HD-TVI，HD-CVI">模拟高清视频传输技术：AHD，HD-TVI，HD-CVI</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+<ul class="widget-list">
+    
+    <li><a href="http://www.pavelhan.tech/categories/Linux/">Linux (2)</a></li>
+    
+    <li><a href="http://www.pavelhan.tech/categories/WiFi/">WiFi (1)</a></li>
+    
+    <li><a href="http://www.pavelhan.tech/categories/%E7%A1%AC%E4%BB%B6/">硬件 (4)</a></li>
+    
+    <li><a href="http://www.pavelhan.tech/categories/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">网络安全 (1)</a></li>
+    
+    <li><a href="http://www.pavelhan.tech/categories/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/">软件工程 (2)</a></li>
+    
+    <li><a href="http://www.pavelhan.tech/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/">音视频 (3)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">标签</h3>
+<div class="tagcloud">
+    
+    <a href="http://www.pavelhan.tech/tags/AES/">AES</a>
+    
+    <a href="http://www.pavelhan.tech/tags/AHD/">AHD</a>
+    
+    <a href="http://www.pavelhan.tech/tags/BT1120/">BT1120</a>
+    
+    <a href="http://www.pavelhan.tech/tags/BT656/">BT656</a>
+    
+    <a href="http://www.pavelhan.tech/tags/CI/">CI</a>
+    
+    <a href="http://www.pavelhan.tech/tags/CppCheck/">CppCheck</a>
+    
+    <a href="http://www.pavelhan.tech/tags/GPS/">GPS</a>
+    
+    <a href="http://www.pavelhan.tech/tags/H.264/">H.264</a>
+    
+    <a href="http://www.pavelhan.tech/tags/Hi3520DV400/">Hi3520DV400</a>
+    
+    <a href="http://www.pavelhan.tech/tags/Hi3521DV100/">Hi3521DV100</a>
+    
+    <a href="http://www.pavelhan.tech/tags/IPC/">IPC</a>
+    
+    <a href="http://www.pavelhan.tech/tags/Jenkins/">Jenkins</a>
+    
+    <a href="http://www.pavelhan.tech/tags/LUKS/">LUKS</a>
+    
+    <a href="http://www.pavelhan.tech/tags/Linux/">Linux</a>
+    
+    <a href="http://www.pavelhan.tech/tags/NMEA/">NMEA</a>
+    
+    <a href="http://www.pavelhan.tech/tags/WiFi/">WiFi</a>
+    
+    <a href="http://www.pavelhan.tech/tags/debian/">debian</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E4%BD%8E%E5%8A%9F%E8%80%97/">低功耗</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E5%8A%A0%E5%AF%86/">加密</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E5%8C%97%E6%96%97/">北斗</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E6%B5%B7%E6%80%9D/">海思</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/">消息队列</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E7%94%B5%E9%87%8F%E8%AE%A1/">电量计</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">网络安全</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/">软件工程</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E9%94%82%E7%94%B5%E6%B1%A0/">锂电池</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/">音视频</a>
+    
+</div>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="http://www.pavelhan.tech/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+    <footer id="footer">
+    <div class="container">
+        &copy; 2020 <a href="http://www.pavelhan.tech">Pavel Han的博客 By Pavel Han</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
+        <a href="https://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/flysnow-org/maupassant-hugo" target="_blank">maupassant</a>.
+        
+    </div>
+</footer>
+
+
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-166241725-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+    <script src='/js/douban.js'></script>
+
+</body>
+
+</html>
