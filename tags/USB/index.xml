@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>USB on Pavel Han的博客</title>
+    <link>http://www.pavelhan.tech/tags/USB/</link>
+    <description>Recent content in USB on Pavel Han的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Fri, 24 Jul 2020 17:03:10 +0800</lastBuildDate>
+    
+	<atom:link href="http://www.pavelhan.tech/tags/USB/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>USB复合设备及UVC Profile的描述符详解</title>
+      <link>http://www.pavelhan.tech/post/2020-07-23-00-USB%E5%A4%8D%E5%90%88%E8%AE%BE%E5%A4%87%E5%8F%8AUVC-Profile%E7%9A%84%E6%8F%8F%E8%BF%B0%E7%AC%A6%E8%AF%A6%E8%A7%A3/</link>
+      <pubDate>Fri, 24 Jul 2020 17:03:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/post/2020-07-23-00-USB%E5%A4%8D%E5%90%88%E8%AE%BE%E5%A4%87%E5%8F%8AUVC-Profile%E7%9A%84%E6%8F%8F%E8%BF%B0%E7%AC%A6%E8%AF%A6%E8%A7%A3/</guid>
+      <description>USB Composite Device 所谓的USB composite device就是一个USB设备中包含有多项功能，每项功能的具体实现都包含一个或者多个相互独立的Interface，但是整个设备只有一个PID和VID。多个设备功能通过内部逻辑和接口组合的形式形成一个对外的设备。 USB Composite device可以分为两种情况： 该设备中的每个单</description>
+    </item>
+    
+  </channel>
+</rss>
