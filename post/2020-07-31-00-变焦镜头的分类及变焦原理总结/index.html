@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>变焦镜头的分类及变焦原理总结 | Pavel Han的博客</title>
+    <meta property="og:title" content="变焦镜头的分类及变焦原理总结 - Pavel Han的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2020-07-31T16:23:10&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2020-07-31T16:23:10&#43;08:00'>
+        
+    <meta name="Keywords" content="">
+    <meta name="description" content="变焦镜头的分类及变焦原理总结">
+        
+    <meta name="author" content="Pavel Han">
+    <meta property="og:url" content="http://www.pavelhan.tech/post/2020-07-31-00-%E5%8F%98%E7%84%A6%E9%95%9C%E5%A4%B4%E7%9A%84%E5%88%86%E7%B1%BB%E5%8F%8A%E5%8F%98%E7%84%A6%E5%8E%9F%E7%90%86%E6%80%BB%E7%BB%93/">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-4031353640611810",
+        enable_page_level_ads: true
+    });
+    </script>
+    
+
+
+    
+    
+        <link rel="stylesheet" href='/css/douban.css'>
+    
+        <link rel="stylesheet" href='/css/other.css'>
+    
+</head>
+
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="http://www.pavelhan.tech">
+                        Pavel Han的博客
+                    </a>
+                
+                <p class="description">专注于音视频、摄像头、消费类电子、智能硬件、物联网等行业</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="http://www.pavelhan.tech">首页</a>
+                    
+                    <a  href="http://www.pavelhan.tech/archives/" title="归档">归档</a>
+                    
+                    <a  href="http://www.pavelhan.tech/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#变焦的分类及其实现变焦的原理">变焦的分类及其实现变焦的原理</a></li>
+    <li><a href="#光学变焦镜头的工作原理">光学变焦镜头的工作原理</a></li>
+    <li><a href="#参考资料">参考资料</a></li>
+  </ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
+    <article class="post">
+        <header>
+            <h1 class="post-title">变焦镜头的分类及变焦原理总结</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2020年7月31日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='http://www.pavelhan.tech/categories/%E9%9F%B3%E8%A7%86%E9%A2%91'>音视频</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <h2 id="变焦的分类及其实现变焦的原理">变焦的分类及其实现变焦的原理</h2>
+<p>我们通常所谓的变焦能力通常可以分为光学变焦和数码变焦两种类型。两者虽然都有助于望远拍摄时放大远方物体，但是只有光学变焦可以支持图像主体成像后，让主体不但变大，同时也相对更清晰；数码变焦只能将原先的图像尺寸裁小，让图像在LCD屏幕上变得比较大，但并不会有助于使细节更清晰。</p>
+<ul>
+<li>
+<p>光学变焦（Optical Zoom）：</p>
+<ul>
+<li>依靠光学镜头的结构来实现变焦的能力，即通过镜头中镜片的移动来放大和缩小相机所拍摄的场景；</li>
+<li>光学变焦是通过镜头、物体和焦点三方的位置（主要是焦点与镜头之间的位置）发生变化而产生的。当成像面在水平方向运动的时候，视觉和焦距就会发生变化，更远的景物变得更清晰，让人感觉像物体递进的感觉。</li>
+<li>优缺点：
+<ul>
+<li>因为是利用镜头中光学玻璃透镜的移动来改变焦距，实现影像的放大和缩小，没有经过任何电子或者软件方面的放大处理，图像在放大的过程中能够始终保持最高的分辨率，清晰度不会因为图像放大而损失；</li>
+<li>必须要有专门的变焦镜头，制造成本比定焦镜头要高很多，价格也更高，而且如果要实现自动变焦的话还需要配合在相机的DSP中实现自动变焦算法，难度较大；</li>
+<li>此外，光学变焦镜头在进行长焦拍摄的时候，很容易因为身体或者手部抖动而造成拍到的图像模糊，因此一般需要固定在三脚架上使用；</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>数字变焦（Digital Zoom）</p>
+<ul>
+<li>在使用数字变焦的时候，相机中的DSP会只Crop出来图像传感器中心部分的区域，并对这部分区域的图像通过数学插值的方式进行放大，放大到图像传感器原始分辨率的大小。这样的处理方式看起来好像镜头正在对图像进行放大处理，但实际上这样的放大效果完全基于软件上的插值运算，与光学元件完全无关。 DSP从图像传感器中央区域捕获图像的区域越小，缩放效果似乎越大，但是这样的放大效果无疑会明显降低放大后的图像质量。</li>
+<li>优缺点：
+<ul>
+<li>实现简单成本低，直接在相机的DSP中进行软件算法方面的运算，不需要额外增加其他硬件设施，在只包含定焦镜头的相机中也可以使用；</li>
+<li>图像质量损失明显，清晰度会变差，对于使用高倍率数字变焦时尤其如此；</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>以下为分别使用光学变焦和数字变焦两种方式对原场景进行10X放大后的清晰度对比：</p>
+<p><img src="/images/2020-07-31-00-%E5%8F%98%E7%84%A6%E9%95%9C%E5%A4%B4%E7%9A%84%E5%88%86%E7%B1%BB%E5%8F%8A%E5%8F%98%E7%84%A6%E5%8E%9F%E7%90%86%E6%80%BB%E7%BB%93/1.jpeg" alt="1"></p>
+<p>一般相机或者手机在变焦能力的宣传上，其相机的总的变焦数为：总变焦能力=光学变焦倍数 * 数字变焦倍数。</p>
+<ul>
+<li>例如Sony F717数据相机的光学变焦倍数为5倍，数码变焦倍数为2倍，相机总的变焦倍数为10倍。</li>
+</ul>
+<h2 id="光学变焦镜头的工作原理">光学变焦镜头的工作原理</h2>
+<p>变焦镜头有许多不同的设计，但是它们都有一些共同的基本原理：</p>
+<ul>
+<li>它们都是由许多形状不同的单个透镜镜片组合而成，其中的一些镜片彼此相对移动可以改变图像的放大倍率而不改变焦点（也就是说镜头最靠近图像传感器的聚焦镜片与图像传感器之间的距离保持不变）。</li>
+</ul>
+<p>下图是一个典型的变焦镜头的非常简化的设计：</p>
+<ul>
+<li>由两个不同的镜头系统组成：变焦系统和聚焦元件。
+<ul>
+<li>变焦系统的关键元件是一个凹透镜，它可以分散光路，并且可以相对于其后方的凸透镜移动，从而将其再次聚集。</li>
+<li><strong>变焦系统的功能仅仅是控制进入透镜前部的光线的宽度或色散，从而改变放大倍数。</strong></li>
+<li>变焦系统不聚焦光线，该工作由镜头系统的后部元件即聚焦镜片部分完成，这些元件将光线聚焦到图像传感器上，从而确保了清晰的图像。</li>
+</ul>
+</li>
+</ul>
+<p>下面的两幅图演示了同一个光学变焦镜头分别设置为广角和长焦两种情况下的光路图，注意其中凹透镜所在的位置。</p>
+<ul>
+<li>广角Wide-Angle：从前部透镜进入的光纤因为前部透镜与凹透镜之间的距离比较远，所以整个光路在传输过程中聚焦，因此曝光在图像传感器上的图像整体放大倍数较小，FOV较大；</li>
+<li>长焦Telephoto： 从前部透镜进入的光纤因为前部透镜与凹透镜之间的距离比较近，经过凹透镜的散射后，只有图像的中央部分会投射在图像传感器的靶面上，因此曝光在图像传感器上的图像整体放大倍数较大，FOV较小；</li>
+</ul>
+<p><img src="/images/2020-07-31-00-%E5%8F%98%E7%84%A6%E9%95%9C%E5%A4%B4%E7%9A%84%E5%88%86%E7%B1%BB%E5%8F%8A%E5%8F%98%E7%84%A6%E5%8E%9F%E7%90%86%E6%80%BB%E7%BB%93/2.gif" alt="2"></p>
+<p><img src="/images/2020-07-31-00-%E5%8F%98%E7%84%A6%E9%95%9C%E5%A4%B4%E7%9A%84%E5%88%86%E7%B1%BB%E5%8F%8A%E5%8F%98%E7%84%A6%E5%8E%9F%E7%90%86%E6%80%BB%E7%BB%93/3.gif" alt="3"></p>
+<h2 id="参考资料">参考资料</h2>
+<ul>
+<li><a href="http://www.winvow.com/Technology/Technology50_en.html">How It Works - Zoom Lenses</a></li>
+</ul>
+
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="http://www.pavelhan.tech">Pavel Han</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="http://www.pavelhan.tech/post/2020-07-31-00-%E5%8F%98%E7%84%A6%E9%95%9C%E5%A4%B4%E7%9A%84%E5%88%86%E7%B1%BB%E5%8F%8A%E5%8F%98%E7%84%A6%E5%8E%9F%E7%90%86%E6%80%BB%E7%BB%93/">http://www.pavelhan.tech/post/2020-07-31-00-%E5%8F%98%E7%84%A6%E9%95%9C%E5%A4%B4%E7%9A%84%E5%88%86%E7%B1%BB%E5%8F%8A%E5%8F%98%E7%84%A6%E5%8E%9F%E7%90%86%E6%80%BB%E7%BB%93/</a></li>
+        <li><strong>版权声明：</strong>本作品采用<a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可，非商业转载请注明出处（作者，原文链接），商业转载请联系作者获得授权。</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='http://www.pavelhan.tech/tags/%E9%95%9C%E5%A4%B4'>镜头</a></li>
+                
+                <li><a href='http://www.pavelhan.tech/tags/%E5%8F%98%E7%84%A6'>变焦</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+</div>
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='http://www.pavelhan.tech/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="http://www.pavelhan.tech">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-07-31-00-%E5%8F%98%E7%84%A6%E9%95%9C%E5%A4%B4%E7%9A%84%E5%88%86%E7%B1%BB%E5%8F%8A%E5%8F%98%E7%84%A6%E5%8E%9F%E7%90%86%E6%80%BB%E7%BB%93/" title="变焦镜头的分类及变焦原理总结">变焦镜头的分类及变焦原理总结</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-07-23-00-USB%E5%A4%8D%E5%90%88%E8%AE%BE%E5%A4%87%E5%8F%8AUVC-Profile%E7%9A%84%E6%8F%8F%E8%BF%B0%E7%AC%A6%E8%AF%A6%E8%A7%A3/" title="USB复合设备及UVC Profile的描述符详解">USB复合设备及UVC Profile的描述符详解</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-07-07-00-Linux%E7%9A%84%E7%A3%81%E7%9B%98%E5%8A%A0%E5%AF%86%E6%8A%80%E6%9C%AFLUKS/" title="Linux的磁盘加密技术LUKS">Linux的磁盘加密技术LUKS</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-06-22-00-TI%E7%9A%84%E7%94%B5%E9%87%8F%E8%B7%9F%E8%B8%AA%E6%8A%80%E6%9C%AFImpedance-Track%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/" title="TI的电量跟踪技术Impedance Track学习总结">TI的电量跟踪技术Impedance Track学习总结</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-06-19-00-%E5%9C%A8Debian%E4%B8%8B%E9%85%8D%E7%BD%AEC&#43;&#43;%E7%9A%84Jenkins%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90%E7%8E%AF%E5%A2%83/" title="在Debian/Linux环境下配置C/C&#43;&#43;的Jenkins持续集成环境">在Debian/Linux环境下配置C/C&#43;&#43;的Jenkins持续集成环境</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-06-10-00-%E9%94%82%E7%94%B5%E6%B1%A0%E7%9A%84%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" title="锂电池的基础知识">锂电池的基础知识</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-06-03-00-Linux-IPC%E6%9C%BA%E5%88%B6%E4%B9%8B%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" title="Linux IPC机制之消息队列">Linux IPC机制之消息队列</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-06-01-00-%E5%9C%A8Debian%E4%B8%8B%E4%BD%BF%E7%94%A8CppCheck%E5%AF%B9C%E4%BB%A3%E7%A0%81%E8%BF%9B%E8%A1%8C%E9%9D%99%E6%80%81%E6%89%AB%E6%8F%8F/" title="在Debian/Linux下使用CppCheck对C代码进行静态扫描">在Debian/Linux下使用CppCheck对C代码进行静态扫描</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-05-26-00-%E6%B5%B7%E6%80%9D35XX%E7%B3%BB%E5%88%97HiMPP%E6%A1%86%E6%9E%B6%E5%BC%80%E5%8F%91%E5%8F%82%E8%80%83%E4%B9%8BVI%E6%A8%A1%E5%9D%97/" title="海思35XX系列HiMPP框架开发参考之VI模块">海思35XX系列HiMPP框架开发参考之VI模块</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-05-22-00-GPS%E7%9A%84NMEA%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90%E5%8F%8AGPS&#43;%E5%8C%97%E6%96%97%E5%8F%8C%E6%A8%A1%E6%A8%A1%E5%9D%97TD3020C%E4%BB%8B%E7%BB%8D/" title="GPS的NMEA数据格式解析及GPS/北斗双模模块TD3020C介绍">GPS的NMEA数据格式解析及GPS/北斗双模模块TD3020C介绍</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+<ul class="widget-list">
+    
+    <li><a href="http://www.pavelhan.tech/categories/Linux/">Linux (2)</a></li>
+    
+    <li><a href="http://www.pavelhan.tech/categories/WiFi/">WiFi (1)</a></li>
+    
+    <li><a href="http://www.pavelhan.tech/categories/%E7%A1%AC%E4%BB%B6/">硬件 (5)</a></li>
+    
+    <li><a href="http://www.pavelhan.tech/categories/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">网络安全 (1)</a></li>
+    
+    <li><a href="http://www.pavelhan.tech/categories/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/">软件工程 (2)</a></li>
+    
+    <li><a href="http://www.pavelhan.tech/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/">音视频 (4)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">标签</h3>
+<div class="tagcloud">
+    
+    <a href="http://www.pavelhan.tech/tags/AES/">AES</a>
+    
+    <a href="http://www.pavelhan.tech/tags/AHD/">AHD</a>
+    
+    <a href="http://www.pavelhan.tech/tags/BT1120/">BT1120</a>
+    
+    <a href="http://www.pavelhan.tech/tags/BT656/">BT656</a>
+    
+    <a href="http://www.pavelhan.tech/tags/CI/">CI</a>
+    
+    <a href="http://www.pavelhan.tech/tags/CppCheck/">CppCheck</a>
+    
+    <a href="http://www.pavelhan.tech/tags/GPS/">GPS</a>
+    
+    <a href="http://www.pavelhan.tech/tags/H.264/">H.264</a>
+    
+    <a href="http://www.pavelhan.tech/tags/Hi3520DV400/">Hi3520DV400</a>
+    
+    <a href="http://www.pavelhan.tech/tags/Hi3521DV100/">Hi3521DV100</a>
+    
+    <a href="http://www.pavelhan.tech/tags/IAD/">IAD</a>
+    
+    <a href="http://www.pavelhan.tech/tags/IPC/">IPC</a>
+    
+    <a href="http://www.pavelhan.tech/tags/Jenkins/">Jenkins</a>
+    
+    <a href="http://www.pavelhan.tech/tags/LUKS/">LUKS</a>
+    
+    <a href="http://www.pavelhan.tech/tags/Linux/">Linux</a>
+    
+    <a href="http://www.pavelhan.tech/tags/NMEA/">NMEA</a>
+    
+    <a href="http://www.pavelhan.tech/tags/USB/">USB</a>
+    
+    <a href="http://www.pavelhan.tech/tags/UVC/">UVC</a>
+    
+    <a href="http://www.pavelhan.tech/tags/WiFi/">WiFi</a>
+    
+    <a href="http://www.pavelhan.tech/tags/debian/">debian</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E4%BD%8E%E5%8A%9F%E8%80%97/">低功耗</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E5%8A%A0%E5%AF%86/">加密</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E5%8C%97%E6%96%97/">北斗</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E5%8F%98%E7%84%A6/">变焦</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E6%B5%B7%E6%80%9D/">海思</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/">消息队列</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E7%94%B5%E9%87%8F%E8%AE%A1/">电量计</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">网络安全</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/">软件工程</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E9%94%82%E7%94%B5%E6%B1%A0/">锂电池</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E9%95%9C%E5%A4%B4/">镜头</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/">音视频</a>
+    
+</div>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="http://www.pavelhan.tech/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+    <footer id="footer">
+    <div class="container">
+        &copy; 2020 <a href="http://www.pavelhan.tech">Pavel Han的博客 By Pavel Han</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
+        <a href="https://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/flysnow-org/maupassant-hugo" target="_blank">maupassant</a>.
+        
+    </div>
+</footer>
+
+
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-166241725-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+    <script src='/js/douban.js'></script>
+
+</body>
+
+</html>

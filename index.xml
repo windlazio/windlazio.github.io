@@ -12,6 +12,15 @@
     
     
     <item>
+      <title>变焦镜头的分类及变焦原理总结</title>
+      <link>http://www.pavelhan.tech/post/2020-07-31-00-%E5%8F%98%E7%84%A6%E9%95%9C%E5%A4%B4%E7%9A%84%E5%88%86%E7%B1%BB%E5%8F%8A%E5%8F%98%E7%84%A6%E5%8E%9F%E7%90%86%E6%80%BB%E7%BB%93/</link>
+      <pubDate>Fri, 31 Jul 2020 16:23:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/post/2020-07-31-00-%E5%8F%98%E7%84%A6%E9%95%9C%E5%A4%B4%E7%9A%84%E5%88%86%E7%B1%BB%E5%8F%8A%E5%8F%98%E7%84%A6%E5%8E%9F%E7%90%86%E6%80%BB%E7%BB%93/</guid>
+      <description>变焦的分类及其实现变焦的原理 我们通常所谓的变焦能力通常可以分为光学变焦和数码变焦两种类型。两者虽然都有助于望远拍摄时放大远方物体，但是只有光学变焦可以支持图像主体成像后，让主体不但变大，同时也相对更清晰；数码变焦只能将原先的图像尺寸裁小，让图像在LCD屏幕上变得比较大，但并不会有</description>
+    </item>
+    
+    <item>
       <title>USB复合设备及UVC Profile的描述符详解</title>
       <link>http://www.pavelhan.tech/post/2020-07-23-00-USB%E5%A4%8D%E5%90%88%E8%AE%BE%E5%A4%87%E5%8F%8AUVC-Profile%E7%9A%84%E6%8F%8F%E8%BF%B0%E7%AC%A6%E8%AF%A6%E8%A7%A3/</link>
       <pubDate>Fri, 24 Jul 2020 17:03:10 +0800</pubDate>
