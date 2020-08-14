@@ -6,10 +6,19 @@
     <description>Recent content in 镜头 on Pavel Han的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Fri, 31 Jul 2020 16:23:10 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 07 Aug 2020 14:23:10 +0800</lastBuildDate>
     
 	<atom:link href="http://www.pavelhan.tech/tags/%E9%95%9C%E5%A4%B4/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>AF自动对焦算法及PDAF工作原理总结</title>
+      <link>http://www.pavelhan.tech/post/2020-08-07-00-AF%E8%87%AA%E5%8A%A8%E5%AF%B9%E7%84%A6%E7%AE%97%E6%B3%95%E5%8F%8APDAF%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E6%80%BB%E7%BB%93/</link>
+      <pubDate>Fri, 07 Aug 2020 14:23:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/post/2020-08-07-00-AF%E8%87%AA%E5%8A%A8%E5%AF%B9%E7%84%A6%E7%AE%97%E6%B3%95%E5%8F%8APDAF%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E6%80%BB%E7%BB%93/</guid>
+      <description>AF自动对焦算法的定义及基本分类 AF：Auto Focus，自动对焦。 自动对焦的基本定义：相机上的图像传感器接收到物体反射的光，根据相机内部的计算与处理，然后由电动对焦装置对镜头进行的对焦操作。 基于自动对焦流程中是否需要相机主动向被拍摄的景物发射，自动对焦算法从大体上可以分为主动式</description>
+    </item>
     
     <item>
       <title>变焦镜头的分类及变焦原理总结</title>

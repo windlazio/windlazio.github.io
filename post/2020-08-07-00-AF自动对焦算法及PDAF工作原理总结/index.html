@@ -6,20 +6,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>变焦镜头的分类及变焦原理总结 | Pavel Han的博客</title>
-    <meta property="og:title" content="变焦镜头的分类及变焦原理总结 - Pavel Han的博客">
+    <title>AF自动对焦算法及PDAF工作原理总结 | Pavel Han的博客</title>
+    <meta property="og:title" content="AF自动对焦算法及PDAF工作原理总结 - Pavel Han的博客">
     <meta property="og:type" content="article">
         
-    <meta property="article:published_time" content='2020-07-31T16:23:10&#43;08:00'>
+    <meta property="article:published_time" content='2020-08-07T14:23:10&#43;08:00'>
         
         
-    <meta property="article:modified_time" content='2020-07-31T16:23:10&#43;08:00'>
+    <meta property="article:modified_time" content='2020-08-07T14:23:10&#43;08:00'>
         
     <meta name="Keywords" content="">
-    <meta name="description" content="变焦镜头的分类及变焦原理总结">
+    <meta name="description" content="AF自动对焦算法及PDAF工作原理总结">
         
     <meta name="author" content="Pavel Han">
-    <meta property="og:url" content="http://www.pavelhan.tech/post/2020-07-31-00-%E5%8F%98%E7%84%A6%E9%95%9C%E5%A4%B4%E7%9A%84%E5%88%86%E7%B1%BB%E5%8F%8A%E5%8F%98%E7%84%A6%E5%8E%9F%E7%90%86%E6%80%BB%E7%BB%93/">
+    <meta property="og:url" content="http://www.pavelhan.tech/post/2020-08-07-00-AF%E8%87%AA%E5%8A%A8%E5%AF%B9%E7%84%A6%E7%AE%97%E6%B3%95%E5%8F%8APDAF%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E6%80%BB%E7%BB%93/">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 
     <link rel="stylesheet" href='/css/normalize.css'>
@@ -145,8 +145,9 @@
     <div class="post-toc-content">
         <nav id="TableOfContents">
   <ul>
-    <li><a href="#变焦的分类及其实现变焦的原理">变焦的分类及其实现变焦的原理</a></li>
-    <li><a href="#光学变焦镜头的工作原理">光学变焦镜头的工作原理</a></li>
+    <li><a href="#af自动对焦算法的定义及基本分类">AF自动对焦算法的定义及基本分类</a></li>
+    <li><a href="#基于对比度检测的af算法">基于对比度检测的AF算法</a></li>
+    <li><a href="#基于pdaf的af算法">基于PDAF的AF算法</a></li>
     <li><a href="#参考资料">参考资料</a></li>
   </ul>
 </nav>
@@ -181,10 +182,10 @@
 </script>
     <article class="post">
         <header>
-            <h1 class="post-title">变焦镜头的分类及变焦原理总结</h1>
+            <h1 class="post-title">AF自动对焦算法及PDAF工作原理总结</h1>
         </header>
         <date class="post-meta meta-date">
-            2020年7月31日
+            2020年8月7日
         </date>
         
         <div class="post-meta">
@@ -202,67 +203,96 @@
         
         
         <div class="post-content">
-            <h2 id="变焦的分类及其实现变焦的原理">变焦的分类及其实现变焦的原理</h2>
-<p>我们通常所谓的变焦能力通常可以分为光学变焦和数码变焦两种类型。两者虽然都有助于望远拍摄时放大远方物体，但是只有光学变焦可以支持图像主体成像后，让主体不但变大，同时也相对更清晰；数码变焦只能将原先的图像尺寸裁小，让图像在LCD屏幕上变得比较大，但并不会有助于使细节更清晰。</p>
+            <h2 id="af自动对焦算法的定义及基本分类">AF自动对焦算法的定义及基本分类</h2>
 <ul>
 <li>
-<p>光学变焦（Optical Zoom）：</p>
+<p>AF：Auto Focus，自动对焦。</p>
+</li>
+<li>
+<p>自动对焦的基本定义：相机上的图像传感器接收到物体反射的光，根据相机内部的计算与处理，然后由电动对焦装置对镜头进行的对焦操作。</p>
+</li>
+<li>
+<p>基于自动对焦流程中是否需要相机主动向被拍摄的景物发射，自动对焦算法从大体上可以分为主动式和被动式。</p>
 <ul>
-<li>依靠光学镜头的结构来实现变焦的能力，即通过镜头中镜片的移动来放大和缩小相机所拍摄的场景；</li>
-<li>光学变焦是通过镜头、物体和焦点三方的位置（主要是焦点与镜头之间的位置）发生变化而产生的。当成像面在水平方向运动的时候，视觉和焦距就会发生变化，更远的景物变得更清晰，让人感觉像物体递进的感觉。</li>
-<li>优缺点：
+<li><strong>主动式对焦：主动式需要发射光源，然后接受反射回波，进行测距，然后对焦（也就是说对焦的时候需要镜头模组这边主动发射光线并测量这个光线的回波来辅助对焦）</strong>。
 <ul>
-<li>因为是利用镜头中光学玻璃透镜的移动来改变焦距，实现影像的放大和缩小，没有经过任何电子或者软件方面的放大处理，图像在放大的过程中能够始终保持最高的分辨率，清晰度不会因为图像放大而损失；</li>
-<li>必须要有专门的变焦镜头，制造成本比定焦镜头要高很多，价格也更高，而且如果要实现自动变焦的话还需要配合在相机的DSP中实现自动变焦算法，难度较大；</li>
-<li>此外，光学变焦镜头在进行长焦拍摄的时候，很容易因为身体或者手部抖动而造成拍到的图像模糊，因此一般需要固定在三脚架上使用；</li>
+<li>典型的主动式对焦方案包括激光对焦（Laser AF）和红外对焦（Infrared AF），激光对焦的工作原理就是在对焦的时候专门有一个激光发射头向被拍摄的对象发射激光，然后通过这个激光来测量被拍摄对象的距离，计算应该把镜头调节到什么位置。</li>
+</ul>
+</li>
+<li><strong>被动式对焦：被动式不需要额外的光源，光学系统仅接收被摄物体自身的反光进行检测和计算，得出镜头移动的位置（不需要镜头模组这边发射光线，单纯依赖于被拍摄物体反射的光线进行对焦计算）；</strong>
+<ul>
+<li>常见的被动式对焦策略有contrast AF（反差对焦）和PDAF（Phase Detection Auto Focus，相位检测自动对焦）两种。</li>
 </ul>
 </li>
 </ul>
 </li>
 <li>
-<p>数字变焦（Digital Zoom）</p>
+<p>从以上定义可以看出来，对于当前市场上通用的camera产品以及手机上的相机而言，绝大多数情况下应该都是被动式对焦。其中PDAF对焦策略更是因为对焦速度快是目前市场上的热点应用方向。</p>
+</li>
+</ul>
+<h2 id="基于对比度检测的af算法">基于对比度检测的AF算法</h2>
 <ul>
-<li>在使用数字变焦的时候，相机中的DSP会只Crop出来图像传感器中心部分的区域，并对这部分区域的图像通过数学插值的方式进行放大，放大到图像传感器原始分辨率的大小。这样的处理方式看起来好像镜头正在对图像进行放大处理，但实际上这样的放大效果完全基于软件上的插值运算，与光学元件完全无关。 DSP从图像传感器中央区域捕获图像的区域越小，缩放效果似乎越大，但是这样的放大效果无疑会明显降低放大后的图像质量。</li>
+<li>
+<p>Contrast AF对焦（或 Contrast Detection Auto Focus，CDAF），主要是通过相机对镜头的来回调整过程中，检出最高对比度所在，即为判定合焦。</p>
+<ul>
+<li>其基本原理是：一般而言，在相机的镜头调节到最佳位置的时候，图像整体的对比度越高，这个时候图像中物体的边缘最锐利。因此通过来回调节镜头的位置，并实时计算图像整体的对比度，当图像的对比度最高的时候，就是相机镜头合焦的位置。</li>
+</ul>
+</li>
+<li>
+<p>基于对比度AF的整体对焦过程：基于对比度或者反差度的对焦，就是在对焦的过程中，sensor不断对被拍摄的物体成像，处理器基于采集的图像计算出来这幅图像的对比度或者反差度（实际上就是这个图像中亮度相差的程度，越清晰亮度的差距会越大），对比度越大说明焦距越清晰。但是一定有一个阶段对比度会出现下降的情况（这个时候就表示镜头调过了），这个时候就需要把镜头往回调。因此<strong>整个的这个过程中因为会采集多幅图像不断计算，而且还势必会出现调过头之后往回调的问题，整个调焦的过程速度肯定是比较慢的，这就是这种调焦方式最大的问题。</strong></p>
+</li>
+<li>
+<p>整个对焦的工作过程如下图所示：</p>
+</li>
+</ul>
+<p><img src="/images/2020-08-07-00-AF%E8%87%AA%E5%8A%A8%E5%AF%B9%E7%84%A6%E7%AE%97%E6%B3%95%E5%8F%8APDAF%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E6%80%BB%E7%BB%93/1.png" alt="1"></p>
+<ul>
 <li>优缺点：
 <ul>
-<li>实现简单成本低，直接在相机的DSP中进行软件算法方面的运算，不需要额外增加其他硬件设施，在只包含定焦镜头的相机中也可以使用；</li>
-<li>图像质量损失明显，清晰度会变差，对于使用高倍率数字变焦时尤其如此；</li>
+<li>不需要其他额外的硬件元器件辅助，方案实现成本更低，系统更容易实现；调焦效果很好；</li>
+<li>如以上所述，因为需要驱动镜头透镜来回移动找到最佳的合焦点，因此对焦需要的时间较长（大致需要1s）；在光线较差的环境中对焦效果不好，因为这个时候环境整体的对比度差异不明显；因为对焦速度很慢，因此不适合对运动中的物体进行跟踪对焦。</li>
+</ul>
+</li>
+</ul>
+<h2 id="基于pdaf的af算法">基于PDAF的AF算法</h2>
+<ul>
+<li>PDAF：Phase Detection Auto Focus，基于相位检测的自动对焦方案。</li>
+<li>PDAF对焦方案的实施需要依赖于使用专门的PDAF Sensor。这种Sensor中包含有一些<strong>成对出现</strong>的PD Pixel（一般一个Sensor上包含的PD Pixel的数量占到总像素数的5%-10%），这些成对出现的PD Pixel通过专门的布置排列就类似于人的左眼和右眼：</li>
+</ul>
+<p><img src="/images/2020-08-07-00-AF%E8%87%AA%E5%8A%A8%E5%AF%B9%E7%84%A6%E7%AE%97%E6%B3%95%E5%8F%8APDAF%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E6%80%BB%E7%BB%93/2.png" alt="2"></p>
+<p><img src="/images/2020-08-07-00-AF%E8%87%AA%E5%8A%A8%E5%AF%B9%E7%84%A6%E7%AE%97%E6%B3%95%E5%8F%8APDAF%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E6%80%BB%E7%BB%93/3.jpg" alt="3"></p>
+<ul>
+<li>PDAF对焦，是在感光元件上预留出PDAF像素点，这些PDAF像素点专门用来辅助进行相位检测，通过相位差计算出对焦的偏移值从而实现准确对焦。相比反差对焦，相位对焦不需要镜头的反复移动，对焦速度肯定会更快。
+<ul>
+<li>经过这些在Image Sensor上精心排列和布置的PDAF像素点在进行对焦的过程中会产生实时的left looking和right looking两幅图像，所谓的相位差的计算就是通过对这两幅图像中的数据进行数学运算所得出的结果，然后根据以上相位差的计算结果查表判断镜头的移动方向和距离。</li>
+</ul>
+</li>
+</ul>
+<p><img src="/images/2020-08-07-00-AF%E8%87%AA%E5%8A%A8%E5%AF%B9%E7%84%A6%E7%AE%97%E6%B3%95%E5%8F%8APDAF%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E6%80%BB%E7%BB%93/4.png" alt="4"></p>
+<ul>
+<li>
+<p>要实现PDAF对焦的功能：首先需要图像传感器也就是CIS本身要支持PDAF，其次摄像头需要校准不同距离下相位数据，这份数据主要是得到相位差和物距的对应关系。手机拍照可得到相位差信息，相位差信息根据内部校准数据，得到镜头当前位置并计算出需要移动的方向和距离。</p>
+<ul>
+<li>也就是说需要提前校准好物距与镜头位置、相位差这三者之间的关系，在实际的应用中，通过PDAF sesnor出来的图像可以得到相位差，然后根据这个相位差去查物距和镜头位置的表，得到镜头位置应该调节的距离，然后控制电动镜头移动到指定的位置。</li>
+</ul>
+</li>
+<li>
+<p>优缺点：</p>
+<ul>
+<li>相对比基于对比度的自动对焦方案，对焦速度更快，可以在0.3s的时间里完成对焦过程；因为对焦速度较快，因此可以用于对运动物体进行连续跟踪对焦的应用场景；</li>
+<li>与基于对比度的自动对焦方案相同，在弱光线环境下对焦效果不佳；需要使用专门的PDAF图像传感器，成本较高，一般只用于高端的消费类相机和手机中；
+<ul>
+<li>被动对焦的方案都不太适合与弱光环境下的对焦，因此针对这种应用场景，要么需要在弱光环境下使用闪光灯辅助补光来实现对焦的过程，要么就需要借助于红外或者激光等类型主动对焦方案。</li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
-<p>以下为分别使用光学变焦和数字变焦两种方式对原场景进行10X放大后的清晰度对比：</p>
-<p><img src="/images/2020-07-31-00-%E5%8F%98%E7%84%A6%E9%95%9C%E5%A4%B4%E7%9A%84%E5%88%86%E7%B1%BB%E5%8F%8A%E5%8F%98%E7%84%A6%E5%8E%9F%E7%90%86%E6%80%BB%E7%BB%93/1.jpeg" alt="1"></p>
-<p>一般相机或者手机在变焦能力的宣传上，其相机的总的变焦数为：总变焦能力=光学变焦倍数 * 数字变焦倍数。</p>
-<ul>
-<li>例如Sony F717数据相机的光学变焦倍数为5倍，数码变焦倍数为2倍，相机总的变焦倍数为10倍。</li>
-</ul>
-<h2 id="光学变焦镜头的工作原理">光学变焦镜头的工作原理</h2>
-<p>变焦镜头有许多不同的设计，但是它们都有一些共同的基本原理：</p>
-<ul>
-<li>它们都是由许多形状不同的单个透镜镜片组合而成，其中的一些镜片彼此相对移动可以改变图像的放大倍率而不改变焦点（也就是说镜头最靠近图像传感器的聚焦镜片与图像传感器之间的距离保持不变）。</li>
-</ul>
-<p>下图是一个典型的变焦镜头的非常简化的设计：</p>
-<ul>
-<li>由两个不同的镜头系统组成：变焦系统和聚焦元件。
-<ul>
-<li>变焦系统的关键元件是一个凹透镜，它可以分散光路，并且可以相对于其后方的凸透镜移动，从而将其再次聚集。</li>
-<li><strong>变焦系统的功能仅仅是控制进入透镜前部的光线的宽度或色散，从而改变放大倍数。</strong></li>
-<li>变焦系统不聚焦光线，该工作由镜头系统的后部元件即聚焦镜片部分完成，这些元件将光线聚焦到图像传感器上，从而确保了清晰的图像。</li>
-</ul>
-</li>
-</ul>
-<p>下面的两幅图演示了同一个光学变焦镜头分别设置为广角和长焦两种情况下的光路图，注意其中凹透镜所在的位置。</p>
-<ul>
-<li>广角Wide-Angle：从前部透镜进入的光纤因为前部透镜与凹透镜之间的距离比较远，所以整个光路在传输过程中聚焦，因此曝光在图像传感器上的图像整体放大倍数较小，FOV较大；</li>
-<li>长焦Telephoto： 从前部透镜进入的光纤因为前部透镜与凹透镜之间的距离比较近，经过凹透镜的散射后，只有图像的中央部分会投射在图像传感器的靶面上，因此曝光在图像传感器上的图像整体放大倍数较大，FOV较小；</li>
-</ul>
-<p><img src="/images/2020-07-31-00-%E5%8F%98%E7%84%A6%E9%95%9C%E5%A4%B4%E7%9A%84%E5%88%86%E7%B1%BB%E5%8F%8A%E5%8F%98%E7%84%A6%E5%8E%9F%E7%90%86%E6%80%BB%E7%BB%93/2.gif" alt="2"></p>
-<p><img src="/images/2020-07-31-00-%E5%8F%98%E7%84%A6%E9%95%9C%E5%A4%B4%E7%9A%84%E5%88%86%E7%B1%BB%E5%8F%8A%E5%8F%98%E7%84%A6%E5%8E%9F%E7%90%86%E6%80%BB%E7%BB%93/3.gif" alt="3"></p>
 <h2 id="参考资料">参考资料</h2>
 <ul>
-<li><a href="http://www.winvow.com/Technology/Technology50_en.html">How It Works - Zoom Lenses</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Autofocus">Autofocus</a></li>
+<li><a href="https://www.msigeek.com/11171/pdaf-technology-helps-cameras-focus-fast">How PDAF Technology helps Cameras to focus fast</a></li>
+<li><a href="https://www.giffgaff.com/blog/how-does-auto-focus-work-on-your-smartphone/">How does autofocus work on your smartphone?</a></li>
 </ul>
 
         </div>
@@ -271,7 +301,7 @@
 <div class="post-archive">
     <ul class="post-copyright">
         <li><strong>原文作者：</strong><a rel="author" href="http://www.pavelhan.tech">Pavel Han</a></li>
-        <li style="word-break:break-all"><strong>原文链接：</strong><a href="http://www.pavelhan.tech/post/2020-07-31-00-%E5%8F%98%E7%84%A6%E9%95%9C%E5%A4%B4%E7%9A%84%E5%88%86%E7%B1%BB%E5%8F%8A%E5%8F%98%E7%84%A6%E5%8E%9F%E7%90%86%E6%80%BB%E7%BB%93/">http://www.pavelhan.tech/post/2020-07-31-00-%E5%8F%98%E7%84%A6%E9%95%9C%E5%A4%B4%E7%9A%84%E5%88%86%E7%B1%BB%E5%8F%8A%E5%8F%98%E7%84%A6%E5%8E%9F%E7%90%86%E6%80%BB%E7%BB%93/</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="http://www.pavelhan.tech/post/2020-08-07-00-AF%E8%87%AA%E5%8A%A8%E5%AF%B9%E7%84%A6%E7%AE%97%E6%B3%95%E5%8F%8APDAF%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E6%80%BB%E7%BB%93/">http://www.pavelhan.tech/post/2020-08-07-00-AF%E8%87%AA%E5%8A%A8%E5%AF%B9%E7%84%A6%E7%AE%97%E6%B3%95%E5%8F%8APDAF%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E6%80%BB%E7%BB%93/</a></li>
         <li><strong>版权声明：</strong>本作品采用<a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可，非商业转载请注明出处（作者，原文链接），商业转载请联系作者获得授权。</li>
     </ul>
 </div>
@@ -281,6 +311,15 @@
 
         
 
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/post/2020-07-31-00-%E5%8F%98%E7%84%A6%E9%95%9C%E5%A4%B4%E7%9A%84%E5%88%86%E7%B1%BB%E5%8F%8A%E5%8F%98%E7%84%A6%E5%8E%9F%E7%90%86%E6%80%BB%E7%BB%93/">变焦镜头的分类及变焦原理总结</a></li>
+        
+    </ul>
+</div>
+
 
         <div class="post-meta meta-tags">
             
@@ -289,6 +328,8 @@
                 <li><a href='http://www.pavelhan.tech/tags/%E9%95%9C%E5%A4%B4'>镜头</a></li>
                 
                 <li><a href='http://www.pavelhan.tech/tags/%E5%8F%98%E7%84%A6'>变焦</a></li>
+                
+                <li><a href='http://www.pavelhan.tech/tags/PDAF'>PDAF</a></li>
                 
             </ul>
             

@@ -6,15 +6,24 @@
     <description>Recent content in Tags on Pavel Han的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Fri, 31 Jul 2020 16:23:10 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 07 Aug 2020 14:23:10 +0800</lastBuildDate>
     
 	<atom:link href="http://www.pavelhan.tech/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>PDAF</title>
+      <link>http://www.pavelhan.tech/tags/PDAF/</link>
+      <pubDate>Fri, 07 Aug 2020 14:23:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/tags/PDAF/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>变焦</title>
       <link>http://www.pavelhan.tech/tags/%E5%8F%98%E7%84%A6/</link>
-      <pubDate>Fri, 31 Jul 2020 16:23:10 +0800</pubDate>
+      <pubDate>Fri, 07 Aug 2020 14:23:10 +0800</pubDate>
       
       <guid>http://www.pavelhan.tech/tags/%E5%8F%98%E7%84%A6/</guid>
       <description></description>
@@ -23,7 +32,7 @@
     <item>
       <title>镜头</title>
       <link>http://www.pavelhan.tech/tags/%E9%95%9C%E5%A4%B4/</link>
-      <pubDate>Fri, 31 Jul 2020 16:23:10 +0800</pubDate>
+      <pubDate>Fri, 07 Aug 2020 14:23:10 +0800</pubDate>
       
       <guid>http://www.pavelhan.tech/tags/%E9%95%9C%E5%A4%B4/</guid>
       <description></description>
