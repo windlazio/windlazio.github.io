@@ -1,0 +1,856 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>QT5.9.8版本在海思3521平台上的移植 | Pavel Han的博客</title>
+    <meta property="og:title" content="QT5.9.8版本在海思3521平台上的移植 - Pavel Han的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2020-09-15T11:02:10&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2020-09-15T11:02:10&#43;08:00'>
+        
+    <meta name="Keywords" content="">
+    <meta name="description" content="QT5.9.8版本在海思3521平台上的移植">
+        
+    <meta name="author" content="Pavel Han">
+    <meta property="og:url" content="http://www.pavelhan.tech/post/2020-09-15-00-QT5.9.8%E7%89%88%E6%9C%AC%E5%9C%A8%E6%B5%B7%E6%80%9D3521%E5%B9%B3%E5%8F%B0%E4%B8%8A%E7%9A%84%E7%A7%BB%E6%A4%8D/">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-4031353640611810",
+        enable_page_level_ads: true
+    });
+    </script>
+    
+
+
+    
+    
+        <link rel="stylesheet" href='/css/douban.css'>
+    
+        <link rel="stylesheet" href='/css/other.css'>
+    
+</head>
+
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="http://www.pavelhan.tech">
+                        Pavel Han的博客
+                    </a>
+                
+                <p class="description">专注于音视频、摄像头、消费类电子、智能硬件、物联网等行业</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="http://www.pavelhan.tech">首页</a>
+                    
+                    <a  href="http://www.pavelhan.tech/archives/" title="归档">归档</a>
+                    
+                    <a  href="http://www.pavelhan.tech/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#qt源码的下载及交叉编译工具的准备">QT源码的下载及交叉编译工具的准备</a></li>
+    <li><a href="#修改qt的mkspecs">修改QT的mkspecs</a></li>
+    <li><a href="#交叉编译配置脚本">交叉编译配置脚本</a></li>
+    <li><a href="#交叉编译流程及其问题的解决">交叉编译流程及其问题的解决</a></li>
+  </ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
+    <article class="post">
+        <header>
+            <h1 class="post-title">QT5.9.8版本在海思3521平台上的移植</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2020年9月15日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='http://www.pavelhan.tech/categories/%E9%9F%B3%E8%A7%86%E9%A2%91'>音视频</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <h2 id="qt源码的下载及交叉编译工具的准备">QT源码的下载及交叉编译工具的准备</h2>
+<ul>
+<li>QT源码的下载地址：https://download.qt.io/archive/qt/5.9/5.9.8/single/qt-everywhere-opensource-src-5.9.8.tar.xz；</li>
+<li>交叉编译工具：
+<ul>
+<li>交叉编译工具使用的是海思3521 SDK带的arm-hisiv500-linux交叉编译工具链，这个交叉编译工具链的sysyroot位置为：x86-arm/arm-hisiv500-linux/target，这一点在QT的configure中需要用到；</li>
+</ul>
+</li>
+</ul>
+<h2 id="修改qt的mkspecs">修改QT的mkspecs</h2>
+<p>针对我们要进行的海思3521平台的QT编译，在QT源码根目录中，进入qtbase/mkspecs子目录中，从linux-arm-gnueabi-g++目录上拷贝重命名一个hisi3521-linux-gnueabi-g++目录，并修改其中的qmake.conf文件如下：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">#
+<span style="color:#998;font-style:italic"># qmake configuration for building with arm-linux-gnueabi-g++</span>
+#
+
+<span style="color:#008080">MAKEFILE_GENERATOR</span>      <span style="color:#000;font-weight:bold">=</span> UNIX
+<span style="color:#008080">CONFIG</span>                 <span style="color:#000;font-weight:bold">+=</span> incremental
+<span style="color:#008080">QMAKE_INCREMENTAL_STYLE</span> <span style="color:#000;font-weight:bold">=</span> sublib
+
+<span style="color:#008080">QT_QPA_DEFAULT_PLATFORM</span> <span style="color:#000;font-weight:bold">=</span> linuxfb
+<span style="color:#008080">QMAKE_CFLAGS_RELEASE</span> <span style="color:#000;font-weight:bold">+=</span> -O2 -march<span style="color:#000;font-weight:bold">=</span>armv7-a
+<span style="color:#008080">QMAKE_CXXFLAGS_RELEASE</span> <span style="color:#000;font-weight:bold">+=</span> -O2 -march<span style="color:#000;font-weight:bold">=</span>armv7-a
+
+include<span style="color:#000;font-weight:bold">(</span>../common/linux.conf<span style="color:#000;font-weight:bold">)</span>
+include<span style="color:#000;font-weight:bold">(</span>../common/gcc-base-unix.conf<span style="color:#000;font-weight:bold">)</span>
+include<span style="color:#000;font-weight:bold">(</span>../common/g++-unix.conf<span style="color:#000;font-weight:bold">)</span>
+
+<span style="color:#998;font-style:italic"># modifications to g++.conf</span>
+<span style="color:#008080">QMAKE_CC</span>                <span style="color:#000;font-weight:bold">=</span> arm-hisiv500-linux-uclibcgnueabi-gcc
+<span style="color:#008080">QMAKE_CXX</span>               <span style="color:#000;font-weight:bold">=</span> arm-hisiv500-linux-uclibcgnueabi-g++
+<span style="color:#008080">QMAKE_LINK</span>              <span style="color:#000;font-weight:bold">=</span> arm-hisiv500-linux-uclibcgnueabi-g++
+<span style="color:#008080">QMAKE_LINK_SHLIB</span>        <span style="color:#000;font-weight:bold">=</span> arm-hisiv500-linux-uclibcgnueabi-g++
+<span style="color:#008080">QMAKE_CFLAGS</span> <span style="color:#000;font-weight:bold">+=</span>-DEGL_FBDEV -std<span style="color:#000;font-weight:bold">=</span>c++11
+<span style="color:#008080">QMAKE_CXXFLAGS</span> <span style="color:#000;font-weight:bold">+=</span>-DEGL_FBDEV -std<span style="color:#000;font-weight:bold">=</span>c++11
+
+<span style="color:#998;font-style:italic"># modifications to linux.conf</span>
+<span style="color:#008080">QMAKE_AR</span>                <span style="color:#000;font-weight:bold">=</span> arm-hisiv500-linux-uclibcgnueabi-ar cqs
+<span style="color:#008080">QMAKE_OBJCOPY</span>           <span style="color:#000;font-weight:bold">=</span> arm-hisiv500-linux-uclibcgnueabi-objcopy
+<span style="color:#008080">QMAKE_NM</span>                <span style="color:#000;font-weight:bold">=</span> arm-hisiv500-linux-uclibcgnueabi-nm -P
+<span style="color:#008080">QMAKE_STRIP</span>             <span style="color:#000;font-weight:bold">=</span> arm-hisiv500-linux-uclibcgnueabi-strip
+load<span style="color:#000;font-weight:bold">(</span>qt_config<span style="color:#000;font-weight:bold">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>对于QT的交叉编译而言，针对自己交叉编译的平台及其工具链修改mkspecs是交叉编译过程的第一步，后续对QT进行configure的时候需要通过xplatform来传递自己的平台类型。</li>
+</ul>
+<h2 id="交叉编译配置脚本">交叉编译配置脚本</h2>
+<p>在QT目录下创建一个编译配置脚本buildsetup.sh如下：</p>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 36
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 37
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 38
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 39
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 40
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 41
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 42
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 43
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 44
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 45
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 46
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 47
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 48
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 49
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 50
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 51
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 52
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 53
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 54
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 55
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 56
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 57
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 58
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 59
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 60
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 61
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 62
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 63
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 64
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 65
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 66
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 67
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 68
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 69
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 70
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 71
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 72
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 73
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 74
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 75
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 76
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 77
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 78
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 79
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 80
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 81
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 82
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 83
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 84
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 85
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 86
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 87
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 88
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 89
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 90
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 91
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 92
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 93
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 94
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 95
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 96
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 97
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 98
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 99
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">100
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">101
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">102
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">103
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">104
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">105
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">106
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">107
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">108
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">109
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">110
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">111
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">112
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">113
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">114
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">115
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">116
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">117
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">118
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">119
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">120
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">121
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">122
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">123
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">124
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">125
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">126
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">127
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">128
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">129
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">130
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">131
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">132
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">133
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">134
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">135
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">136
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">137
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#999;font-weight:bold;font-style:italic">#!/bin/sh
+</span><span style="color:#999;font-weight:bold;font-style:italic"></span>
+<span style="color:#008080">PWD</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">`</span><span style="color:#0086b3">pwd</span><span style="color:#d14">`</span>
+
+<span style="color:#0086b3">export</span> <span style="color:#008080">QT_SRC_DIR</span><span style="color:#000;font-weight:bold">=</span><span style="color:#008080">$PWD</span>
+<span style="color:#0086b3">export</span> <span style="color:#008080">QT_INSTALL_DIR</span><span style="color:#000;font-weight:bold">=</span><span style="color:#008080">$QT_SRC_DIR</span>/Qt_5.9.8
+<span style="color:#0086b3">export</span> <span style="color:#008080">SYSROOT</span><span style="color:#000;font-weight:bold">=</span>/home/pavel/hisi-linux/x86-arm/arm-hisiv500-linux/target
+<span style="color:#0086b3">export</span> <span style="color:#008080">PATH</span><span style="color:#000;font-weight:bold">=</span>/home/pavel/hisi-linux/x86-arm/arm-hisiv500-linux/bin:<span style="color:#008080">$PATH</span>
+<span style="color:#0086b3">export</span> <span style="color:#008080">CROSS_COMPILE</span><span style="color:#000;font-weight:bold">=</span>/home/pavel/hisi-linux/x86-arm/arm-hisiv500-linux
+<span style="color:#0086b3">export</span> <span style="color:#008080">CPLUS_INCLUDE_PATH</span><span style="color:#000;font-weight:bold">=</span><span style="color:#008080">$PWD</span>/qtbase/src/3rdparty/angle/include:<span style="color:#008080">$CPLUS_INCLUDE_PATH</span>
+
+<span style="color:#008080">QT_ENV_CFG</span><span style="color:#000;font-weight:bold">=</span>qtenv.sh
+
+sed -i <span style="color:#d14">&#39;/^export  QTDIR*/d&#39;</span> <span style="color:#008080">$QT_ENV_CFG</span>
+sed -i <span style="color:#d14">&#39;1 a \export  QTDIR=&#39;</span><span style="color:#008080">$QT_RUN_DIR</span><span style="color:#d14">&#39;&#39;</span> <span style="color:#008080">$QT_ENV_CFG</span>
+
+<span style="color:#008080">cpu_cores</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">`</span>cat /proc/cpuinfo | grep <span style="color:#d14">&#34;processor&#34;</span> | wc -l<span style="color:#d14">`</span>
+<span style="color:#000;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">[</span> <span style="color:#d14">${</span><span style="color:#008080">cpu_cores</span><span style="color:#d14">}</span> -le <span style="color:#099">8</span> <span style="color:#000;font-weight:bold">]</span> ; <span style="color:#000;font-weight:bold">then</span>
+    <span style="color:#008080">LICHEE_JLEVEL</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">${</span><span style="color:#008080">cpu_cores</span><span style="color:#d14">}</span>
+<span style="color:#000;font-weight:bold">else</span>
+    <span style="color:#008080">LICHEE_JLEVEL</span><span style="color:#000;font-weight:bold">=</span><span style="color:#d14">${</span><span style="color:#008080">cpu_cores</span><span style="color:#d14">}</span>
+<span style="color:#000;font-weight:bold">fi</span>
+
+<span style="color:#000;font-weight:bold">function</span> cdqtroot
+<span style="color:#000;font-weight:bold">{</span>
+<span style="color:#0086b3">cd</span> <span style="color:#008080">$QT_SRC_DIR</span>
+<span style="color:#000;font-weight:bold">}</span>
+
+<span style="color:#000;font-weight:bold">function</span> qtmakeconfig
+<span style="color:#000;font-weight:bold">{</span>
+    mkdir -p <span style="color:#008080">$QT_INSTALL_DIR</span>
+
+    <span style="color:#008080">$QT_SRC_DIR</span>/configure <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -opensource <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -confirm-license <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -sysroot <span style="color:#008080">$SYSROOT</span> <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -extprefix <span style="color:#008080">$QT_INSTALL_DIR</span> <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -platform linux-g++-64 <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -xplatform hisi3521-linux-gnueabi-g++ <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -device-option <span style="color:#008080">CROSS_COMPILE</span><span style="color:#000;font-weight:bold">=</span><span style="color:#008080">$CROSS_COMPILE</span> <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -R /usr/lib <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -no-strip <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -c++std c++11 <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -shared <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -nomake examples <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -accessibility <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -no-sql-db2 -no-sql-ibase -no-sql-mysql -no-sql-oci <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -no-sql-odbc -no-sql-psql -no-sql-sqlite2  -no-sql-tds <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -no-sql-sqlite -plugin-sql-sqlite <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -no-qml-debug <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -no-sse2 <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -no-sse3 <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -no-ssse3 <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -no-sse4.1 <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -no-sse4.2 <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -no-avx <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -no-avx2 <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -no-mips_dsp <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -no-mips_dspr2 <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -qt-zlib <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -no-journald <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -qt-libpng <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -qt-libjpeg <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -qt-freetype <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -qt-harfbuzz <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -no-openssl <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -no-opengl <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -no-xcb-xlib <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -no-glib <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -no-pulseaudio <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -gui <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -widgets <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -v <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -optimized-qmake <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -no-cups <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -no-iconv <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -evdev <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -no-icu <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -no-fontconfig <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -no-strip <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -pch <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -dbus <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -no-use-gold-linker <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -no-directfb <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -linuxfb <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -no-kms <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -no-system-proxies <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -no-slog2 <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -no-pps <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -no-imf <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -no-lgmon <span style="color:#d14">\
+</span><span style="color:#d14"></span>        -no-tslib
+<span style="color:#000;font-weight:bold">}</span>
+
+<span style="color:#000;font-weight:bold">function</span> qtmakeall
+<span style="color:#000;font-weight:bold">{</span>
+    make  -j<span style="color:#d14">${</span><span style="color:#008080">LICHEE_JLEVEL</span><span style="color:#d14">}</span> -C <span style="color:#008080">$QT_SRC_DIR</span>
+<span style="color:#000;font-weight:bold">}</span>
+
+<span style="color:#000;font-weight:bold">function</span> qtmakeinstall
+<span style="color:#000;font-weight:bold">{</span>
+    make  -j<span style="color:#d14">${</span><span style="color:#008080">LICHEE_JLEVEL</span><span style="color:#d14">}</span> -C <span style="color:#008080">$QT_SRC_DIR</span> install
+
+    <span style="color:#998;font-style:italic">#cp fonts to Install directory</span>
+    cp -rf fonts <span style="color:#008080">$QT_INSTALL_DIR</span>
+    
+    <span style="color:#998;font-style:italic">#Remove redundant files</span>
+    rm -rf <span style="color:#008080">$QT_INSTALL_DIR</span>/bin
+    rm -rf <span style="color:#008080">$QT_INSTALL_DIR</span>/include
+    rm -rf <span style="color:#008080">$QT_INSTALL_DIR</span>/doc
+    rm -rf <span style="color:#008080">$QT_INSTALL_DIR</span>/mkspecs
+    rm -rf <span style="color:#008080">$QT_INSTALL_DIR</span>/lib/cmake
+    rm -rf <span style="color:#008080">$QT_INSTALL_DIR</span>/lib/pkgconfig
+    rm -rf <span style="color:#008080">$QT_INSTALL_DIR</span>/lib/*.a
+    rm -rf <span style="color:#008080">$QT_INSTALL_DIR</span>/lib/*.prl
+    rm -rf <span style="color:#008080">$QT_INSTALL_DIR</span>/lib/*.la
+<span style="color:#000;font-weight:bold">}</span>
+
+<span style="color:#000;font-weight:bold">function</span> qtmakecleanall
+<span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#0086b3">cd</span> <span style="color:#008080">$QT_SRC_DIR</span>
+    make distclean -j<span style="color:#d14">${</span><span style="color:#008080">LICHEE_JLEVEL</span><span style="color:#d14">}</span>
+    make -C <span style="color:#008080">$QT_SRC_DIR</span> clean -j<span style="color:#d14">${</span><span style="color:#008080">LICHEE_JLEVEL</span><span style="color:#d14">}</span>
+    rm -rf <span style="color:#008080">$QT_INSTALL_DIR</span>
+<span style="color:#000;font-weight:bold">}</span>
+
+
+<span style="color:#0086b3">echo</span> <span style="color:#d14">&#34;  &#34;</span>
+<span style="color:#0086b3">echo</span> <span style="color:#d14">&#34;********************** useage ***************************&#34;</span>
+<span style="color:#0086b3">echo</span> <span style="color:#d14">&#34;        please use:&#34;</span>
+<span style="color:#0086b3">echo</span> <span style="color:#d14">&#34;        qtmakeconfig:         config qt env.&#34;</span>
+<span style="color:#0086b3">echo</span> <span style="color:#d14">&#34;        qtmakeall:            build qt&#34;</span>
+<span style="color:#0086b3">echo</span> <span style="color:#d14">&#34;        qtmakeinstall:        install qt-lib and cp to target dir.&#34;</span>
+<span style="color:#0086b3">echo</span> <span style="color:#d14">&#34;        qtmakecleanall:       clean qt and rm all target.&#34;</span>
+<span style="color:#0086b3">echo</span> <span style="color:#d14">&#34;        QT_INSTALL_DIR:       &#34;</span> <span style="color:#008080">$QT_INSTALL_DIR</span>
+<span style="color:#0086b3">echo</span> <span style="color:#d14">&#34;        qtmakecleanall:       clean qt and rm all target.&#34;</span>
+<span style="color:#0086b3">echo</span> <span style="color:#d14">&#34;  &#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>以上脚本主要做了四件事情：</p>
+<ul>
+<li>设置必要的环境变量；</li>
+<li>把QT交叉编译的configure过程封装在qtmakeconfig中；</li>
+<li>把QT交叉编译的完整编译过程封装在qtmakeall中；</li>
+<li>把QT交叉编译的安装过程封装在qtmakeinstall中；</li>
+</ul>
+<h2 id="交叉编译流程及其问题的解决">交叉编译流程及其问题的解决</h2>
+<p>在以上编译配置脚本的帮助下，对于QT的交叉编译就非常简单了：</p>
+<pre><code>source ./buildsetup.sh
+qtmakeconfig
+qtmakeall
+qtmakeinstall
+</code></pre><ul>
+<li>编译后生成的库、插件等目录在QT根目录下的Qt_5.9.8，把这些目录拷贝到板子的/usr/local/Qt_5.9.8子目录下并设置对应的环境变量即可使用。</li>
+</ul>
+<p><strong>1.编译qmake的时候出现“You cannot configure qt separately within a top-level build.”的错误</strong></p>
+<p>完整错误提示如下：</p>
+<pre><code>pavel@debian:~/qt-everywhere-opensource-src-5.9.8$ qtmakeconfig
++ cd qtbase
++ /home/pavel/qt-everywhere-opensource-src-5.9.8/qtbase/configure -top-level -opensource -confirm-license -sysroot /home/pavel/hisi-linux/x86-arm/arm-hisiv500-linux/target -extprefix /home/pavel/qt-everywhere-opensource-src-5.9.8/Qt_5.12.5 -platform linux-g++-64 -xplatform hisi-linux-gnueabi-g++ -device-option CROSS_COMPILE=/home/pavel/hisi-linux/x86-arm/arm-hisiv500-linux -R /usr/lib -no-strip -c++std c++11 -shared -nomake examples -accessibility -no-sql-db2 -no-sql-ibase -no-sql-mysql -no-sql-oci -no-sql-odbc -no-sql-psql -no-sql-sqlite2 -no-sql-tds -no-sql-sqlite -plugin-sql-sqlite -no-qml-debug -no-sse2 -no-sse3 -no-ssse3 -no-sse4.1 -no-sse4.2 -no-avx -no-avx2 -no-mips_dsp -no-mips_dspr2 -qt-zlib -no-journald -qt-libpng -qt-libjpeg -qt-freetype -qt-harfbuzz -no-openssl -no-opengl -no-xcb-xlib -no-glib -no-pulseaudio -gui -widgets -v -optimized-qmake -no-cups -no-iconv -evdev -no-icu -no-fontconfig -no-strip -pch -dbus -no-use-gold-linker -no-directfb -linuxfb -no-kms -no-system-proxies -no-slog2 -no-pps -no-imf -no-lgmon -no-tslib
+Creating qmake...
+make: 对“first”无需做任何事。
+Project ERROR: You cannot configure qt separately within a top-level build.
+</code></pre><p>解决办法：</p>
+<ul>
+<li>参考http://www.qtcn.org/bbs/apps.php?q=diary&amp;a=detail&amp;did=3026&amp;uid=121778给出的办法，在QT源码的top level目录下创建两个文件：touch .qmake.stash .qymake.super，然后重新进行编译即可。</li>
+</ul>
+
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="http://www.pavelhan.tech">Pavel Han</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="http://www.pavelhan.tech/post/2020-09-15-00-QT5.9.8%E7%89%88%E6%9C%AC%E5%9C%A8%E6%B5%B7%E6%80%9D3521%E5%B9%B3%E5%8F%B0%E4%B8%8A%E7%9A%84%E7%A7%BB%E6%A4%8D/">http://www.pavelhan.tech/post/2020-09-15-00-QT5.9.8%E7%89%88%E6%9C%AC%E5%9C%A8%E6%B5%B7%E6%80%9D3521%E5%B9%B3%E5%8F%B0%E4%B8%8A%E7%9A%84%E7%A7%BB%E6%A4%8D/</a></li>
+        <li><strong>版权声明：</strong>本作品采用<a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可，非商业转载请注明出处（作者，原文链接），商业转载请联系作者获得授权。</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/post/2020-05-26-00-%E6%B5%B7%E6%80%9D35XX%E7%B3%BB%E5%88%97HiMPP%E6%A1%86%E6%9E%B6%E5%BC%80%E5%8F%91%E5%8F%82%E8%80%83%E4%B9%8BVI%E6%A8%A1%E5%9D%97/">海思35XX系列HiMPP框架开发参考之VI模块</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='http://www.pavelhan.tech/tags/QT'>QT</a></li>
+                
+                <li><a href='http://www.pavelhan.tech/tags/%E6%B5%B7%E6%80%9D'>海思</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+</div>
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='http://www.pavelhan.tech/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="http://www.pavelhan.tech">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-09-15-00-QT5.9.8%E7%89%88%E6%9C%AC%E5%9C%A8%E6%B5%B7%E6%80%9D3521%E5%B9%B3%E5%8F%B0%E4%B8%8A%E7%9A%84%E7%A7%BB%E6%A4%8D/" title="QT5.9.8版本在海思3521平台上的移植">QT5.9.8版本在海思3521平台上的移植</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-08-07-00-AF%E8%87%AA%E5%8A%A8%E5%AF%B9%E7%84%A6%E7%AE%97%E6%B3%95%E5%8F%8APDAF%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E6%80%BB%E7%BB%93/" title="AF自动对焦算法及PDAF工作原理总结">AF自动对焦算法及PDAF工作原理总结</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-07-31-00-%E5%8F%98%E7%84%A6%E9%95%9C%E5%A4%B4%E7%9A%84%E5%88%86%E7%B1%BB%E5%8F%8A%E5%8F%98%E7%84%A6%E5%8E%9F%E7%90%86%E6%80%BB%E7%BB%93/" title="变焦镜头的分类及变焦原理总结">变焦镜头的分类及变焦原理总结</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-07-23-00-USB%E5%A4%8D%E5%90%88%E8%AE%BE%E5%A4%87%E5%8F%8AUVC-Profile%E7%9A%84%E6%8F%8F%E8%BF%B0%E7%AC%A6%E8%AF%A6%E8%A7%A3/" title="USB复合设备及UVC Profile的描述符详解">USB复合设备及UVC Profile的描述符详解</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-07-07-00-Linux%E7%9A%84%E7%A3%81%E7%9B%98%E5%8A%A0%E5%AF%86%E6%8A%80%E6%9C%AFLUKS/" title="Linux的磁盘加密技术LUKS">Linux的磁盘加密技术LUKS</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-06-22-00-TI%E7%9A%84%E7%94%B5%E9%87%8F%E8%B7%9F%E8%B8%AA%E6%8A%80%E6%9C%AFImpedance-Track%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/" title="TI的电量跟踪技术Impedance Track学习总结">TI的电量跟踪技术Impedance Track学习总结</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-06-19-00-%E5%9C%A8Debian%E4%B8%8B%E9%85%8D%E7%BD%AEC&#43;&#43;%E7%9A%84Jenkins%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90%E7%8E%AF%E5%A2%83/" title="在Debian/Linux环境下配置C/C&#43;&#43;的Jenkins持续集成环境">在Debian/Linux环境下配置C/C&#43;&#43;的Jenkins持续集成环境</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-06-10-00-%E9%94%82%E7%94%B5%E6%B1%A0%E7%9A%84%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" title="锂电池的基础知识">锂电池的基础知识</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-06-03-00-Linux-IPC%E6%9C%BA%E5%88%B6%E4%B9%8B%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" title="Linux IPC机制之消息队列">Linux IPC机制之消息队列</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-06-01-00-%E5%9C%A8Debian%E4%B8%8B%E4%BD%BF%E7%94%A8CppCheck%E5%AF%B9C%E4%BB%A3%E7%A0%81%E8%BF%9B%E8%A1%8C%E9%9D%99%E6%80%81%E6%89%AB%E6%8F%8F/" title="在Debian/Linux下使用CppCheck对C代码进行静态扫描">在Debian/Linux下使用CppCheck对C代码进行静态扫描</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+<ul class="widget-list">
+    
+    <li><a href="http://www.pavelhan.tech/categories/Linux/">Linux (2)</a></li>
+    
+    <li><a href="http://www.pavelhan.tech/categories/WiFi/">WiFi (1)</a></li>
+    
+    <li><a href="http://www.pavelhan.tech/categories/%E7%A1%AC%E4%BB%B6/">硬件 (5)</a></li>
+    
+    <li><a href="http://www.pavelhan.tech/categories/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">网络安全 (1)</a></li>
+    
+    <li><a href="http://www.pavelhan.tech/categories/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/">软件工程 (2)</a></li>
+    
+    <li><a href="http://www.pavelhan.tech/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/">音视频 (6)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">标签</h3>
+<div class="tagcloud">
+    
+    <a href="http://www.pavelhan.tech/tags/AES/">AES</a>
+    
+    <a href="http://www.pavelhan.tech/tags/AHD/">AHD</a>
+    
+    <a href="http://www.pavelhan.tech/tags/BT1120/">BT1120</a>
+    
+    <a href="http://www.pavelhan.tech/tags/BT656/">BT656</a>
+    
+    <a href="http://www.pavelhan.tech/tags/CI/">CI</a>
+    
+    <a href="http://www.pavelhan.tech/tags/CppCheck/">CppCheck</a>
+    
+    <a href="http://www.pavelhan.tech/tags/GPS/">GPS</a>
+    
+    <a href="http://www.pavelhan.tech/tags/H.264/">H.264</a>
+    
+    <a href="http://www.pavelhan.tech/tags/Hi3520DV400/">Hi3520DV400</a>
+    
+    <a href="http://www.pavelhan.tech/tags/Hi3521DV100/">Hi3521DV100</a>
+    
+    <a href="http://www.pavelhan.tech/tags/IAD/">IAD</a>
+    
+    <a href="http://www.pavelhan.tech/tags/IPC/">IPC</a>
+    
+    <a href="http://www.pavelhan.tech/tags/Jenkins/">Jenkins</a>
+    
+    <a href="http://www.pavelhan.tech/tags/LUKS/">LUKS</a>
+    
+    <a href="http://www.pavelhan.tech/tags/Linux/">Linux</a>
+    
+    <a href="http://www.pavelhan.tech/tags/NMEA/">NMEA</a>
+    
+    <a href="http://www.pavelhan.tech/tags/PDAF/">PDAF</a>
+    
+    <a href="http://www.pavelhan.tech/tags/QT/">QT</a>
+    
+    <a href="http://www.pavelhan.tech/tags/USB/">USB</a>
+    
+    <a href="http://www.pavelhan.tech/tags/UVC/">UVC</a>
+    
+    <a href="http://www.pavelhan.tech/tags/WiFi/">WiFi</a>
+    
+    <a href="http://www.pavelhan.tech/tags/debian/">debian</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E4%BD%8E%E5%8A%9F%E8%80%97/">低功耗</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E5%8A%A0%E5%AF%86/">加密</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E5%8C%97%E6%96%97/">北斗</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E5%8F%98%E7%84%A6/">变焦</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E6%B5%B7%E6%80%9D/">海思</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/">消息队列</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E7%94%B5%E9%87%8F%E8%AE%A1/">电量计</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">网络安全</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/">软件工程</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E9%94%82%E7%94%B5%E6%B1%A0/">锂电池</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E9%95%9C%E5%A4%B4/">镜头</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/">音视频</a>
+    
+</div>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="http://www.pavelhan.tech/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+    <footer id="footer">
+    <div class="container">
+        &copy; 2020 <a href="http://www.pavelhan.tech">Pavel Han的博客 By Pavel Han</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
+        <a href="https://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/flysnow-org/maupassant-hugo" target="_blank">maupassant</a>.
+        
+    </div>
+</footer>
+
+
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-166241725-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+    <script src='/js/douban.js'></script>
+
+</body>
+
+</html>

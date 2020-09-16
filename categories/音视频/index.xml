@@ -6,10 +6,19 @@
     <description>Recent content in 音视频 on Pavel Han的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Fri, 07 Aug 2020 14:23:10 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 15 Sep 2020 11:02:10 +0800</lastBuildDate>
     
 	<atom:link href="http://www.pavelhan.tech/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>QT5.9.8版本在海思3521平台上的移植</title>
+      <link>http://www.pavelhan.tech/post/2020-09-15-00-QT5.9.8%E7%89%88%E6%9C%AC%E5%9C%A8%E6%B5%B7%E6%80%9D3521%E5%B9%B3%E5%8F%B0%E4%B8%8A%E7%9A%84%E7%A7%BB%E6%A4%8D/</link>
+      <pubDate>Tue, 15 Sep 2020 11:02:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/post/2020-09-15-00-QT5.9.8%E7%89%88%E6%9C%AC%E5%9C%A8%E6%B5%B7%E6%80%9D3521%E5%B9%B3%E5%8F%B0%E4%B8%8A%E7%9A%84%E7%A7%BB%E6%A4%8D/</guid>
+      <description>QT源码的下载及交叉编译工具的准备 QT源码的下载地址：https://download.qt.io/archive/qt/5.9/5.9.8/single/qt-everywhere-opensource-src-5.9.8.tar.xz； 交叉编译工具： 交叉编译工具使用的是海思3</description>
+    </item>
     
     <item>
       <title>AF自动对焦算法及PDAF工作原理总结</title>

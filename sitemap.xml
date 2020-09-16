@@ -3,27 +3,47 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>http://www.pavelhan.tech/categories/</loc>
+    <lastmod>2020-09-15T11:02:10+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.pavelhan.tech/post/</loc>
+    <lastmod>2020-09-15T11:02:10+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.pavelhan.tech/tags/QT/</loc>
+    <lastmod>2020-09-15T11:02:10+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.pavelhan.tech/post/2020-09-15-00-QT5.9.8%E7%89%88%E6%9C%AC%E5%9C%A8%E6%B5%B7%E6%80%9D3521%E5%B9%B3%E5%8F%B0%E4%B8%8A%E7%9A%84%E7%A7%BB%E6%A4%8D/</loc>
+    <lastmod>2020-09-15T11:02:10+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.pavelhan.tech/tags/</loc>
+    <lastmod>2020-09-15T11:02:10+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.pavelhan.tech/tags/%E6%B5%B7%E6%80%9D/</loc>
+    <lastmod>2020-09-15T11:02:10+08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.pavelhan.tech/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/</loc>
+    <lastmod>2020-09-15T11:02:10+08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>http://www.pavelhan.tech/post/2020-08-07-00-AF%E8%87%AA%E5%8A%A8%E5%AF%B9%E7%84%A6%E7%AE%97%E6%B3%95%E5%8F%8APDAF%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E6%80%BB%E7%BB%93/</loc>
     <lastmod>2020-08-07T14:23:10+08:00</lastmod>
   </url>
   
   <url>
-    <loc>http://www.pavelhan.tech/categories/</loc>
-    <lastmod>2020-08-07T14:23:10+08:00</lastmod>
-  </url>
-  
-  <url>
     <loc>http://www.pavelhan.tech/tags/PDAF/</loc>
-    <lastmod>2020-08-07T14:23:10+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://www.pavelhan.tech/post/</loc>
-    <lastmod>2020-08-07T14:23:10+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://www.pavelhan.tech/tags/</loc>
     <lastmod>2020-08-07T14:23:10+08:00</lastmod>
   </url>
   
@@ -34,11 +54,6 @@
   
   <url>
     <loc>http://www.pavelhan.tech/tags/%E9%95%9C%E5%A4%B4/</loc>
-    <lastmod>2020-08-07T14:23:10+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://www.pavelhan.tech/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/</loc>
     <lastmod>2020-08-07T14:23:10+08:00</lastmod>
   </url>
   
@@ -179,11 +194,6 @@
   
   <url>
     <loc>http://www.pavelhan.tech/tags/Hi3521DV100/</loc>
-    <lastmod>2020-05-26T10:42:10+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://www.pavelhan.tech/tags/%E6%B5%B7%E6%80%9D/</loc>
     <lastmod>2020-05-26T10:42:10+08:00</lastmod>
   </url>
   
