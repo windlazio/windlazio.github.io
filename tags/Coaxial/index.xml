@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>AHD on Pavel Han的博客</title>
-    <link>http://www.pavelhan.tech/tags/AHD/</link>
-    <description>Recent content in AHD on Pavel Han的博客</description>
+    <title>Coaxial on Pavel Han的博客</title>
+    <link>http://www.pavelhan.tech/tags/Coaxial/</link>
+    <description>Recent content in Coaxial on Pavel Han的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <lastBuildDate>Tue, 22 Sep 2020 14:02:10 +0800</lastBuildDate>
     
-	<atom:link href="http://www.pavelhan.tech/tags/AHD/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="http://www.pavelhan.tech/tags/Coaxial/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -18,15 +18,6 @@
       
       <guid>http://www.pavelhan.tech/post/2020-09-22-00-AHD%E6%A8%A1%E6%8B%9F%E6%91%84%E5%83%8F%E5%A4%B4%E7%9A%84%E5%8F%8D%E5%90%91%E6%8E%A7%E5%88%B6%E5%8D%8F%E8%AE%AE-CoaxialProtocol/</guid>
       <description>缘起 对于控制一个云台摄像头的镜头动作而言，使用IP协议来进行控制是很容易做到的：IP摄像头与控制主机之间可以通过IP协议建立全双工双向通信，云台控制的命令可以很方便的发送到摄像头端，在摄像头端进行镜头的旋转、缩放等控制； 但是对于模拟摄像头而言，要轻松的做到这一点就很麻烦了：因为模</description>
-    </item>
-    
-    <item>
-      <title>模拟高清视频传输技术：AHD，HD-TVI，HD-CVI</title>
-      <link>http://www.pavelhan.tech/post/2020-05-14-00-%E6%A8%A1%E6%8B%9F%E9%AB%98%E6%B8%85%E8%A7%86%E9%A2%91%E4%BC%A0%E8%BE%93%E6%8A%80%E6%9C%AF/</link>
-      <pubDate>Thu, 14 May 2020 10:56:10 +0800</pubDate>
-      
-      <guid>http://www.pavelhan.tech/post/2020-05-14-00-%E6%A8%A1%E6%8B%9F%E9%AB%98%E6%B8%85%E8%A7%86%E9%A2%91%E4%BC%A0%E8%BE%93%E6%8A%80%E6%9C%AF/</guid>
-      <description>缘起 由于从事摄像头相关行业以来，一直做的都是数字也就是IP摄像头领域，因此之前对于模拟摄像头的认知，还停留在10多年前CCD标清模组+CBVS接口+同轴线缆传输，以及模拟摄像头无法支持高清分辨率的认知上。 对于模拟图像传输支持高清分辨率的方案，印象里只有大华之前推出的HD-SDI的</description>
     </item>
     
   </channel>

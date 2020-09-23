@@ -6,10 +6,19 @@
     <description>Recent content in 音视频 on Pavel Han的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Tue, 15 Sep 2020 11:02:10 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 22 Sep 2020 14:02:10 +0800</lastBuildDate>
     
 	<atom:link href="http://www.pavelhan.tech/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>AHD模拟摄像头的反向控制协议-Coaxial Protocol</title>
+      <link>http://www.pavelhan.tech/post/2020-09-22-00-AHD%E6%A8%A1%E6%8B%9F%E6%91%84%E5%83%8F%E5%A4%B4%E7%9A%84%E5%8F%8D%E5%90%91%E6%8E%A7%E5%88%B6%E5%8D%8F%E8%AE%AE-CoaxialProtocol/</link>
+      <pubDate>Tue, 22 Sep 2020 14:02:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/post/2020-09-22-00-AHD%E6%A8%A1%E6%8B%9F%E6%91%84%E5%83%8F%E5%A4%B4%E7%9A%84%E5%8F%8D%E5%90%91%E6%8E%A7%E5%88%B6%E5%8D%8F%E8%AE%AE-CoaxialProtocol/</guid>
+      <description>缘起 对于控制一个云台摄像头的镜头动作而言，使用IP协议来进行控制是很容易做到的：IP摄像头与控制主机之间可以通过IP协议建立全双工双向通信，云台控制的命令可以很方便的发送到摄像头端，在摄像头端进行镜头的旋转、缩放等控制； 但是对于模拟摄像头而言，要轻松的做到这一点就很麻烦了：因为模</description>
+    </item>
     
     <item>
       <title>QT5.9.8版本在海思3521平台上的移植</title>
