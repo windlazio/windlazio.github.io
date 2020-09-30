@@ -1,0 +1,817 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>最简单的基于QT&#43;ffmpeg的播放器的例子 | Pavel Han的博客</title>
+    <meta property="og:title" content="最简单的基于QT&#43;ffmpeg的播放器的例子 - Pavel Han的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content='2020-09-29T09:40:10&#43;08:00'>
+        
+        
+    <meta property="article:modified_time" content='2020-09-29T09:40:10&#43;08:00'>
+        
+    <meta name="Keywords" content="">
+    <meta name="description" content="最简单的基于QT&#43;ffmpeg的播放器的例子">
+        
+    <meta name="author" content="Pavel Han">
+    <meta property="og:url" content="http://www.pavelhan.tech/post/2020-09-29-00-%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84%E5%9F%BA%E4%BA%8EQT&#43;ffmpeg%E7%9A%84%E6%92%AD%E6%94%BE%E5%99%A8%E7%9A%84%E4%BE%8B%E5%AD%90/">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href='/css/normalize.css'>
+    <link rel="stylesheet" href='/css/style.css'>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-4031353640611810",
+        enable_page_level_ads: true
+    });
+    </script>
+    
+
+
+    
+    
+        <link rel="stylesheet" href='/css/douban.css'>
+    
+        <link rel="stylesheet" href='/css/other.css'>
+    
+</head>
+
+
+<body>
+    <header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="http://www.pavelhan.tech">
+                        Pavel Han的博客
+                    </a>
+                
+                <p class="description">专注于音视频、摄像头、消费类电子、智能硬件、物联网等行业</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="current" href="http://www.pavelhan.tech">首页</a>
+                    
+                    <a  href="http://www.pavelhan.tech/archives/" title="归档">归档</a>
+                    
+                    <a  href="http://www.pavelhan.tech/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+    <div id="body">
+        <div class="container">
+            <div class="col-group">
+
+                <div class="col-8" id="main">
+                    
+<div class="res-cons">
+    <style type="text/css">
+    .post-toc {
+        position: fixed;
+        width: 200px;
+        margin-left: -210px;
+        padding: 5px 10px;
+        font-family: Athelas, STHeiti, Microsoft Yahei, serif;
+        font-size: 12px;
+        border: 1px solid rgba(0, 0, 0, .07);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.98);
+        background-clip: padding-box;
+        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        box-shadow: 1px 1px 2px rgba(0, 0, 0, .125);
+        word-wrap: break-word;
+        white-space: nowrap;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        z-index: 999;
+        cursor: pointer;
+        max-height: 70%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .post-toc .post-toc-title {
+        width: 100%;
+        margin: 0 auto;
+        font-size: 20px;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+    }
+
+    .post-toc .post-toc-content {
+        font-size: 15px;
+    }
+
+    .post-toc .post-toc-content>nav>ul {
+        margin: 10px 0;
+    }
+
+    .post-toc .post-toc-content ul {
+        padding-left: 20px;
+        list-style: square;
+        margin: 0.5em;
+        line-height: 1.8em;
+    }
+
+    .post-toc .post-toc-content ul ul {
+        padding-left: 15px;
+        display: none;
+    }
+
+    @media print,
+    screen and (max-width:1057px) {
+        .post-toc {
+            display: none;
+        }
+    }
+</style>
+<div class="post-toc" style="position: absolute; top: 188px;">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+        <nav id="TableOfContents">
+  <ul>
+    <li><a href="#前提条件">前提条件：</a></li>
+    <li><a href="#ui准备">UI准备：</a></li>
+    <li><a href="#主要代码流程">主要代码流程：</a></li>
+    <li><a href="#参考资料">参考资料：</a></li>
+  </ul>
+</nav>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var postToc = $(".post-toc");
+        if (postToc.length) {
+            var leftPos = $("#main").offset().left;
+            if(leftPos<220){
+                postToc.css({"width":leftPos-10,"margin-left":(0-leftPos)})
+            }
+
+            var t = postToc.offset().top - 20,
+                a = {
+                    start: {
+                        position: "absolute",
+                        top: t
+                    },
+                    process: {
+                        position: "fixed",
+                        top: 20
+                    },
+                };
+            $(window).scroll(function () {
+                var e = $(window).scrollTop();
+                e < t ? postToc.css(a.start) : postToc.css(a.process)
+            })
+        }
+    })
+</script>
+    <article class="post">
+        <header>
+            <h1 class="post-title">最简单的基于QT&#43;ffmpeg的播放器的例子</h1>
+        </header>
+        <date class="post-meta meta-date">
+            2020年9月29日
+        </date>
+        
+        <div class="post-meta">
+            <span>|</span>
+            
+            <span class="meta-category"><a href='http://www.pavelhan.tech/categories/%E9%9F%B3%E8%A7%86%E9%A2%91'>音视频</a></span>
+            
+        </div>
+        
+        
+        <div class="post-meta">
+            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span>
+                    阅读</span></span>
+        </div>
+        
+        
+        <div class="post-content">
+            <h2 id="前提条件">前提条件：</h2>
+<ul>
+<li>基于 <a href="%5Bhttp://pavelhan.tech/post/2020-09-24-00-%E6%90%AD%E5%BB%BA%E5%9F%BA%E4%BA%8EQTCreator%E7%9A%84ffmpeg%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/%5D">搭建基于QT Creator的ffmpeg开发环境</a>在Windows环境中完成QT Creator++ffmpeg的开发环境，能够在QT Creator中正常的调用ffmpeg library中的接口得到正确的结果。</li>
+</ul>
+<h2 id="ui准备">UI准备：</h2>
+<ul>
+<li>在QT Creator中新建一个QT Wigets Application工程，修改其页面类的base class为QWidget；</li>
+<li>在工程的Forms中修改页面的ui文件，放一个pushButton和一个Label，播放器解码后的图像将会在Label的Pixmap中显示出来；</li>
+</ul>
+<p><img src="/images/2020-09-29-00-%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84%E5%9F%BA%E4%BA%8EQT+ffmpeg%E7%9A%84%E6%92%AD%E6%94%BE%E5%99%A8%E7%9A%84%E4%BE%8B%E5%AD%90/%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_16014301848073.png" alt="img"></p>
+<h2 id="主要代码流程">主要代码流程：</h2>
+<div class="highlight"><div style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4">
+<table style="border-spacing:0;padding:0;margin:0;border:0;width:auto;overflow:auto;display:block;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  1
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  2
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  3
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  4
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  5
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  6
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  7
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  8
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  9
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 10
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 11
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 12
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 13
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 14
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 15
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 16
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 17
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 18
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 19
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 20
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 21
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 22
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 23
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 24
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 25
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 26
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 27
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 28
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 29
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 30
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 31
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 32
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 33
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 34
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 35
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 36
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 37
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 38
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 39
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 40
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 41
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 42
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 43
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 44
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 45
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 46
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 47
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 48
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 49
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 50
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 51
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 52
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 53
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 54
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 55
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 56
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 57
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 58
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 59
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 60
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 61
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 62
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 63
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 64
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 65
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 66
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 67
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 68
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 69
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 70
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 71
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 72
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 73
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 74
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 75
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 76
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 77
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 78
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 79
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 80
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 81
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 82
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 83
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 84
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 85
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 86
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 87
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 88
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 89
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 90
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 91
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 92
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 93
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 94
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 95
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 96
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 97
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 98
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 99
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">100
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">101
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">102
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">103
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">104
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">105
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">106
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">107
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">108
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">109
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">110
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">111
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">112
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">113
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">114
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">115
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">116
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">117
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">118
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">119
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">120
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">121
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">122
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">123
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">124
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">125
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">126
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">127
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">128
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">129
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">130
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">131
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">132
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">133
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">134
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">135
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">136
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">137
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">138
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">139
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">140
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">141
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">142
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">143
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">144
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">145
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">146
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">147
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">148
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">149
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">150
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">151
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">152
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">153
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">154
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">155
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">156
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">157
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">158
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">159
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">160
+</span></code></pre></td>
+<td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+<pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#998;font-style:italic">// 延时函数，以ms为单位，不会阻塞UI操作
+</span><span style="color:#998;font-style:italic"></span><span style="color:#458;font-weight:bold">void</span> <span style="color:#900;font-weight:bold">delay</span>(<span style="color:#458;font-weight:bold">int</span> msec)
+{
+    QTime dieTime <span style="color:#000;font-weight:bold">=</span> QTime<span style="color:#000;font-weight:bold">::</span>currentTime().addMSecs(msec);
+    <span style="color:#000;font-weight:bold">while</span>( QTime<span style="color:#000;font-weight:bold">::</span>currentTime() <span style="color:#000;font-weight:bold">&lt;</span> dieTime )
+        QCoreApplication<span style="color:#000;font-weight:bold">::</span>processEvents(QEventLoop<span style="color:#000;font-weight:bold">::</span>AllEvents, <span style="color:#099">100</span>);
+}
+
+<span style="color:#458;font-weight:bold">void</span> Widget<span style="color:#000;font-weight:bold">::</span>on_playButton_clicked()
+{
+<span style="color:#998;font-style:italic">//#define USE_OLD_DECODE_MODE 1
+</span><span style="color:#998;font-style:italic"></span>    <span style="color:#458;font-weight:bold">int</span> ret <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">-</span><span style="color:#099">1</span>;
+    <span style="color:#458;font-weight:bold">int</span> videoStreamIndex <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">-</span><span style="color:#099">1</span>;
+    <span style="color:#458;font-weight:bold">char</span> <span style="color:#000;font-weight:bold">*</span> filename<span style="color:#000;font-weight:bold">=</span><span style="color:#d14">&#34;D:</span><span style="color:#d14">\\</span><span style="color:#d14">video.mp4&#34;</span>;
+    AVFormatContext <span style="color:#000;font-weight:bold">*</span> pFormatContext <span style="color:#000;font-weight:bold">=</span> <span style="color:#0086b3">NULL</span>;
+    AVCodecContext <span style="color:#000;font-weight:bold">*</span> pCodecContext <span style="color:#000;font-weight:bold">=</span> <span style="color:#0086b3">NULL</span>;
+<span style="color:#998;font-style:italic">//    AVCodecParameters * pCodecParameters = NULL;
+</span><span style="color:#998;font-style:italic"></span>    AVCodec <span style="color:#000;font-weight:bold">*</span> pCodec <span style="color:#000;font-weight:bold">=</span> <span style="color:#0086b3">NULL</span>;
+    AVFrame <span style="color:#000;font-weight:bold">*</span> pFrame <span style="color:#000;font-weight:bold">=</span> <span style="color:#0086b3">NULL</span>;
+    AVFrame <span style="color:#000;font-weight:bold">*</span> pFrameRGB <span style="color:#000;font-weight:bold">=</span> <span style="color:#0086b3">NULL</span>;
+    AVPacket <span style="color:#000;font-weight:bold">*</span> pPacket <span style="color:#000;font-weight:bold">=</span> <span style="color:#0086b3">NULL</span>;
+    <span style="color:#458;font-weight:bold">unsigned</span> <span style="color:#458;font-weight:bold">char</span> <span style="color:#000;font-weight:bold">*</span>out_buffer <span style="color:#000;font-weight:bold">=</span> <span style="color:#0086b3">NULL</span>;
+    <span style="color:#000;font-weight:bold">struct</span> <span style="color:#458;font-weight:bold">SwsContext</span> <span style="color:#000;font-weight:bold">*</span> pSwsContext <span style="color:#000;font-weight:bold">=</span> <span style="color:#0086b3">NULL</span>;
+    <span style="color:#458;font-weight:bold">int</span> displayWidth <span style="color:#000;font-weight:bold">=</span> ui<span style="color:#000;font-weight:bold">-&gt;</span>label<span style="color:#000;font-weight:bold">-&gt;</span>width();
+    <span style="color:#458;font-weight:bold">int</span> displayHeight <span style="color:#000;font-weight:bold">=</span> ui<span style="color:#000;font-weight:bold">-&gt;</span>label<span style="color:#000;font-weight:bold">-&gt;</span>height();
+
+    <span style="color:#998;font-style:italic">//av_register_all();//该函数已经过时，直接删除
+</span><span style="color:#998;font-style:italic"></span>
+    <span style="color:#000;font-weight:bold">if</span>(avformat_open_input(<span style="color:#000;font-weight:bold">&amp;</span>pFormatContext, filename, <span style="color:#099">0</span>, <span style="color:#099">0</span>) <span style="color:#000;font-weight:bold">!=</span> <span style="color:#099">0</span>){
+        qDebug() <span style="color:#000;font-weight:bold">&lt;&lt;</span> <span style="color:#d14">&#34;Couldn&#39;t open input stream.&#34;</span>;
+        <span style="color:#000;font-weight:bold">return</span>;
+    }
+    qDebug() <span style="color:#000;font-weight:bold">&lt;&lt;</span> <span style="color:#d14">&#34;Video Duration:&#34;</span> <span style="color:#000;font-weight:bold">&lt;&lt;</span> pFormatContext<span style="color:#000;font-weight:bold">-&gt;</span>duration <span style="color:#000;font-weight:bold">/</span> AV_TIME_BASE <span style="color:#000;font-weight:bold">&lt;&lt;</span> <span style="color:#d14">&#34; secs&#34;</span>;
+
+    <span style="color:#998;font-style:italic">//查看这个媒体文件中是否包含有媒体信息；
+</span><span style="color:#998;font-style:italic"></span>    <span style="color:#000;font-weight:bold">if</span> (avformat_find_stream_info(pFormatContext, <span style="color:#099">0</span>) <span style="color:#000;font-weight:bold">&lt;</span> <span style="color:#099">0</span>){
+        qDebug() <span style="color:#000;font-weight:bold">&lt;&lt;</span> <span style="color:#d14">&#34;Couldn&#39;t find stream information.</span><span style="color:#d14">\n</span><span style="color:#d14">&#34;</span>;
+        avformat_close_input(<span style="color:#000;font-weight:bold">&amp;</span>pFormatContext);
+        <span style="color:#000;font-weight:bold">return</span>;
+    }
+
+    <span style="color:#998;font-style:italic">//找到这个媒体文件中包含的第一条视频流对应的索引
+</span><span style="color:#998;font-style:italic"></span>    <span style="color:#000;font-weight:bold">for</span> (<span style="color:#458;font-weight:bold">int</span> i <span style="color:#000;font-weight:bold">=</span> <span style="color:#099">0</span>; i <span style="color:#000;font-weight:bold">&lt;</span> (<span style="color:#458;font-weight:bold">int</span>)pFormatContext<span style="color:#000;font-weight:bold">-&gt;</span>nb_streams; i<span style="color:#000;font-weight:bold">++</span>)
+    {
+        <span style="color:#998;font-style:italic">//streams[i]-&gt;codec已经过时，更换为codecpar
+</span><span style="color:#998;font-style:italic"></span>        <span style="color:#998;font-style:italic">//if (pFormatContext-&gt;streams[i]-&gt;codec-&gt;codec_type == AVMEDIA_TYPE_VIDEO) // 判断是否为视频流
+</span><span style="color:#998;font-style:italic"></span>        <span style="color:#000;font-weight:bold">if</span>(pFormatContext<span style="color:#000;font-weight:bold">-&gt;</span>streams[i]<span style="color:#000;font-weight:bold">-&gt;</span>codecpar<span style="color:#000;font-weight:bold">-&gt;</span>codec_type <span style="color:#000;font-weight:bold">==</span> AVMEDIA_TYPE_VIDEO)
+        {
+            videoStreamIndex <span style="color:#000;font-weight:bold">=</span> i;
+            <span style="color:#000;font-weight:bold">break</span>;
+        }
+    }
+    <span style="color:#000;font-weight:bold">if</span> (videoStreamIndex <span style="color:#000;font-weight:bold">==</span> <span style="color:#000;font-weight:bold">-</span><span style="color:#099">1</span>)
+    {
+        qDebug() <span style="color:#000;font-weight:bold">&lt;&lt;</span> <span style="color:#d14">&#34;Didn&#39;t find a video stream.</span><span style="color:#d14">\n</span><span style="color:#d14">&#34;</span>;
+        avformat_close_input(<span style="color:#000;font-weight:bold">&amp;</span>pFormatContext);
+        <span style="color:#000;font-weight:bold">return</span> ;
+    }
+
+    <span style="color:#998;font-style:italic">// 查找视频解码器
+</span><span style="color:#998;font-style:italic"></span>    pCodecContext <span style="color:#000;font-weight:bold">=</span> pFormatContext<span style="color:#000;font-weight:bold">-&gt;</span>streams[videoStreamIndex]<span style="color:#000;font-weight:bold">-&gt;</span>codec; <span style="color:#998;font-style:italic">// 获取视频流编码结构
+</span><span style="color:#998;font-style:italic"></span>    <span style="color:#998;font-style:italic">//pCodecParameters = pFormatContext-&gt;streams[videoStreamIndex]-&gt;codecpar;
+</span><span style="color:#998;font-style:italic"></span>    pCodec <span style="color:#000;font-weight:bold">=</span> avcodec_find_decoder(pCodecContext<span style="color:#000;font-weight:bold">-&gt;</span>codec_id);
+    <span style="color:#998;font-style:italic">//pCodec = avcodec_find_decoder(pCodecParameters-&gt;codec_id);
+</span><span style="color:#998;font-style:italic"></span>    <span style="color:#000;font-weight:bold">if</span> (pCodec <span style="color:#000;font-weight:bold">==</span> <span style="color:#000;font-weight:bold">nullptr</span>)
+    {
+        qDebug() <span style="color:#000;font-weight:bold">&lt;&lt;</span> <span style="color:#d14">&#34;Codec not found.</span><span style="color:#d14">\n</span><span style="color:#d14">&#34;</span>;
+        <span style="color:#000;font-weight:bold">return</span> ;
+    }
+
+    <span style="color:#998;font-style:italic">//使用图像的原尺寸显示，还是使用label的大小进行显示，默认自动缩放到label的大小进行显示；
+</span><span style="color:#998;font-style:italic"></span>    <span style="color:#998;font-style:italic">//displayWidth = pCodecContext-&gt;width;
+</span><span style="color:#998;font-style:italic"></span>    <span style="color:#998;font-style:italic">//displayHeight = pCodecContext-&gt;height;
+</span><span style="color:#998;font-style:italic"></span>
+    <span style="color:#998;font-style:italic">// 打开解码器
+</span><span style="color:#998;font-style:italic"></span>    <span style="color:#000;font-weight:bold">if</span> (avcodec_open2(pCodecContext, pCodec, <span style="color:#000;font-weight:bold">nullptr</span>) <span style="color:#000;font-weight:bold">&lt;</span> <span style="color:#099">0</span>)
+    {
+        qDebug() <span style="color:#000;font-weight:bold">&lt;&lt;</span> <span style="color:#d14">&#34;Could not open codec.</span><span style="color:#d14">\n</span><span style="color:#d14">&#34;</span>;
+        <span style="color:#000;font-weight:bold">return</span> ;
+    }
+
+    <span style="color:#998;font-style:italic">// 打印媒体信息
+</span><span style="color:#998;font-style:italic"></span>    qDebug() <span style="color:#000;font-weight:bold">&lt;&lt;</span> <span style="color:#d14">&#34;--------------- File Information ----------------</span><span style="color:#d14">\n</span><span style="color:#d14">&#34;</span>;
+    av_dump_format(pFormatContext, <span style="color:#099">0</span>, filename, <span style="color:#099">0</span>); <span style="color:#998;font-style:italic">// 此函数打印输入或输出的详细信息
+</span><span style="color:#998;font-style:italic"></span>    qDebug() <span style="color:#000;font-weight:bold">&lt;&lt;</span> <span style="color:#d14">&#34;-------------------------------------------------</span><span style="color:#d14">\n</span><span style="color:#d14">&#34;</span>;
+
+    <span style="color:#998;font-style:italic">//申请两个AVFrame结构，其中pFrame用户承载解码后的YUV数据，pFrameRGB用于承载显示的RGB数据
+</span><span style="color:#998;font-style:italic"></span>    pFrame <span style="color:#000;font-weight:bold">=</span> av_frame_alloc();
+    pFrameRGB <span style="color:#000;font-weight:bold">=</span> av_frame_alloc();
+    <span style="color:#998;font-style:italic">//申请一个AVPacket结构，用于承载从视频文件中读取的一个图像帧的压缩包
+</span><span style="color:#998;font-style:italic"></span>    pPacket <span style="color:#000;font-weight:bold">=</span> (AVPacket <span style="color:#000;font-weight:bold">*</span>)av_malloc(<span style="color:#000;font-weight:bold">sizeof</span>(AVPacket));
+
+    <span style="color:#998;font-style:italic">//为pFrameRGB需要用到的内存申请空间，pFrame用到的内存会在解码的时候在解码接口中自动分配
+</span><span style="color:#998;font-style:italic"></span>    out_buffer <span style="color:#000;font-weight:bold">=</span> (<span style="color:#458;font-weight:bold">unsigned</span> <span style="color:#458;font-weight:bold">char</span> <span style="color:#000;font-weight:bold">*</span>)av_malloc((size_t)av_image_get_buffer_size(AV_PIX_FMT_RGB32, \
+                                               displayWidth, displayHeight, <span style="color:#099">1</span>));
+    av_image_fill_arrays(pFrameRGB<span style="color:#000;font-weight:bold">-&gt;</span>data, pFrameRGB<span style="color:#000;font-weight:bold">-&gt;</span>linesize, out_buffer, \
+            AV_PIX_FMT_RGB32, displayWidth, displayHeight, <span style="color:#099">1</span>);
+
+    <span style="color:#998;font-style:italic">//初始化YUV--&gt;RGB的格式转换/缩放器
+</span><span style="color:#998;font-style:italic"></span>    pSwsContext <span style="color:#000;font-weight:bold">=</span> sws_getContext(pCodecContext<span style="color:#000;font-weight:bold">-&gt;</span>width, pCodecContext<span style="color:#000;font-weight:bold">-&gt;</span>height, pCodecContext<span style="color:#000;font-weight:bold">-&gt;</span>pix_fmt,
+            displayWidth, displayHeight, AV_PIX_FMT_RGB32, SWS_BICUBIC, <span style="color:#000;font-weight:bold">nullptr</span>, <span style="color:#000;font-weight:bold">nullptr</span>, <span style="color:#000;font-weight:bold">nullptr</span>);
+
+    <span style="color:#998;font-style:italic">//反复的从视频文件中读一个packet并进行解码显示
+</span><span style="color:#998;font-style:italic"></span>    <span style="color:#000;font-weight:bold">while</span> (av_read_frame(pFormatContext, pPacket) <span style="color:#000;font-weight:bold">&gt;=</span> <span style="color:#099">0</span>)
+    {
+<span style="color:#999;font-weight:bold;font-style:italic">#ifdef USE_OLD_DECODE_MODE  </span><span style="color:#998;font-style:italic">//旧解码方式
+</span><span style="color:#998;font-style:italic"></span>        <span style="color:#000;font-weight:bold">if</span> (pPacket<span style="color:#000;font-weight:bold">-&gt;</span>stream_index <span style="color:#000;font-weight:bold">==</span> videoStreamIndex)
+        {
+            <span style="color:#458;font-weight:bold">int</span> got_picture <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">-</span><span style="color:#099">1</span>;
+
+            ret <span style="color:#000;font-weight:bold">=</span> avcodec_decode_video2(pCodecContext, pFrame, <span style="color:#000;font-weight:bold">&amp;</span>got_picture, pPacket);
+            <span style="color:#000;font-weight:bold">if</span> (ret <span style="color:#000;font-weight:bold">&lt;</span> <span style="color:#099">0</span>)
+            {
+                qDebug() <span style="color:#000;font-weight:bold">&lt;&lt;</span> <span style="color:#d14">&#34;Decode Error.</span><span style="color:#d14">\n</span><span style="color:#d14">&#34;</span>;
+                <span style="color:#000;font-weight:bold">goto</span> out;
+            }
+            <span style="color:#000;font-weight:bold">if</span> (got_picture)
+            {
+                sws_scale(pSwsContext, (<span style="color:#000;font-weight:bold">const</span> <span style="color:#458;font-weight:bold">unsigned</span> <span style="color:#458;font-weight:bold">char</span><span style="color:#000;font-weight:bold">*</span> <span style="color:#000;font-weight:bold">const</span><span style="color:#000;font-weight:bold">*</span>)pFrame<span style="color:#000;font-weight:bold">-&gt;</span>data, pFrame<span style="color:#000;font-weight:bold">-&gt;</span>linesize, <span style="color:#099">0</span>, pCodecContext<span style="color:#000;font-weight:bold">-&gt;</span>height,
+                                       pFrameRGB<span style="color:#000;font-weight:bold">-&gt;</span>data, pFrameRGB<span style="color:#000;font-weight:bold">-&gt;</span>linesize);
+                QImage <span style="color:#900;font-weight:bold">img</span>((uchar<span style="color:#000;font-weight:bold">*</span>)pFrameRGB<span style="color:#000;font-weight:bold">-&gt;</span>data[<span style="color:#099">0</span>],displayWidth,displayHeight,QImage<span style="color:#000;font-weight:bold">::</span>Format_RGB32);
+                ui<span style="color:#000;font-weight:bold">-&gt;</span>label<span style="color:#000;font-weight:bold">-&gt;</span>setPixmap(QPixmap<span style="color:#000;font-weight:bold">::</span>fromImage(img)); <span style="color:#998;font-style:italic">// 在label上播放视频图片
+</span><span style="color:#998;font-style:italic"></span>                delay(<span style="color:#099">30</span>);
+            }
+        }
+        av_free_packet(pPacket);
+<span style="color:#999;font-weight:bold;font-style:italic">#else   </span><span style="color:#998;font-style:italic">//新解码方式
+</span><span style="color:#998;font-style:italic"></span>        <span style="color:#000;font-weight:bold">if</span> (pPacket<span style="color:#000;font-weight:bold">-&gt;</span>stream_index <span style="color:#000;font-weight:bold">==</span> videoStreamIndex)
+        {
+            ret <span style="color:#000;font-weight:bold">=</span> avcodec_send_packet(pCodecContext,pPacket);
+            <span style="color:#000;font-weight:bold">if</span> (ret <span style="color:#000;font-weight:bold">&lt;</span> <span style="color:#099">0</span>)
+            {
+                qDebug() <span style="color:#000;font-weight:bold">&lt;&lt;</span> <span style="color:#d14">&#34;Decode Error1:&#34;</span> <span style="color:#000;font-weight:bold">&lt;&lt;</span> ret;
+                <span style="color:#000;font-weight:bold">goto</span> out;
+            }
+
+            <span style="color:#998;font-style:italic">//avcodec_send_packet和avcodec_receive_frame调用关系并不一定是一对一的，比如一些音频数据一个AVPacket中包含了1秒钟的音频，
+</span><span style="color:#998;font-style:italic"></span>            <span style="color:#998;font-style:italic">//调用一次avcodec_send_packet之后，可能需要调用25次 avcodec_receive_frame才能获取全部的解码音频数据
+</span><span style="color:#998;font-style:italic"></span>            <span style="color:#000;font-weight:bold">while</span>( avcodec_receive_frame(pCodecContext, pFrame) <span style="color:#000;font-weight:bold">==</span> <span style="color:#099">0</span>)
+            {
+                sws_scale(pSwsContext, (<span style="color:#000;font-weight:bold">const</span> <span style="color:#458;font-weight:bold">unsigned</span> <span style="color:#458;font-weight:bold">char</span><span style="color:#000;font-weight:bold">*</span> <span style="color:#000;font-weight:bold">const</span><span style="color:#000;font-weight:bold">*</span>)pFrame<span style="color:#000;font-weight:bold">-&gt;</span>data, pFrame<span style="color:#000;font-weight:bold">-&gt;</span>linesize, <span style="color:#099">0</span>, pCodecContext<span style="color:#000;font-weight:bold">-&gt;</span>height,
+                                   pFrameRGB<span style="color:#000;font-weight:bold">-&gt;</span>data, pFrameRGB<span style="color:#000;font-weight:bold">-&gt;</span>linesize);
+                QImage <span style="color:#900;font-weight:bold">img</span>((uchar<span style="color:#000;font-weight:bold">*</span>)pFrameRGB<span style="color:#000;font-weight:bold">-&gt;</span>data[<span style="color:#099">0</span>],displayWidth, displayHeight,QImage<span style="color:#000;font-weight:bold">::</span>Format_RGB32);
+                ui<span style="color:#000;font-weight:bold">-&gt;</span>label<span style="color:#000;font-weight:bold">-&gt;</span>setPixmap(QPixmap<span style="color:#000;font-weight:bold">::</span>fromImage(img)); <span style="color:#998;font-style:italic">// 在label上播放视频图片
+</span><span style="color:#998;font-style:italic"></span>                delay(<span style="color:#099">30</span>);
+            }
+        }
+        av_packet_unref(pPacket);
+<span style="color:#999;font-weight:bold;font-style:italic">#endif
+</span><span style="color:#999;font-weight:bold;font-style:italic"></span>    }
+
+<span style="color:#900;font-weight:bold">out</span>:
+    <span style="color:#998;font-style:italic">//释放资源
+</span><span style="color:#998;font-style:italic"></span>    av_free(out_buffer);
+    sws_freeContext(pSwsContext); <span style="color:#998;font-style:italic">// 释放一个SwsContext
+</span><span style="color:#998;font-style:italic"></span>    av_frame_free(<span style="color:#000;font-weight:bold">&amp;</span>pFrameRGB);
+    av_frame_free(<span style="color:#000;font-weight:bold">&amp;</span>pFrame);
+    avcodec_close(pCodecContext);
+    avformat_close_input(<span style="color:#000;font-weight:bold">&amp;</span>pFormatContext);
+}
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="参考资料">参考资料：</h2>
+<ul>
+<li><a href="https://www.cnblogs.com/linuxAndMcu/p/12046600.html">Qt+FFmpeg 简单实现视频播放</a></li>
+</ul>
+
+        </div>
+
+        
+<div class="post-archive">
+    <ul class="post-copyright">
+        <li><strong>原文作者：</strong><a rel="author" href="http://www.pavelhan.tech">Pavel Han</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="http://www.pavelhan.tech/post/2020-09-29-00-%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84%E5%9F%BA%E4%BA%8EQT&#43;ffmpeg%E7%9A%84%E6%92%AD%E6%94%BE%E5%99%A8%E7%9A%84%E4%BE%8B%E5%AD%90/">http://www.pavelhan.tech/post/2020-09-29-00-%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84%E5%9F%BA%E4%BA%8EQT&#43;ffmpeg%E7%9A%84%E6%92%AD%E6%94%BE%E5%99%A8%E7%9A%84%E4%BE%8B%E5%AD%90/</a></li>
+        <li><strong>版权声明：</strong>本作品采用<a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可，非商业转载请注明出处（作者，原文链接），商业转载请联系作者获得授权。</li>
+    </ul>
+</div>
+<br/>
+
+
+
+        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/post/2020-09-24-00-%E6%90%AD%E5%BB%BA%E5%9F%BA%E4%BA%8EQTCreator%E7%9A%84ffmpeg%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/">搭建基于QT Creator的ffmpeg开发环境</a></li>
+        
+        <li><a href="/post/2020-09-15-00-QT5.9.8%E7%89%88%E6%9C%AC%E5%9C%A8%E6%B5%B7%E6%80%9D3521%E5%B9%B3%E5%8F%B0%E4%B8%8A%E7%9A%84%E7%A7%BB%E6%A4%8D/">QT5.9.8版本在海思3521平台上的移植</a></li>
+        
+    </ul>
+</div>
+
+
+        <div class="post-meta meta-tags">
+            
+            <ul class="clearfix">
+                
+                <li><a href='http://www.pavelhan.tech/tags/QT'>QT</a></li>
+                
+                <li><a href='http://www.pavelhan.tech/tags/ffmpeg'>ffmpeg</a></li>
+                
+                <li><a href='http://www.pavelhan.tech/tags/%E6%92%AD%E6%94%BE%E5%99%A8'>播放器</a></li>
+                
+            </ul>
+            
+        </div>
+    </article>
+    
+    
+
+    
+    
+</div>
+
+                </div>
+
+                <div id="secondary">
+    <section class="widget">
+        <form id="search" action='http://www.pavelhan.tech/search/' method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="http://www.pavelhan.tech">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-09-29-00-%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84%E5%9F%BA%E4%BA%8EQT&#43;ffmpeg%E7%9A%84%E6%92%AD%E6%94%BE%E5%99%A8%E7%9A%84%E4%BE%8B%E5%AD%90/" title="最简单的基于QT&#43;ffmpeg的播放器的例子">最简单的基于QT&#43;ffmpeg的播放器的例子</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-09-24-00-%E6%90%AD%E5%BB%BA%E5%9F%BA%E4%BA%8EQTCreator%E7%9A%84ffmpeg%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" title="搭建基于QT Creator的ffmpeg开发环境">搭建基于QT Creator的ffmpeg开发环境</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-09-22-00-AHD%E6%A8%A1%E6%8B%9F%E6%91%84%E5%83%8F%E5%A4%B4%E7%9A%84%E5%8F%8D%E5%90%91%E6%8E%A7%E5%88%B6%E5%8D%8F%E8%AE%AE-CoaxialProtocol/" title="AHD模拟摄像头的反向控制协议-Coaxial Protocol">AHD模拟摄像头的反向控制协议-Coaxial Protocol</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-09-15-00-QT5.9.8%E7%89%88%E6%9C%AC%E5%9C%A8%E6%B5%B7%E6%80%9D3521%E5%B9%B3%E5%8F%B0%E4%B8%8A%E7%9A%84%E7%A7%BB%E6%A4%8D/" title="QT5.9.8版本在海思3521平台上的移植">QT5.9.8版本在海思3521平台上的移植</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-08-07-00-AF%E8%87%AA%E5%8A%A8%E5%AF%B9%E7%84%A6%E7%AE%97%E6%B3%95%E5%8F%8APDAF%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E6%80%BB%E7%BB%93/" title="AF自动对焦算法及PDAF工作原理总结">AF自动对焦算法及PDAF工作原理总结</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-07-31-00-%E5%8F%98%E7%84%A6%E9%95%9C%E5%A4%B4%E7%9A%84%E5%88%86%E7%B1%BB%E5%8F%8A%E5%8F%98%E7%84%A6%E5%8E%9F%E7%90%86%E6%80%BB%E7%BB%93/" title="变焦镜头的分类及变焦原理总结">变焦镜头的分类及变焦原理总结</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-07-23-00-USB%E5%A4%8D%E5%90%88%E8%AE%BE%E5%A4%87%E5%8F%8AUVC-Profile%E7%9A%84%E6%8F%8F%E8%BF%B0%E7%AC%A6%E8%AF%A6%E8%A7%A3/" title="USB复合设备及UVC Profile的描述符详解">USB复合设备及UVC Profile的描述符详解</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-07-07-00-Linux%E7%9A%84%E7%A3%81%E7%9B%98%E5%8A%A0%E5%AF%86%E6%8A%80%E6%9C%AFLUKS/" title="Linux的磁盘加密技术LUKS">Linux的磁盘加密技术LUKS</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-06-22-00-TI%E7%9A%84%E7%94%B5%E9%87%8F%E8%B7%9F%E8%B8%AA%E6%8A%80%E6%9C%AFImpedance-Track%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/" title="TI的电量跟踪技术Impedance Track学习总结">TI的电量跟踪技术Impedance Track学习总结</a>
+    </li>
+    
+    <li>
+        <a href="http://www.pavelhan.tech/post/2020-06-19-00-%E5%9C%A8Debian%E4%B8%8B%E9%85%8D%E7%BD%AEC&#43;&#43;%E7%9A%84Jenkins%E6%8C%81%E7%BB%AD%E9%9B%86%E6%88%90%E7%8E%AF%E5%A2%83/" title="在Debian/Linux环境下配置C/C&#43;&#43;的Jenkins持续集成环境">在Debian/Linux环境下配置C/C&#43;&#43;的Jenkins持续集成环境</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+<ul class="widget-list">
+    
+    <li><a href="http://www.pavelhan.tech/categories/Linux/">Linux (2)</a></li>
+    
+    <li><a href="http://www.pavelhan.tech/categories/WiFi/">WiFi (1)</a></li>
+    
+    <li><a href="http://www.pavelhan.tech/categories/%E7%A1%AC%E4%BB%B6/">硬件 (5)</a></li>
+    
+    <li><a href="http://www.pavelhan.tech/categories/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">网络安全 (1)</a></li>
+    
+    <li><a href="http://www.pavelhan.tech/categories/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/">软件工程 (2)</a></li>
+    
+    <li><a href="http://www.pavelhan.tech/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/">音视频 (9)</a></li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">标签</h3>
+<div class="tagcloud">
+    
+    <a href="http://www.pavelhan.tech/tags/AES/">AES</a>
+    
+    <a href="http://www.pavelhan.tech/tags/AHD/">AHD</a>
+    
+    <a href="http://www.pavelhan.tech/tags/BT1120/">BT1120</a>
+    
+    <a href="http://www.pavelhan.tech/tags/BT656/">BT656</a>
+    
+    <a href="http://www.pavelhan.tech/tags/CI/">CI</a>
+    
+    <a href="http://www.pavelhan.tech/tags/Coaxial/">Coaxial</a>
+    
+    <a href="http://www.pavelhan.tech/tags/CppCheck/">CppCheck</a>
+    
+    <a href="http://www.pavelhan.tech/tags/GPS/">GPS</a>
+    
+    <a href="http://www.pavelhan.tech/tags/H.264/">H.264</a>
+    
+    <a href="http://www.pavelhan.tech/tags/Hi3520DV400/">Hi3520DV400</a>
+    
+    <a href="http://www.pavelhan.tech/tags/Hi3521DV100/">Hi3521DV100</a>
+    
+    <a href="http://www.pavelhan.tech/tags/IAD/">IAD</a>
+    
+    <a href="http://www.pavelhan.tech/tags/IPC/">IPC</a>
+    
+    <a href="http://www.pavelhan.tech/tags/Jenkins/">Jenkins</a>
+    
+    <a href="http://www.pavelhan.tech/tags/LUKS/">LUKS</a>
+    
+    <a href="http://www.pavelhan.tech/tags/Linux/">Linux</a>
+    
+    <a href="http://www.pavelhan.tech/tags/NMEA/">NMEA</a>
+    
+    <a href="http://www.pavelhan.tech/tags/PDAF/">PDAF</a>
+    
+    <a href="http://www.pavelhan.tech/tags/QT/">QT</a>
+    
+    <a href="http://www.pavelhan.tech/tags/USB/">USB</a>
+    
+    <a href="http://www.pavelhan.tech/tags/UVC/">UVC</a>
+    
+    <a href="http://www.pavelhan.tech/tags/WiFi/">WiFi</a>
+    
+    <a href="http://www.pavelhan.tech/tags/debian/">debian</a>
+    
+    <a href="http://www.pavelhan.tech/tags/ffmpeg/">ffmpeg</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E4%BD%8E%E5%8A%9F%E8%80%97/">低功耗</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E5%8A%A0%E5%AF%86/">加密</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E5%8C%97%E6%96%97/">北斗</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E5%8F%98%E7%84%A6/">变焦</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E6%92%AD%E6%94%BE%E5%99%A8/">播放器</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E6%B5%B7%E6%80%9D/">海思</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/">消息队列</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E7%94%B5%E9%87%8F%E8%AE%A1/">电量计</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">网络安全</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/">软件工程</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E9%94%82%E7%94%B5%E6%B1%A0/">锂电池</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E9%95%9C%E5%A4%B4/">镜头</a>
+    
+    <a href="http://www.pavelhan.tech/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/">音视频</a>
+    
+</div>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="http://www.pavelhan.tech/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+</div>
+            </div>
+        </div>
+    </div>
+    <footer id="footer">
+    <div class="container">
+        &copy; 2020 <a href="http://www.pavelhan.tech">Pavel Han的博客 By Pavel Han</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
+        <a href="https://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/flysnow-org/maupassant-hugo" target="_blank">maupassant</a>.
+        
+    </div>
+</footer>
+
+
+    
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [['$', '$']],
+                processEscapes: true
+                }
+            };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src='/js/totop.js?v=0.0.0' async=""></script>
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-166241725-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+    <script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+    <script src='/js/douban.js'></script>
+
+</body>
+
+</html>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>ffmpeg on Pavel Han的博客</title>
+    <link>http://www.pavelhan.tech/tags/ffmpeg/</link>
+    <description>Recent content in ffmpeg on Pavel Han的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 29 Sep 2020 09:40:10 +0800</lastBuildDate>
+    
+	<atom:link href="http://www.pavelhan.tech/tags/ffmpeg/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>最简单的基于QT&#43;ffmpeg的播放器的例子</title>
+      <link>http://www.pavelhan.tech/post/2020-09-29-00-%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84%E5%9F%BA%E4%BA%8EQT&#43;ffmpeg%E7%9A%84%E6%92%AD%E6%94%BE%E5%99%A8%E7%9A%84%E4%BE%8B%E5%AD%90/</link>
+      <pubDate>Tue, 29 Sep 2020 09:40:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/post/2020-09-29-00-%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84%E5%9F%BA%E4%BA%8EQT&#43;ffmpeg%E7%9A%84%E6%92%AD%E6%94%BE%E5%99%A8%E7%9A%84%E4%BE%8B%E5%AD%90/</guid>
+      <description>前提条件： 基于 搭建基于QT Creator的ffmpeg开发环境在Windows环境中完成QT Creator++ffmpeg的开发环境，能够在QT Creator中正常的调用ffmpeg library中的接口得到正确的结果。 UI准备： 在QT Creator中新建一个QT Wigets Applica</description>
+    </item>
+    
+    <item>
+      <title>搭建基于QT Creator的ffmpeg开发环境</title>
+      <link>http://www.pavelhan.tech/post/2020-09-24-00-%E6%90%AD%E5%BB%BA%E5%9F%BA%E4%BA%8EQTCreator%E7%9A%84ffmpeg%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/</link>
+      <pubDate>Thu, 24 Sep 2020 12:40:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/post/2020-09-24-00-%E6%90%AD%E5%BB%BA%E5%9F%BA%E4%BA%8EQTCreator%E7%9A%84ffmpeg%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/</guid>
+      <description>操作系统版本：Windows 10. 从ffmpeg上下载windows平台上预编译好的ffmpeg库 下载地址： https://ffmpeg.zeranoe.com/builds/。 在基于动态链接库开发的情况下，需要下载下图中的Shared和Dev两个包： 下载后解压缩到某个指定的目录中备</description>
+    </item>
+    
+  </channel>
+</rss>

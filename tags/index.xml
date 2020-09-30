@@ -6,10 +6,37 @@
     <description>Recent content in Tags on Pavel Han的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Tue, 22 Sep 2020 14:02:10 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 29 Sep 2020 09:40:10 +0800</lastBuildDate>
     
 	<atom:link href="http://www.pavelhan.tech/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>ffmpeg</title>
+      <link>http://www.pavelhan.tech/tags/ffmpeg/</link>
+      <pubDate>Tue, 29 Sep 2020 09:40:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/tags/ffmpeg/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>QT</title>
+      <link>http://www.pavelhan.tech/tags/QT/</link>
+      <pubDate>Tue, 29 Sep 2020 09:40:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/tags/QT/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>播放器</title>
+      <link>http://www.pavelhan.tech/tags/%E6%92%AD%E6%94%BE%E5%99%A8/</link>
+      <pubDate>Tue, 29 Sep 2020 09:40:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/tags/%E6%92%AD%E6%94%BE%E5%99%A8/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>AHD</title>
@@ -26,15 +53,6 @@
       <pubDate>Tue, 22 Sep 2020 14:02:10 +0800</pubDate>
       
       <guid>http://www.pavelhan.tech/tags/Coaxial/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>QT</title>
-      <link>http://www.pavelhan.tech/tags/QT/</link>
-      <pubDate>Tue, 15 Sep 2020 11:02:10 +0800</pubDate>
-      
-      <guid>http://www.pavelhan.tech/tags/QT/</guid>
       <description></description>
     </item>
     
