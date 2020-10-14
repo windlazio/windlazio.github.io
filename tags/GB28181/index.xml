@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>GB28181 on Pavel Han的博客</title>
+    <link>http://www.pavelhan.tech/tags/GB28181/</link>
+    <description>Recent content in GB28181 on Pavel Han的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 13 Oct 2020 10:40:10 +0800</lastBuildDate>
+    
+	<atom:link href="http://www.pavelhan.tech/tags/GB28181/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>GB28181基础知识学习总结</title>
+      <link>http://www.pavelhan.tech/post/2020-10-13-00-GB28181%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/</link>
+      <pubDate>Tue, 13 Oct 2020 10:40:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/post/2020-10-13-00-GB28181%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/</guid>
+      <description>GB28281标准要解决的问题： 用于解决音视频监控领域中，不同厂家生产的不同平台和不同产品之间的互通协议问题。 在GB28181协议推出之前，不同厂家的不同产品往往都有自己的解决方案和通信协议，因为基本上监控平台与摄像头、DVR等设备之间只能在厂家内部达成对接协议互通。 GB2818</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -6,20 +6,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>H.264的几个基本概念: IDR, dts/pts | Pavel Han的博客</title>
-    <meta property="og:title" content="H.264的几个基本概念: IDR, dts/pts - Pavel Han的博客">
+    <title>GB28181基础知识学习总结 | Pavel Han的博客</title>
+    <meta property="og:title" content="GB28181基础知识学习总结 - Pavel Han的博客">
     <meta property="og:type" content="article">
         
-    <meta property="article:published_time" content='2020-05-12T08:56:10&#43;08:00'>
+    <meta property="article:published_time" content='2020-10-13T10:40:10&#43;08:00'>
         
         
-    <meta property="article:modified_time" content='2020-05-12T08:56:10&#43;08:00'>
+    <meta property="article:modified_time" content='2020-10-13T10:40:10&#43;08:00'>
         
     <meta name="Keywords" content="">
-    <meta name="description" content="H.264的几个基本概念: IDR, dts/pts">
+    <meta name="description" content="GB28181基础知识学习总结">
         
     <meta name="author" content="Pavel Han">
-    <meta property="og:url" content="http://www.pavelhan.tech/post/2020-05-12-00-H.264%E7%9A%84%E5%87%A0%E4%B8%AA%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/">
+    <meta property="og:url" content="http://www.pavelhan.tech/post/2020-10-13-00-GB28181%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 
     <link rel="stylesheet" href='/css/normalize.css'>
@@ -145,9 +145,12 @@
     <div class="post-toc-content">
         <nav id="TableOfContents">
   <ul>
-    <li><a href="#idr帧与i帧之间的区别">IDR帧与I帧之间的区别</a></li>
-    <li><a href="#dts与pts">dts与pts</a></li>
-    <li><a href="#参考信息">参考信息</a></li>
+    <li><a href="#gb28281标准要解决的问题">GB28281标准要解决的问题：</a></li>
+    <li><a href="#监控平台需要实现的主要业务的分类">监控平台需要实现的主要业务的分类：</a></li>
+    <li><a href="#gb28181基础">GB28181基础：</a></li>
+    <li><a href="#音视频推流方面的通信结构和基本流程">音视频推流方面的通信结构和基本流程：</a></li>
+    <li><a href="#其他">其他：</a></li>
+    <li><a href="#参考资料">参考资料：</a></li>
   </ul>
 </nav>
     </div>
@@ -181,10 +184,10 @@
 </script>
     <article class="post">
         <header>
-            <h1 class="post-title">H.264的几个基本概念: IDR, dts/pts</h1>
+            <h1 class="post-title">GB28181基础知识学习总结</h1>
         </header>
         <date class="post-meta meta-date">
-            2020年5月12日
+            2020年10月13日
         </date>
         
         <div class="post-meta">
@@ -202,56 +205,71 @@
         
         
         <div class="post-content">
-            <h2 id="idr帧与i帧之间的区别">IDR帧与I帧之间的区别</h2>
-<p>IDR：Instantaneous Decoding Refresh。</p>
-<p>I帧与IDR帧之间的区别涉及到H.264中不同帧类型的视频解码过程。</p>
+            <h2 id="gb28281标准要解决的问题">GB28281标准要解决的问题：</h2>
 <ul>
-<li>对于普通的I帧（及其IDR帧）而言，对其进行的视频解码不依赖于其他帧，对每一个I帧（及其IDR帧）解码都可以得到一张完整的图像。</li>
-<li>对于每一个P帧而言，对其进行解码需要参考其前面的I帧或者P帧，才能成功的解码出来一帧完整的图像；</li>
-<li>B帧的解码则更复杂一些，对其进行解码不仅要参考前面的I帧或者P帧，还有可能要参考其后面的P帧解码后的图像；</li>
+<li>用于解决音视频监控领域中，不同厂家生产的不同平台和不同产品之间的互通协议问题。</li>
+<li>在GB28181协议推出之前，不同厂家的不同产品往往都有自己的解决方案和通信协议，因为基本上监控平台与摄像头、DVR等设备之间只能在厂家内部达成对接协议互通。</li>
+<li>GB28181协议的解决方式就是由国家部门牵头（各大监控平台和设备产品厂商参与）制定一个统一的对接协议框架和标准，所有厂家生产的产品和开发的平台要在这个生态中销售，就必须遵守GB28181的游戏规则，按照GB28181协议规定的接口和对接方式进行实现。这样就可以实现不同厂家的不同产品在使用过程中的无缝对接。</li>
+<li>GB28181协议的定义和实施中存在的问题：
+<ul>
+<li>GB28181标准在具体通信协议的细节定义上存在不够明晰和严谨的地方，不同厂家在实现GB28181标准的过程中存在一定程度的自我解读和实现，这样最终的结果往往就是：在同一个GB28181规范的前提下，其中的部分实现细节由行业中较大的厂家来决定，中小型厂家按照大型厂商的实现和定义方式来进行适配和对接。</li>
 </ul>
-<p>为了能够支持以上解码过程，H.264的解码算法需要维护一个参考帧列表DPB（Decorded Picture Buffer），实际上就是一个普通的缓存空间，用于存放每一帧完成解码的图像数据，因此：</p>
-<ul>
-<li>I帧的解码不需要依赖于DPB中的内容，直接独立进行解码就可以产生一张完整的图像，填入DPB中，此后就可以作为其他P帧和B帧解码的参考；</li>
-<li>P帧和B帧的解码则需要依赖于DPB中已经解码好的图像帧，解码完成后同样放入DPB中，作为后面的P帧和B帧的解码参考帧。</li>
+</li>
 </ul>
-<p>注意：P帧和B帧的解码不仅可能依赖于其前面紧邻的那个I帧，还有可能要依赖于更前面的帧。这一点就导致了I帧和IDR帧的细微差别：</p>
-<p>​	<strong>IDR帧是一种特殊的I帧，在IDR帧之后的所有P帧和B帧的解码都只会向前参考到这个IDR帧，而不会参考这个IDR帧之前的帧。因此在解码器在对一个IDR帧进行解码的时候，就可以直接把DPB中保存的所有缓存数据全部清空，这是很自然的道理：因为这个IDR帧后面的所有帧的解码都不会参考这个IDR帧之前的数据。</strong></p>
-<p>总结起来：</p>
+<h2 id="监控平台需要实现的主要业务的分类">监控平台需要实现的主要业务的分类：</h2>
 <ul>
-<li>IDR帧一定是I帧，但I帧不一定是IDR帧。</li>
-<li>IDR帧会导致DPB被清空，而普通的I帧不会，因为其后面的帧解码有可能要参考到普通I帧前面的帧。</li>
-<li>也正因为以上道理，在对视频流或者视频文件在播放过程中做seek操作的时候，一定要找到IDR帧开始进行解码播放，否则如果在I帧位置进行播放，有可能会因为其后面的帧解码时要依赖于这个I帧前面的帧而造成花屏。</li>
+<li>等待接收下游设备的连接请求，以及连接建立后的keepalive消息；</li>
+<li>获取该平台下接入的设备信息；
+<ul>
+<li>一个GB28181平台下游可以连接另外一个GB28181平台，从而形成一个上下级级联的结构；</li>
 </ul>
-<h2 id="dts与pts">dts与pts</h2>
-<p>dts、pts 的概念如下所述：</p>
-<ul>
-<li>dts（Decoding Time Stamp）：即解码时间戳，这个时间戳的意义在于告诉播放器该在什么时候解码这一帧的数据。</li>
-<li>pts（Presentation Time Stamp）：即显示时间戳，这个时间戳用来告诉播放器该在什么时候显示这一帧的数据。</li>
+</li>
+<li>获取平台下某个接入设备的实时流；</li>
+<li>获取平台下某个接入设备之前某个时间的录像回放；</li>
+<li>设备远程控制，例如云台控制、语音对讲等；</li>
 </ul>
-<p>实际上dts和pts的概念与B帧息息相关，当编解码器只有I帧和P帧的时候，视频解码和播放的顺序是完全一致的，因此dts与pts是相等的，这个时候讨论dts和pts就意义不大了，播放器只需要按照原来的顺序进行解码和显示就可以了。
-但是如果引入了B帧，就会导致解码和显示的顺序不一样。这是因为：</p>
+<h2 id="gb28181基础">GB28181基础：</h2>
 <ul>
-<li>B帧的解码需要依赖于其后面的帧，所以解码B帧的时候要先把其后面的帧解码才能对B帧成功解码，但是在播放的时候则需要按照原来的顺序进行播放，也就是说解码和播放显示的顺序不一致。</li>
+<li>GB28181协议在各种不同设备和服务之间的通信，是基于UDP的SIP协议进行实现的；</li>
+<li>拓扑结构：上级，下级；</li>
+<li>视频流的传输使用推流的方式来实现，由下级推到上级；</li>
+<li>上级需要访问下级的视频流的时候，向下级发送一条消息告知接收视频流的IP和端口，下级收到以后就向指定的IP和端口推流；</li>
+<li>当上级不需要再接收这个视频流的时候，就向下级发送一条BYE指令通知下级停止发送，下级收到后就会停止发送。</li>
+<li>使用推模式很好的一点就是：可以方便的实现内网的视频流推送到外网的流媒体服务器上。</li>
+<li>GB28181要求传输的视频流格式是PS流，或者H.264裸流以及MP4格式，其中PS流和H.264裸流比较常见。</li>
 </ul>
-<p>例如：</p>
-<p>一个帧序列播放的顺序是：I B1 B2 P；</p>
+<h2 id="音视频推流方面的通信结构和基本流程">音视频推流方面的通信结构和基本流程：</h2>
+<p>在GB28181的协议框架下，对于音视频流的请求、推送和转发等业务上主要可以分为以下四种角色（有可能多个角色会在同一个服务器上部署）：</p>
+<p><img src="/images/2020-10-13-00-GB28181%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/Image1.png" alt="Image1"></p>
 <ul>
-<li>I帧可以独立解码，因此首先解码，I帧解码顺序为1，播放顺序为1；</li>
-<li>B1和B2的解码需要依赖于I帧和后面的P帧，所以需要等P帧先解码；</li>
-<li>P帧解码顺序为2，播放顺序为4；</li>
-<li>B1的解码需要依赖于B2，因此B2先解码，B2的解码顺序为3，播放顺序为3；</li>
-<li>B1的解码顺序为4，播放顺序为2。</li>
+<li>媒体流发送者：可以考虑是一个远端部署的摄像头或者DVR，用于向指定的流媒体服务器发送图像流；</li>
+<li>SIP服务器：负责进行设备管理和在不同的服务/终端节点之间转发消息；</li>
+<li>媒体服务器：媒体流发送者会把自己的音视频流推送到媒体服务器上，用于接收来自前端设备推送的音视频流，同时可以用于为媒体流接收者提供拉流播放的接口，相当于是一个流媒体中转服务器；实际上SIP服务器和媒体服务器可以部署在同一个服务器硬件上；</li>
+<li>媒体流接收者：真正需要访问和播放音视频流的通信节点，不会直接与媒体流发送者进行通信，而是通过媒体服务器来进行整体的管理和中转；</li>
 </ul>
-<p>也就是说：</p>
-<p>Frame：I B1 B2 P;</p>
-<p>dts：         1 4   3  2；</p>
-<p>pts：         1 2   3  4；</p>
-<h2 id="参考信息">参考信息</h2>
+<p>从媒体流接收者开始发起的请求音视频流的完整流程如下：</p>
+<p><img src="/images/2020-10-13-00-GB28181%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/Image2.png" alt="Image2"></p>
 <ul>
-<li>《音视频开发进阶指南》第一章；</li>
-<li><a href="https://blog.csdn.net/jammg/article/details/52357245">H264中I帧和IDR帧的区别</a></li>
-<li><a href="https://www.cnblogs.com/samirchen/p/7071824.html">理解音视频PTS和DTS</a></li>
+<li>媒体流接收者即真正需要访问摄像头实时流的服务器，向SIP服务器发送一个Invite Message来请求指定摄像头的实时流数据；</li>
+<li>SIP服务器收到后向媒体服务器发送一个Invite Message，查询该流媒体服务器能够支持的媒体类型；</li>
+<li>流媒体服务器收到后会以SDP的形式返回给SIP服务器；</li>
+<li>SIP服务器继续向媒体流发送者也就是摄像头发送一个Invite Message，在其中通过SDP的形式包含流媒体服务器的IP、端口以及支持的流媒体类型格式信息；</li>
+<li>媒体发送者确认以上Invite Message以后，就开始向上面SDP中包含的媒体服务器的IP、端口推送自己的实时音视频流；</li>
+<li>然后SIP服务器就向媒体流接收者返回一个确认消息，表示已经成功通知媒体发送者向流媒体服务器推送Streaming；</li>
+<li>然后媒体流接收者就可以从流媒体服务器上来获取自己想要申请的摄像头的实时流并解码播放了；</li>
+<li>当媒体流接收者需要停止接收Streaming的时候，就向SIP Server发送一个BYE消息；</li>
+<li>SIP Server则分别向流媒体服务器和媒体发送者分别发送BYE消息，停止推流。整个业务流程完成。</li>
+</ul>
+<p><strong>注意：从以上流程图中可以看到，四种角色之间的交互流程稍显繁琐和多余，实际上在对接的过程中可以省略掉其中一些不必要的确认步骤。</strong></p>
+<h2 id="其他">其他：</h2>
+<ul>
+<li>在GB28181功能的具体实现上，可以基于PJSIP开源库来方便的实现与SIP服务器之间的SIP协议通信功能；</li>
+</ul>
+<h2 id="参考资料">参考资料：</h2>
+<ul>
+<li><a href="https://www.cnblogs.com/wanggang123/p/5724257.html">GB28181国检推流</a></li>
+<li><a href="https://www.bilibili.com/video/BV1wJ411T7We?t=3343">GB28181视频教程第一集（基础知识）</a></li>
+<li><a href="https://www.bilibili.com/video/BV1cJ411T7oA/?spm_id_from=333.788.videocard.0">GB28181视频教程第二集（推流上）</a></li>
 </ul>
 
         </div>
@@ -260,7 +278,7 @@
 <div class="post-archive">
     <ul class="post-copyright">
         <li><strong>原文作者：</strong><a rel="author" href="http://www.pavelhan.tech">Pavel Han</a></li>
-        <li style="word-break:break-all"><strong>原文链接：</strong><a href="http://www.pavelhan.tech/post/2020-05-12-00-H.264%E7%9A%84%E5%87%A0%E4%B8%AA%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/">http://www.pavelhan.tech/post/2020-05-12-00-H.264%E7%9A%84%E5%87%A0%E4%B8%AA%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="http://www.pavelhan.tech/post/2020-10-13-00-GB28181%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/">http://www.pavelhan.tech/post/2020-10-13-00-GB28181%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/</a></li>
         <li><strong>版权声明：</strong>本作品采用<a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可，非商业转载请注明出处（作者，原文链接），商业转载请联系作者获得授权。</li>
     </ul>
 </div>
@@ -270,6 +288,19 @@
 
         
 
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/post/2020-05-18-00-BT601&#43;BT656&#43;BT1120%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E8%A7%A3%E6%9E%90/">BT601/BT656/BT1120的基本概念解析</a></li>
+        
+        <li><a href="/post/2020-05-14-00-%E6%A8%A1%E6%8B%9F%E9%AB%98%E6%B8%85%E8%A7%86%E9%A2%91%E4%BC%A0%E8%BE%93%E6%8A%80%E6%9C%AF/">模拟高清视频传输技术：AHD，HD-TVI，HD-CVI</a></li>
+        
+        <li><a href="/post/2020-05-12-00-H.264%E7%9A%84%E5%87%A0%E4%B8%AA%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/">H.264的几个基本概念: IDR, dts/pts</a></li>
+        
+    </ul>
+</div>
+
 
         <div class="post-meta meta-tags">
             
@@ -277,7 +308,7 @@
                 
                 <li><a href='http://www.pavelhan.tech/tags/%E9%9F%B3%E8%A7%86%E9%A2%91'>音视频</a></li>
                 
-                <li><a href='http://www.pavelhan.tech/tags/H.264'>H.264</a></li>
+                <li><a href='http://www.pavelhan.tech/tags/GB28181'>GB28181</a></li>
                 
             </ul>
             
