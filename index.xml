@@ -12,6 +12,15 @@
     
     
     <item>
+      <title>GPS基础及其定位的工作原理</title>
+      <link>http://www.pavelhan.tech/post/2021-01-11-00-GPS%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%85%B6%E5%AE%9A%E4%BD%8D%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/</link>
+      <pubDate>Mon, 11 Jan 2021 10:40:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/post/2021-01-11-00-GPS%E5%9F%BA%E7%A1%80%E5%8F%8A%E5%85%B6%E5%AE%9A%E4%BD%8D%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86/</guid>
+      <description>GPS基础 GPS：Global Position System，全球定位系统。全称为NAVSTAR GPS（NAVigation Satellite Timing And Ranging Global Position System，导航星测时与测距全球定位系统）。 GPS是一个由美国国防部开发的空基全天侯导航系统，它用以满足军方在地面或近地空间内获取在一个通用参照系中的位置、速</description>
+    </item>
+    
+    <item>
       <title>GB28181基础知识学习总结</title>
       <link>http://www.pavelhan.tech/post/2020-10-13-00-GB28181%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/</link>
       <pubDate>Tue, 13 Oct 2020 10:40:10 +0800</pubDate>

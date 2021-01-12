@@ -6,10 +6,28 @@
     <description>Recent content in Tags on Pavel Han的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Tue, 13 Oct 2020 10:40:10 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 11 Jan 2021 10:40:10 +0800</lastBuildDate>
     
 	<atom:link href="http://www.pavelhan.tech/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>GPS</title>
+      <link>http://www.pavelhan.tech/tags/GPS/</link>
+      <pubDate>Mon, 11 Jan 2021 10:40:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/tags/GPS/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>硬件</title>
+      <link>http://www.pavelhan.tech/tags/%E7%A1%AC%E4%BB%B6/</link>
+      <pubDate>Mon, 11 Jan 2021 10:40:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/tags/%E7%A1%AC%E4%BB%B6/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>GB28181</title>
@@ -260,15 +278,6 @@
       <pubDate>Tue, 26 May 2020 10:42:10 +0800</pubDate>
       
       <guid>http://www.pavelhan.tech/tags/Hi3521DV100/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>GPS</title>
-      <link>http://www.pavelhan.tech/tags/GPS/</link>
-      <pubDate>Fri, 22 May 2020 15:35:10 +0800</pubDate>
-      
-      <guid>http://www.pavelhan.tech/tags/GPS/</guid>
       <description></description>
     </item>
     
