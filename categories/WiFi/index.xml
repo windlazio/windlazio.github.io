@@ -6,10 +6,19 @@
     <description>Recent content in WiFi on Pavel Han的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Sun, 10 May 2020 21:00:00 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 12 Jan 2021 11:40:10 +0800</lastBuildDate>
     
 	<atom:link href="http://www.pavelhan.tech/categories/WiFi/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>WiFi中的Beacon、TIM与DTIM概念总结</title>
+      <link>http://www.pavelhan.tech/post/2021-01-12-00-WiFi%E4%B8%AD%E7%9A%84BeaconTIM%E4%B8%8EDTIM%E6%A6%82%E5%BF%B5%E6%80%BB%E7%BB%93/</link>
+      <pubDate>Tue, 12 Jan 2021 11:40:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/post/2021-01-12-00-WiFi%E4%B8%AD%E7%9A%84BeaconTIM%E4%B8%8EDTIM%E6%A6%82%E5%BF%B5%E6%80%BB%E7%BB%93/</guid>
+      <description>Beacon Frame AP默认每102.4ms向外广播一个Beacon Frame，每个Beacon Frame中都包含有一个TIM Field，其中描述了AP为哪些STA缓存了数据； Beacon Frame的发送周期以及DTIM间隔可以在路由器的设置选项中进行设置（路由器支持设置的情况下）； 注意：Beacon Fr</description>
+    </item>
     
     <item>
       <title>WiFi的低功耗策略实现机制总结</title>

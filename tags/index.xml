@@ -6,10 +6,37 @@
     <description>Recent content in Tags on Pavel Han的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Mon, 11 Jan 2021 10:40:10 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 12 Jan 2021 11:40:10 +0800</lastBuildDate>
     
 	<atom:link href="http://www.pavelhan.tech/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>DTIM</title>
+      <link>http://www.pavelhan.tech/tags/DTIM/</link>
+      <pubDate>Tue, 12 Jan 2021 11:40:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/tags/DTIM/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>WiFi</title>
+      <link>http://www.pavelhan.tech/tags/WiFi/</link>
+      <pubDate>Tue, 12 Jan 2021 11:40:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/tags/WiFi/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>低功耗</title>
+      <link>http://www.pavelhan.tech/tags/%E4%BD%8E%E5%8A%9F%E8%80%97/</link>
+      <pubDate>Tue, 12 Jan 2021 11:40:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/tags/%E4%BD%8E%E5%8A%9F%E8%80%97/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>GPS</title>
@@ -323,24 +350,6 @@
       <pubDate>Tue, 12 May 2020 08:56:10 +0800</pubDate>
       
       <guid>http://www.pavelhan.tech/tags/H.264/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>WiFi</title>
-      <link>http://www.pavelhan.tech/tags/WiFi/</link>
-      <pubDate>Sun, 10 May 2020 21:00:00 +0800</pubDate>
-      
-      <guid>http://www.pavelhan.tech/tags/WiFi/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>低功耗</title>
-      <link>http://www.pavelhan.tech/tags/%E4%BD%8E%E5%8A%9F%E8%80%97/</link>
-      <pubDate>Sun, 10 May 2020 21:00:00 +0800</pubDate>
-      
-      <guid>http://www.pavelhan.tech/tags/%E4%BD%8E%E5%8A%9F%E8%80%97/</guid>
       <description></description>
     </item>
     
