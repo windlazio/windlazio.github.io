@@ -6,10 +6,19 @@
     <description>Recent content in WiFi on Pavel Han的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Tue, 12 Jan 2021 11:40:10 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 18 Jan 2021 16:40:10 +0800</lastBuildDate>
     
 	<atom:link href="http://www.pavelhan.tech/tags/WiFi/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>基于Wireshark&#43;Acrylic WiFi Sniffer的WiFi空口抓包环境</title>
+      <link>http://www.pavelhan.tech/post/2021-01-18-00-%E5%9F%BA%E4%BA%8EWireshark&#43;Acrylic-WiFi-Sniffer%E7%9A%84WiFi%E7%A9%BA%E5%8F%A3%E6%8A%93%E5%8C%85%E7%8E%AF%E5%A2%83/</link>
+      <pubDate>Mon, 18 Jan 2021 16:40:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/post/2021-01-18-00-%E5%9F%BA%E4%BA%8EWireshark&#43;Acrylic-WiFi-Sniffer%E7%9A%84WiFi%E7%A9%BA%E5%8F%A3%E6%8A%93%E5%8C%85%E7%8E%AF%E5%A2%83/</guid>
+      <description>前提条件： 安装好wireshark和Acrylic WiFi Sniffer软件； 一个能够支持Monitor工作模式的无线网卡； 提前知道要抓包的AP信道； （如果需要对数据链路层以上的数据进行解密的话，需要）提前知道要抓包的AP SSID和密码； 安装Wireshark和Acrylic WiFi Sniffer 在ww</description>
+    </item>
     
     <item>
       <title>WiFi中的Beacon、TIM与DTIM概念总结</title>
