@@ -6,20 +6,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>GPS的NMEA数据格式解析及GPS/北斗双模模块TD3020C介绍 | Pavel Han的博客</title>
-    <meta property="og:title" content="GPS的NMEA数据格式解析及GPS/北斗双模模块TD3020C介绍 - Pavel Han的博客">
+    <title>WiFi低功耗工作模式的完整工作流程总结 | Pavel Han的博客</title>
+    <meta property="og:title" content="WiFi低功耗工作模式的完整工作流程总结 - Pavel Han的博客">
     <meta property="og:type" content="article">
         
-    <meta property="article:published_time" content='2020-05-22T15:35:10&#43;08:00'>
+    <meta property="article:published_time" content='2021-02-01T17:40:10&#43;08:00'>
         
         
-    <meta property="article:modified_time" content='2020-05-22T15:35:10&#43;08:00'>
+    <meta property="article:modified_time" content='2021-02-01T17:40:10&#43;08:00'>
         
     <meta name="Keywords" content="">
-    <meta name="description" content="GPS的NMEA数据格式解析及GPS/北斗双模模块TD3020C介绍">
+    <meta name="description" content="WiFi低功耗工作模式的完整工作流程总结">
         
     <meta name="author" content="Pavel Han">
-    <meta property="og:url" content="http://www.pavelhan.tech/post/2020-05-22-00-GPS%E7%9A%84NMEA%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90%E5%8F%8AGPS&#43;%E5%8C%97%E6%96%97%E5%8F%8C%E6%A8%A1%E6%A8%A1%E5%9D%97TD3020C%E4%BB%8B%E7%BB%8D/">
+    <meta property="og:url" content="http://www.pavelhan.tech/post/2021-02-01-00-WiFi%E4%BD%8E%E5%8A%9F%E8%80%97%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%AE%8C%E6%95%B4%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E6%80%BB%E7%BB%93/">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 
     <link rel="stylesheet" href='/css/normalize.css'>
@@ -145,12 +145,12 @@
     <div class="post-toc-content">
         <nav id="TableOfContents">
   <ul>
-    <li><a href="#nmea数据格式">NMEA数据格式</a></li>
-    <li><a href="#常用的nmea-0183语句">常用的NMEA-0183语句</a></li>
-    <li><a href="#gprmcbdrmc">GPRMC/BDRMC</a></li>
-    <li><a href="#gpggabdgga">GPGGA/BDGGA</a></li>
-    <li><a href="#定位模块nmea数据解析的小结">定位模块NMEA数据解析的小结</a></li>
-    <li><a href="#gps北斗双模模块td3020c的使用介绍">GPS/北斗双模模块TD3020C的使用介绍</a></li>
+    <li><a href="#sta的两种不同的功耗工作模式">STA的两种不同的功耗工作模式</a></li>
+    <li><a href="#sta处于active-mode">STA处于Active Mode：</a></li>
+    <li><a href="#sta进入ps低功耗模式">STA进入PS低功耗模式：</a></li>
+    <li><a href="#sta低功耗模式的运行逻辑">STA低功耗模式的运行逻辑</a></li>
+    <li><a href="#sta退出ps低功耗模式">STA退出PS低功耗模式</a></li>
+    <li><a href="#参考资料">参考资料</a></li>
   </ul>
 </nav>
     </div>
@@ -184,16 +184,16 @@
 </script>
     <article class="post">
         <header>
-            <h1 class="post-title">GPS的NMEA数据格式解析及GPS/北斗双模模块TD3020C介绍</h1>
+            <h1 class="post-title">WiFi低功耗工作模式的完整工作流程总结</h1>
         </header>
         <date class="post-meta meta-date">
-            2020年5月22日
+            2021年2月1日
         </date>
         
         <div class="post-meta">
             <span>|</span>
             
-            <span class="meta-category"><a href='http://www.pavelhan.tech/categories/%E7%A1%AC%E4%BB%B6'>硬件</a></span>
+            <span class="meta-category"><a href='http://www.pavelhan.tech/categories/WiFi'>WiFi</a></span>
             
         </div>
         
@@ -205,182 +205,73 @@
         
         
         <div class="post-content">
-            <h2 id="nmea数据格式">NMEA数据格式</h2>
-<p>NEMA-0183是GPS接收机应该遵守的标准协议，也是当前世界上GPS接收机上使用最广泛的协议，绝大多数的GPS接收机，包括北斗模块在内都遵守或者至少兼容这个协议。</p>
-<p>NMEA语句的标准格式定义如下：</p>
-<p><strong>$&lt;语句类型标识&gt;，&lt;数据字段&gt;，&lt;数据字段&gt;，&hellip;&hellip;，&lt;数据字段&gt;*&lt;校验和&gt;[CR][LF]</strong></p>
+            <h2 id="sta的两种不同的功耗工作模式">STA的两种不同的功耗工作模式</h2>
 <ul>
-<li>语句类型标识由两部分组成：语句标识符+语句格式符；
+<li>总的来说，STA包含有两种不同的功耗工作模式：
 <ul>
-<li>北斗和GPS使用不同的语句标识符符，北斗的语句标识符是BD，GPS的则是GP；</li>
-<li>后面的语句格式符是通用的，例如都使用GGA表示位置信息，VTG表示地面速度信息。</li>
+<li>Active Mode：在这种状态下，WiFi的无线信号接收电路RX始终处于打开状态，因此可以在任何时间接收AP发过来的数据帧。
+<ul>
+<li>因为STA的RX要保持打开状态，这种模式下自然功耗较大；</li>
 </ul>
 </li>
-<li>每种不同的NEMA语句包含有多个独立的定义不同的数据字段，各个数据字段使用逗号分割开；</li>
-<li>&lt;校验和&gt;的计算是从$到*之间的所有字符；</li>
-<li>CR和LF则是标准的回车换行符。</li>
-</ul>
-<p>在应用中，无论是使用标准的GPS模块还是国内的北斗模块，模块本身输出的定位等信息的格式和协议基本上都是遵循NEMA-0183标准（只是语句的标识符稍有差异）：</p>
-<p><img src="/images/2020-05-22-00-GPS%E7%9A%84NMEA%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90%E5%8F%8AGPS+%E5%8C%97%E6%96%97%E5%8F%8C%E6%A8%A1%E6%A8%A1%E5%9D%97TD3020C%E4%BB%8B%E7%BB%8D/1.png" alt="1"></p>
-<p>而在硬件方面，基本上大部分GPS和北斗模块以及双模模块都采用标准的串口输出这些NEMA语句，因此无论在硬件层面还是软件层面，都可以很方便做到兼容和替换。</p>
-<h2 id="常用的nmea-0183语句">常用的NMEA-0183语句</h2>
-<p>NMEA-0183协议定义的语句非常多，但是常用的兼容性最广的语句主要有：</p>
-<ul>
-<li>$GPGGA：定位信息</li>
-<li>$GPGSA：当前卫星信息</li>
-<li>$GPGSV：可见卫星信息</li>
-<li>$GPRMC：推荐定位信息数据格式</li>
-<li>$GPVTG：地面速度信息</li>
-<li>$GPGLL：地理定位信息</li>
-</ul>
-<p>对于我们在应用中使用GPS或者北斗模块而言，主要使用到其提供的以下功能：</p>
-<ul>
-<li>定位的经纬度信息；</li>
-<li>速度及运动方向信息；</li>
-<li>海拔高度；</li>
-<li>校时；</li>
-</ul>
-<p>因此对于我们的应用而言，只需要关注和解析定位模块输出的以下语句即可：</p>
-<ul>
-<li>GGA：经纬度，GPS状态，可用卫星数量，海拔高度；</li>
-<li>RMC：经纬度，UTC时间（精确到ms），磁偏角；</li>
-<li>VTG：速度及其方向；</li>
-</ul>
-<p>以下链接是一个NEMA数据的解析库，可以在应用中尝试直接使用这个库来实现对所需要信息的解析处理，避免重复造轮子：
-<a href="http://nmea.sourceforge.net/#downloads">http://nmea.sourceforge.net/#downloads</a></p>
-<h2 id="gprmcbdrmc">GPRMC/BDRMC</h2>
-<p>RMC数据帧的结构及其各个字段的定义如下：
-<strong>$GPRMC,&lt;1&gt;,&lt;2&gt;,&lt;3&gt;,&lt;4&gt;,&lt;5&gt;,&lt;6&gt;,&lt;7&gt;,&lt;8&gt;,&lt;9&gt;,&lt;10&gt;,&lt;11&gt;,&lt;12&gt;*hh[CR][LF]</strong></p>
-<ul>
-<li>&lt;1&gt; UTC时间，hhmmss（时分秒）格式</li>
-<li>&lt;2&gt; 定位状态，A=有效定位，V=无效定位</li>
-<li>&lt;3&gt; 纬度ddmm.mmmm（度分）格式（前面的0也将被传输）</li>
-<li>&lt;4&gt; 纬度半球N（北半球）或S（南半球）</li>
-<li>&lt;5&gt; 经度dddmm.mmmm（度分）格式（前面的0也将被传输）</li>
-<li>&lt;6&gt; 经度半球E（东经）或W（西经）</li>
-<li>&lt;7&gt; 地面速率（000.0~999.9节，前面的0也将被传输）</li>
-<li>&lt;8&gt; 地面航向（000.0~359.9度，以真北为参考基准，前面的0也将被传输）</li>
-<li>&lt;9&gt; UTC日期，ddmmyy（日月年）格式</li>
-<li>&lt;10&gt; 磁偏角（000.0~180.0度，前面的0也将被传输）</li>
-<li>&lt;11&gt; 磁偏角方向，E（东）或W（西）</li>
-<li>&lt;12&gt; 模式指示（仅NMEA0183 3.00版本输出，A=自主定位，D=差分，E=估算，N=数据无效）</li>
-<li>*: 语句结束标志符</li>
-<li>hh：从$开始到*之间的所有ASCII码的异或校验</li>
-<li>[CR] 回车符，结束标记</li>
-<li>[LF] 换行符，结束标记</li>
-</ul>
-<p>RMC语句中包含的重要信息有：UTC时间，经纬度，定位状态，速度（以节为单位，需要自行换算为km/h）及其方向，磁偏角等；</p>
-<ul>
-<li>可以看到，RMC语句中基本上包含了我们所关注的绝大多数常用信息；</li>
-<li>如果需要获取以km/h为单位的速度信息，可以解析GPVTG语句，该语句中同时包含有以节为单位和以km/h为单位的速度信息；</li>
-</ul>
-<h2 id="gpggabdgga">GPGGA/BDGGA</h2>
-<p>GGA数据帧的结构及其各个字段的定义如下：
-<strong>$GPGGA,&lt;1&gt;,&lt;2&gt;,&lt;3&gt;,&lt;4&gt;,&lt;5&gt;,&lt;6&gt;,&lt;7&gt;,&lt;8&gt;,&lt;9&gt;,M,&lt;10&gt;,M,&lt;11&gt;,&lt;12&gt;*xx<!-- raw HTML omitted --><!-- raw HTML omitted --></strong></p>
-<ul>
-<li>
-<p>$GPGGA：起始引导符及语句格式说明，如果是北斗模块的话就是BDGGA；</p>
-</li>
-<li>
-<p>&lt;1&gt; UTC时间，格式为hhmmss.sss；</p>
-</li>
-<li>
-<p>&lt;2&gt; 纬度，格式为ddmm.mmmm(第一位是零也将传送)；</p>
-</li>
-<li>
-<p>&lt;3&gt; 纬度半球，N或S(北纬或南纬)</p>
-</li>
-<li>
-<p>&lt;4&gt; 经度，格式为dddmm.mmmm(第一位零也将传送)；</p>
-</li>
-<li>
-<p>&lt;5&gt; 经度半球，E或W(东经或西经)</p>
-</li>
-<li>
-<p>&lt;6&gt; GPS状态， 0初始化， 1单点定位， 2码差分， 3无效PPS， 4固定解， 5浮点解， 6正在估算 7，人工输入固定值， 8模拟模式， 9WAAS差分</p>
-</li>
-<li>
-<p>&lt;7&gt; 使用卫星数量，从00到12(第一个零也将传送)</p>
-</li>
-<li>
-<p>&lt;8&gt; HDOP-水平精度因子，0.5到99.9，一般认为HDOP越小，质量越好。</p>
-</li>
-<li>
-<p>&lt;9&gt; 海拔高度，-9999.9到9999.9米</p>
-</li>
-<li>
-<p>M 指海拔单位为米</p>
-</li>
-<li>
-<p>&lt;10&gt; 大地水准面高度异常差值，-9999.9到9999.9米</p>
-</li>
-<li>
-<p>M 指单位米</p>
-</li>
-<li>
-<p>&lt;11&gt; 差分GPS数据期限(RTCM SC-104)，最后设立RTCM传送的秒数量，如不是差分定位则为空</p>
-</li>
-<li>
-<p>&lt;12&gt; 差分参考基站标号，从0000到1023(首位0也将传送)。</p>
-</li>
-<li>
-<p>*：语句结束标志符</p>
-</li>
-<li>
-<p>xx 从$开始到*之间的所有ASCII码的异或校验</p>
-</li>
-<li>
-<p>[CR] 回车符，结束标记</p>
-</li>
-<li>
-<p>[LF] 换行符，结束标记</p>
-</li>
-</ul>
-<p>GGA语句中比较重要的信息就是：经纬度，GPS状态，当前使用的卫星数量，海拔高度；</p>
-<h2 id="定位模块nmea数据解析的小结">定位模块NMEA数据解析的小结</h2>
-<ul>
-<li>从以上整理的数据可以看出来，GPGGA和GPRMC均包含有经纬度等定位信息，那我们在应用中应该用哪一个呢？其实，GPGGA是GPS定位信息，而​GPRMC是推荐定位信息，所以用GPRMC会比较准确。</li>
-<li>考虑到我们普通应用中需要从定位模块中获取的信息类型，基本上我们要用到的大部分信息在GPRMC语句中都已经包含了，所以只需要对GPRMC语句进行解析就可以了。</li>
-</ul>
-<h2 id="gps北斗双模模块td3020c的使用介绍">GPS/北斗双模模块TD3020C的使用介绍</h2>
-<p>TD3020C是东莞市泰斗微电子推出的一款GPS和北斗二代双模导航定位模块，模块尺寸22.4mm x 17mm x 2.0mm，采样28pin邮票孔封装，与主流的GPS模块（例如UBlox的LEA-5/6系列）在硬件上做到pin to pin兼容。</p>
-<p><img src="/images/2020-05-22-00-GPS%E7%9A%84NMEA%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90%E5%8F%8AGPS+%E5%8C%97%E6%96%97%E5%8F%8C%E6%A8%A1%E6%A8%A1%E5%9D%97TD3020C%E4%BB%8B%E7%BB%8D/2.png" alt="2"></p>
-<p>典型应用的走线图如下所示：</p>
-<p><img src="/images/2020-05-22-00-GPS%E7%9A%84NMEA%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90%E5%8F%8AGPS+%E5%8C%97%E6%96%97%E5%8F%8C%E6%A8%A1%E6%A8%A1%E5%9D%97TD3020C%E4%BB%8B%E7%BB%8D/3.png" alt="3"></p>
-<p>主要包含的接口如下：</p>
-<ul>
-<li>电源接口；</li>
-<li>天线接口：GPS和北斗共用同一个外置有源天线接口；</li>
-<li>休眠模式控制接口
-<ul>
-<li>模块通过外部休眠模式引脚控制进入休眠状态，功耗可降至5mA以下；</li>
+<li>PS（Power Saving） Mode：这种状态下，STA的RX大多数时间保存关闭状态，只需要定时同步打开RX并监听AP发出的Beacon Frame，以此达到尽可能节约能耗的目的；</li>
 </ul>
 </li>
-<li>两组UART接口
+<li>注意：只有STA才有低功耗模式，对于AP而言因为要实时的对所连接的STA设备进行状态管理和包转发，因此一定是处于Active Mode下；</li>
+<li>连接在同一个AP上的STA既可以处于active mode下，也可以处于PS mode下，AP需要对每一个STA是在Active mode还是PS mode有清晰的管理，这样才知道是否需要为某个特定的STA缓存数据（PS mode）还是直接发送出去（Active Mode）；</li>
+</ul>
+<h2 id="sta处于active-mode">STA处于Active Mode：</h2>
 <ul>
-<li>串口1（TXD1/RXD1），在UTC秒边界输出NMEA数据，也可以通过这个串口控制模块的工作模式、输出波特率等；该串口默认波特率为9600；</li>
-<li>串口2（TXD2/RXD2），备用串口，用于输出自定义格式的数据，也可以用于对模块进行软件升级。</li>
+<li>当STA处于Active Mode的情况下，STA的RX会始终保持打开状态，此时AP可以随时把需要发给这个STA的数据包直接发送给STA；</li>
+<li>当STA处于Active Mode的情况下，STA向AP发送的所有数据包的MAC Header Frame Control中的Power Management bit应保持为0；</li>
+</ul>
+<h2 id="sta进入ps低功耗模式">STA进入PS低功耗模式：</h2>
+<ul>
+<li>当STA需要进入低功耗运行模式的时候，STA通过设置MAC Header Frame Control中的Power Management bit为1，来通知AP自己将要进入低功耗待机模式；</li>
+<li>当STA处于低功耗模式运行时，其发出的所有包的Power Management bit均应该保持设置为1；</li>
+<li>当AP接收到STA发出的数据包的MAC Header Frame Control中的Power Management bit为1，表示这个STA将会进入低功耗运行模式，此后AP在收到发给这个STA的数据包时，就会把这个数据包暂时缓存起来；</li>
+</ul>
+<h2 id="sta低功耗模式的运行逻辑">STA低功耗模式的运行逻辑</h2>
+<ul>
+<li>AP会以固定的Beacon Interval周期（一般为100ms或者200ms）向外发出自己的Beacon Frame，在这个Beacon Frame中包含有TIM Field，这个Tim Field以bitmap（即连接到AP的每个STA对应于其中的一个bit）的形式包含有AP是否为这个STA缓存数据的标记；
+<ul>
+<li>当AP有为某个处于PS mode的STA缓存数据的情况下，bitmap中与该STA对应的bit会被设置为1；否则为0；</li>
 </ul>
 </li>
-<li>GPIO接口
+<li>当某个STA进入低功耗模式以后，在AP收到其他（外部）设备发给这个STA的包后，就会暂时为这个STA缓存这个数据，然后通过Beacon Frame的TIM信息中的bitmap来通知STA有缓冲数据；</li>
+<li>当STA处于低功耗模式运行时，STA的RX绝大多数时间处于关闭状态，以Listen Interval（每个STA可以单独设置自己的listen interval，以beacon interval为单位）为周期唤醒，等待接收来自AP发出的Beacon Frame；
 <ul>
-<li>包含3个GPIO接口，可以根据用户需求定义这些GPIO接口的功能。</li>
+<li>Listen Interval越大，STA越省电，但是STA接收到外部数据的延迟越大；</li>
+<li>Listen Interval越小，STA接收到外部数据的延迟越小，但是因为要频繁醒来监听Beacon Frame，因此更耗电；</li>
+</ul>
+</li>
+<li>当STA处于低功耗模式运行时，STA按照预先设定的Listen interval周期性唤醒接收到Beacon Frame，对其中的TIM信息进行解析，了解到AP中有自己的缓存数据；
+<ul>
+<li>如果AP中没有自己的缓存数据，STA关闭RX继续休眠，等待Listen Interval后重新唤醒检查，反复执行以上运行逻辑；
+<ul>
+<li>如果AP中有自己的缓存数据，STA会主动通过以下PS-Poll的机制来获取这个数据；
+<ul>
+<li>STA向AP发出一个PS-Poll Frame，请求AP发回自己的缓存数据包；</li>
+<li>AP收到PS-Poll Frame以后，会把这个STA缓存的一个数据帧发给STA；</li>
+<li>如果AP上有针对这个STA的多个数据帧，那么会把返回的数据帧的MAC Header中的more data bit设置为1，这样STA就知道AP上还有它的缓冲帧；然后STA回继续以上过程，重复向AP发出PS-Poll Frame，直到把所有的数据帧全部接收完毕；</li>
 </ul>
 </li>
 </ul>
-<p>TD3020C在正常工作中除了能够按照NEMA标准输出经纬度等信息以外，还可以通过UART1来控制模块的定位模式、波特率等运行参数。</p>
-<ul>
-<li>定位模式的切换指令：可以支持GPS和北斗的独立工作模式和混合工作模式；</li>
+</li>
 </ul>
-<p><img src="/images/2020-05-22-00-GPS%E7%9A%84NMEA%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90%E5%8F%8AGPS+%E5%8C%97%E6%96%97%E5%8F%8C%E6%A8%A1%E6%A8%A1%E5%9D%97TD3020C%E4%BB%8B%E7%BB%8D/4.png" alt="4"></p>
-<ul>
-<li>波特率设置指令：设置串口输出的波特率；</li>
+</li>
 </ul>
-<p><img src="/images/2020-05-22-00-GPS%E7%9A%84NMEA%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90%E5%8F%8AGPS+%E5%8C%97%E6%96%97%E5%8F%8C%E6%A8%A1%E6%A8%A1%E5%9D%97TD3020C%E4%BB%8B%E7%BB%8D/5.png" alt="5"></p>
+<h2 id="sta退出ps低功耗模式">STA退出PS低功耗模式</h2>
 <ul>
-<li>GPS/北斗模块NMEA信息输出更新率设置指令：</li>
+<li>当STA需要退出低功耗运行模式的时候，STA通过设置MAC Header Frame Control中的Power Management bit为0，来通知AP自己将要退出低功耗待机模式，进入Active mode；</li>
+<li>当STA处于Active模式运行时，其发出的所有包的Power Management bit均应该保持设置为0；</li>
+<li>当AP接收到STA发出的数据包的MAC Header Frame Control中的Power Management bit为0，表示这个STA退出低功耗运行模式进入Active mode，此后AP在收到发给这个STA的数据包时，就会把这个数据包直接转发给STA；</li>
+<li>当某个STA退出PS mode时，AP会检查自己当前是否有为这个STA缓存数据包，如果有的话就立即把这些缓存的数据全部发给这个STA；</li>
 </ul>
-<p><img src="/images/2020-05-22-00-GPS%E7%9A%84NMEA%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90%E5%8F%8AGPS+%E5%8C%97%E6%96%97%E5%8F%8C%E6%A8%A1%E6%A8%A1%E5%9D%97TD3020C%E4%BB%8B%E7%BB%8D/6.png" alt="6"></p>
+<h2 id="参考资料">参考资料</h2>
+<ul>
+<li>Part 11: Wireless LAN Medium Access Control (MAC) and Physical Layer (PHY) Specifications, 2007；</li>
+</ul>
 
         </div>
 
@@ -388,7 +279,7 @@
 <div class="post-archive">
     <ul class="post-copyright">
         <li><strong>原文作者：</strong><a rel="author" href="http://www.pavelhan.tech">Pavel Han</a></li>
-        <li style="word-break:break-all"><strong>原文链接：</strong><a href="http://www.pavelhan.tech/post/2020-05-22-00-GPS%E7%9A%84NMEA%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90%E5%8F%8AGPS&#43;%E5%8C%97%E6%96%97%E5%8F%8C%E6%A8%A1%E6%A8%A1%E5%9D%97TD3020C%E4%BB%8B%E7%BB%8D/">http://www.pavelhan.tech/post/2020-05-22-00-GPS%E7%9A%84NMEA%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90%E5%8F%8AGPS&#43;%E5%8C%97%E6%96%97%E5%8F%8C%E6%A8%A1%E6%A8%A1%E5%9D%97TD3020C%E4%BB%8B%E7%BB%8D/</a></li>
+        <li style="word-break:break-all"><strong>原文链接：</strong><a href="http://www.pavelhan.tech/post/2021-02-01-00-WiFi%E4%BD%8E%E5%8A%9F%E8%80%97%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%AE%8C%E6%95%B4%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E6%80%BB%E7%BB%93/">http://www.pavelhan.tech/post/2021-02-01-00-WiFi%E4%BD%8E%E5%8A%9F%E8%80%97%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%AE%8C%E6%95%B4%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E6%80%BB%E7%BB%93/</a></li>
         <li><strong>版权声明：</strong>本作品采用<a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可，非商业转载请注明出处（作者，原文链接），商业转载请联系作者获得授权。</li>
     </ul>
 </div>
@@ -398,16 +289,29 @@
 
         
 
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/post/2021-01-12-00-WiFi%E4%B8%AD%E7%9A%84BeaconTIM%E4%B8%8EDTIM%E6%A6%82%E5%BF%B5%E6%80%BB%E7%BB%93/">WiFi中的Beacon、TIM与DTIM概念总结</a></li>
+        
+        <li><a href="/post/2020-05-10-00-WiFi%E7%9A%84%E4%BD%8E%E5%8A%9F%E8%80%97%E7%AD%96%E7%95%A5%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6%E6%80%BB%E7%BB%93/">WiFi的低功耗策略实现机制总结</a></li>
+        
+        <li><a href="/post/2021-01-21-00-Wireshark%E6%8A%93%E5%8C%85%E7%8E%AF%E5%A2%83%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E4%B8%8E%E4%BD%BF%E7%94%A8%E6%8A%80%E5%B7%A7%E6%80%BB%E7%BB%93/">Wireshark抓包环境的工作原理与使用技巧总结</a></li>
+        
+        <li><a href="/post/2021-01-18-00-%E5%9F%BA%E4%BA%8EWireshark&#43;Acrylic-WiFi-Sniffer%E7%9A%84WiFi%E7%A9%BA%E5%8F%A3%E6%8A%93%E5%8C%85%E7%8E%AF%E5%A2%83/">基于Wireshark&#43;Acrylic WiFi Sniffer的WiFi空口抓包环境</a></li>
+        
+    </ul>
+</div>
+
 
         <div class="post-meta meta-tags">
             
             <ul class="clearfix">
                 
-                <li><a href='http://www.pavelhan.tech/tags/GPS'>GPS</a></li>
+                <li><a href='http://www.pavelhan.tech/tags/WiFi'>WiFi</a></li>
                 
-                <li><a href='http://www.pavelhan.tech/tags/%E5%8C%97%E6%96%97'>北斗</a></li>
-                
-                <li><a href='http://www.pavelhan.tech/tags/NMEA'>NMEA</a></li>
+                <li><a href='http://www.pavelhan.tech/tags/%E4%BD%8E%E5%8A%9F%E8%80%97'>低功耗</a></li>
                 
             </ul>
             

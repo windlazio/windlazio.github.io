@@ -6,7 +6,7 @@
     <description>Recent content in Tags on Pavel Han的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 21 Jan 2021 10:40:10 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 01 Feb 2021 17:40:10 +0800</lastBuildDate>
     
 	<atom:link href="http://www.pavelhan.tech/tags/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,9 +14,18 @@
     <item>
       <title>WiFi</title>
       <link>http://www.pavelhan.tech/tags/WiFi/</link>
-      <pubDate>Thu, 21 Jan 2021 10:40:10 +0800</pubDate>
+      <pubDate>Mon, 01 Feb 2021 17:40:10 +0800</pubDate>
       
       <guid>http://www.pavelhan.tech/tags/WiFi/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>低功耗</title>
+      <link>http://www.pavelhan.tech/tags/%E4%BD%8E%E5%8A%9F%E8%80%97/</link>
+      <pubDate>Mon, 01 Feb 2021 17:40:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/tags/%E4%BD%8E%E5%8A%9F%E8%80%97/</guid>
       <description></description>
     </item>
     
@@ -53,15 +62,6 @@
       <pubDate>Tue, 12 Jan 2021 11:40:10 +0800</pubDate>
       
       <guid>http://www.pavelhan.tech/tags/DTIM/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>低功耗</title>
-      <link>http://www.pavelhan.tech/tags/%E4%BD%8E%E5%8A%9F%E8%80%97/</link>
-      <pubDate>Tue, 12 Jan 2021 11:40:10 +0800</pubDate>
-      
-      <guid>http://www.pavelhan.tech/tags/%E4%BD%8E%E5%8A%9F%E8%80%97/</guid>
       <description></description>
     </item>
     
