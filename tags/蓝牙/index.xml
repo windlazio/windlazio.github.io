@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>蓝牙 on Pavel Han的博客</title>
+    <link>http://www.pavelhan.tech/tags/%E8%93%9D%E7%89%99/</link>
+    <description>Recent content in 蓝牙 on Pavel Han的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 11 May 2021 10:40:10 +0800</lastBuildDate>
+    
+	<atom:link href="http://www.pavelhan.tech/tags/%E8%93%9D%E7%89%99/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>蓝牙设备的BQB认证</title>
+      <link>http://www.pavelhan.tech/post/2021-05-11-00-%E8%93%9D%E7%89%99%E8%AE%BE%E5%A4%87%E7%9A%84BQB%E8%AE%A4%E8%AF%81/</link>
+      <pubDate>Tue, 11 May 2021 10:40:10 +0800</pubDate>
+      
+      <guid>http://www.pavelhan.tech/post/2021-05-11-00-%E8%93%9D%E7%89%99%E8%AE%BE%E5%A4%87%E7%9A%84BQB%E8%AE%A4%E8%AF%81/</guid>
+      <description>什么是BQB认证？ BQB：Bluetooth Qualification Body。 只有通过蓝牙SIG组织认证的产品才是真正的蓝牙产品，才能保证产品的兼容性和相关性能是符合蓝牙标准的，才能合法使用蓝牙或BLUETOOTH的LOGO以及相关蓝牙技术规范，不然被查到需要罚款。 什么情况下需要做BQB认证？ 凡带有蓝</description>
+    </item>
+    
+  </channel>
+</rss>
